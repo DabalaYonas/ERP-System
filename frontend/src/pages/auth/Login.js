@@ -5,6 +5,8 @@ import { useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { FaRegEnvelope, FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
+import { useDispatch } from "react-redux";
+import { setUser } from '../../features/users/userSlice';
 
 export async function login(user) {
   return axios.post('http://127.0.0.1:8000/user/login/api/', user, 
@@ -17,6 +19,7 @@ function Login() {
     const [eyeOpened, setEyeOpened] = useState(false);
     const [paaswordType, setPasswordType] = useState("password");
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     
     function handleChange(e) {
       var name = e.target.name;
@@ -40,6 +43,7 @@ function Login() {
           const user = jwtDecode(token);
           if(token != null) {
             localStorage.setItem("jwtToken", token);
+            dispatch(setUser(user.id));
             navigate("/");
           }
         }

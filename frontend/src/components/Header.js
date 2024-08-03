@@ -21,7 +21,7 @@ export default function CustomHeader({ collapsed, setCollapsed, colorBgContainer
           
           <Button
             type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            icon={collapsed ? <MenuUnfoldOutlined className='text-slate-800' /> : <MenuFoldOutlined className='text-primary-600' />}
             onClick={() => setCollapsed(!collapsed)}
             style={{
               fontSize: '16px',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   DashboardOutlined,
   TeamOutlined,
@@ -6,12 +6,14 @@ import {
   SettingOutlined,
   SignatureOutlined,
   CarryOutOutlined,
-  DollarOutlined
+  DollarOutlined,
+  ArrowLeftOutlined
 } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Breadcrumb, Divider, Layout, Menu, theme } from 'antd';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import CustomHeader from './Header';
 import Logo from './Logo';
+import axios from 'axios';
 
 const { Sider, Content } = Layout;
 
@@ -22,7 +24,7 @@ const items = [
     label: 'Dashboard',
   },
   {
-    key: 'employee',
+    key: 'employees',
     icon: <TeamOutlined />,
     label: 'All Employee',
   },
@@ -53,24 +55,48 @@ const items = [
   },
 ];
 
+const logout = () => {
+  return axios.post('http://127.0.0.1:8000/user/logout/api/');
+}
+
 const Sidebar = ({ children }) => {
 
   const [collapsed, setCollapsed] = useState(false);
+  const [current, setCurrent] = useState('personal');
 
   const location = useLocation();
-  const hideSidebarPath = ['/login', '/signup'];
+  const hideSidebarPath = ['/login', '/signup', '*'];
   const navigate = useNavigate();
+
+  
+  const onClick = (info) => {
+    if(info.key == 'logout') {
+      localStorage.removeItem('jwtToken');
+      logout();
+      navigate('/login');
+    } else {
+      setCurrent(info.key);
+      navigate('/' + info.key); 
+    }
+  };
 
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  useEffect(() => {
+    const currentPath = location.pathname.slice(1).split("/")[0];
+    setCurrent(currentPath);
+    console.log(currentPath.split("/"));
+  }, [location]);
+
   
   if(hideSidebarPath.includes(location.pathname)) {
     return <>{children}</>
   }
 
   return (
-    <Layout hasSider style={{height: '100vh'}}>
+    <Layout hasSider className='custom-scroll' style={{height: '100vh'}}>
       <Sider 
         width={250}
         theme="light" 
@@ -81,13 +107,24 @@ const Sidebar = ({ children }) => {
           <Logo />
         
         <Menu  
-          className='flex flex-col gap-3 font-medium'
+          className='mysidebar-menu flex flex-col gap-3 font-medium'
           theme="light"
           mode="inline"
+          selectedKeys={current}
           defaultSelectedKeys={['']}
-          onSelect={(info) => {navigate('/' + info.key)}}
+          onClick={onClick}
           items={items}
         />
+
+        <div className='absolute bottom-4 w-full p-2'>
+          
+          <Divider />
+          <Menu 
+            className='logout-menu' 
+            onClick={onClick}
+            items={[{label: 'Logout', key: 'logout', icon: <ArrowLeftOutlined />}]} />
+
+        </div>
 
       </Sider>
 
@@ -95,17 +132,11 @@ const Sidebar = ({ children }) => {
 
        <CustomHeader collapsed={collapsed} setCollapsed={setCollapsed} colorBgContainer={colorBgContainer} />
 
-        <Content
+        <Content className='custom-scroll' 
           style={{
             margin: '0 16px',
+            overflowY: "auto",
           }}>
-
-            <Breadcrumb
-              style={{
-                margin: '16px 0',
-              }}>
-              <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
-            </Breadcrumb>
 
             {children}
         </Content>

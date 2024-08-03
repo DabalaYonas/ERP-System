@@ -9,7 +9,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
 class JobPositionSerializer(serializers.ModelSerializer):
     class Meta:
         model = JobPosition
-        fields = '_all__'
+        fields = '__all__'
 
 class BankAccountSerializer(serializers.ModelSerializer):
     class Meta:

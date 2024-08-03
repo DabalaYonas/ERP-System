@@ -3,7 +3,43 @@
 @tailwind components;
 @tailwind utilities;
 
-.ant-menu-item-selected {
+.mysidebar-menu .ant-menu-item-selected {
     background-color: #2563eb !important;
     color: white !important;
 }
+
+.logout-menu {
+    border: none !important;
+}
+
+.logout-menu .ant-menu-item {
+    background-color: rgba(0, 0, 0, 0.06) !important;
+    color: black !important;
+}
+/* 
+.custom-scroll::-webkit-scrollbar {
+    display: none;
+    width: 16px;
+  }
+  
+  .custom-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    overflow: auto;
+    height: 100%;
+    scrollbar-width: thin;
+    scrollbar-color: #d0d0d0 #f1f1f1;
+  }
+  
+  .custom-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  .custom-scroll::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 6px;
+  }
+  
+  .custom-scroll::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  } */

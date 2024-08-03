@@ -1,8 +1,16 @@
 import React from 'react'
+import Breadcrumbs from '../components/Breadcrumbs'
 
 function Recruitment() {
   return (
-    <div>Recruitment</div>
+    <>
+      <Breadcrumbs items={[
+      {
+        path: '/recruitment',
+        title: 'Recruitment',
+      }
+    ]} />
+    </>
   )
 }
 

@@ -1,7 +1,15 @@
 import React from 'react'
+import Breadcrumbs from '../components/Breadcrumbs'
 
 export default function Settings() {
   return (
-    <div>Settings</div>
+    <>
+      <Breadcrumbs items={[
+      {
+        path: '/settings',
+        title: 'Settings',
+      }
+    ]} />
+    </>
   )
 }
