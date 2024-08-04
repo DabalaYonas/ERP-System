@@ -1,84 +1,48 @@
 import React, { useState } from 'react';
-import dayjs from "dayjs";
 import { Button, Col, DatePicker, Flex, Form, Input, message, Row, Select, Space, Upload } from 'antd';
 import { CameraOutlined } from '@ant-design/icons'
 import ImgCrop from 'antd-img-crop';
-import { postEmployees } from "../../actions/handleEmployee";
+import { DeleteOutlined } from "@ant-design/icons";
+import { useNavigate } from 'react-router-dom';
 
-function PersonalForm({ disabled, setActiveKey }) {
+function PersonalForm({ setActiveKey }) {
   const [fileList, setFileList] = useState([]);
   const [imageUrl, setImageUrl] = useState();
-
-  const onFinish = (value) => {
-    console.log(value);
-    let formData = new FormData();
-    formData.append("name", value.name);
-    formData.append("email", value.email);
-    formData.append("phone_number", value.phone_number);
-    formData.append("gender", value.gender);
-    formData.append("bdate", value.bdate.format("YYYY-MM-DD"));
-    if (fileList.length > 0) {
-      formData.append("profilePic", fileList[0], fileList[0].name);
-    }
-    // formData.append("bank_acc", value.bank_acc);
-    // value.department = null;
-    // value.jop_position = null;
-    // try {
-    //   // postEmployees(formData);
-    //   message.success("Employee Added Seccussfully!");
-    //   form.resetFields();
-    //   setFileList([]);
-      
-    // } catch (error) {
-    //   message.error("Can't upload this employee");
-    //   console.log("There is an error uploading this employee!", error);
-    // }
-    setActiveKey("work");
-  }
+  const navigate = useNavigate();
 
   const handleBeforeUpload = (file) => {
-    setFileList([file]); 
+    setFileList([file]);
     return false;
   }
 
   const handleChange = (file) => {
     const imgUrl = URL.createObjectURL(file.file);
     setImageUrl(imgUrl);
+    // setFileList([file]);
   }
 
   return (
-    <Form
-      onFinish={onFinish}
-      size='large'
-      disabled={disabled}
-      initialValues={{
-          remember: true,
-          name: "Dabala Yonas Asafa",
-          email: "dabo.yonasl@gmail.com",
-          gender: "Male",
-          bdate: dayjs('2015-01-01', 'YYYY-MM-DD'),
-          phone_number: "0910227023",
-          bank_acc: "1000418121037"
-      }}
-      layout='vertical'>
-
+  <>
     <Row gutter={20}>
           <Col span={24} className='py-3'>
-            <Form.Item name="profilePic" className='mb-0' label="Upload">
-              <ImgCrop>
+            <Form.Item name="profilePic" className='mb-0' label="Profile Image">
+              {/* <ImgCrop> */}
                 <Upload
                   fileList={fileList}
                   showUploadList={false}
                   onChange={handleChange}
                   beforeUpload={handleBeforeUpload}
                   listType='picture-card'>
-                    {imageUrl ? <img src={imageUrl} alt="profile-image" className='w-full' /> :
+                  {imageUrl ? (<div className='w-full h-full rounded-lg relative bg-gray-100'>
+                        <DeleteOutlined onClick={(e) => {setFileList([]); setImageUrl()}} className='z-50 absolute hover:bg-slate-600 hover:bg-opacity-60 p-1 text-lg top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 opacity-50 hover:opacity-100'/>
+                        <img src={imageUrl} alt="profile-image" className='object-contain w-full h-full over' />
+                      </div>) :
                     <Button type='text' style={{
                           border: 0,
                           background: 'none',
                         }} icon={<CameraOutlined />}> Upload</Button>}
                   </Upload>
-              </ImgCrop>
+              {/* </ImgCrop> */}
             </Form.Item>
           </Col>
       <Col span={12} className='py-2'>
@@ -120,11 +84,11 @@ function PersonalForm({ disabled, setActiveKey }) {
 
     <Flex className='py-3' justify='end'>
       <Space>
-        <Button type='default'>Cancel</Button>
-        <Button htmlType='sumbit' type='primary' >Next</Button>
+        <Button type='default' onClick={() => {navigate("/employees")}}>Cancel</Button>
+        <Button type='primary' onClick={() => {setActiveKey("work");}}>Next</Button>
       </Space>
     </Flex>
-</Form>
+    </>
   )
 }
 

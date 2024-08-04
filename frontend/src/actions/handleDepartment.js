@@ -6,6 +6,10 @@ export async function getDepartments() {
     return axios.get(URL).then(response => response.data);
 }
 
+export async function getDepartment(id) {
+    return axios.get(URL + id + "/").then(response => response.data);
+}
+
 export async function postDepartments(data) {
     return axios.post(URL, data).then(response => response.data);
 }

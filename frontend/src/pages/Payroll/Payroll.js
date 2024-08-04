@@ -1,7 +1,7 @@
 import { Button, Flex, Input, Table, Tag } from 'antd';
 import React from 'react';
-import { ImportOutlined, ExportOutlined } from "@ant-design/icons";
-import Breadcrumbs from '../components/Breadcrumbs';
+import { ImportOutlined, ExportOutlined, PlusCircleFilled } from "@ant-design/icons";
+import Breadcrumbs from '../../components/Breadcrumbs';
 
 
 const fakeData = [{
@@ -70,6 +70,7 @@ function Payroll() {
       <Input.Search placeholder='Search Employee Payroll' size='large' />
       <Button type='primary' icon={<ImportOutlined />} size='middle'>Import Excel</Button>
       <Button type='primary' icon={<ExportOutlined />} size='middle'>Export</Button>
+      <Button type='primary' shape='round' iconPosition='end' icon={<PlusCircleFilled />} size='middle'>Create A Contract</Button>
     </Flex>
     <Table columns={columns} dataSource={fakeData}/>
     </>

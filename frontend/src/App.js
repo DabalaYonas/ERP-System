@@ -4,17 +4,17 @@ import Sidebar from './components/Sidebar';
 import Login from './pages/auth/Login';
 import SignUp from './pages/auth/SignUp';
 import LoginRequired from './actions/LoginRequired';
-import Dashboard from './pages/Dashboard';
-import Employees from './pages/employee/Employees';
-import AddEmployee from './pages/employee/AddEmployee';
-import Payroll from './pages/Payroll';
-import Attendance from './pages/Attendance';
-import Leave from './pages/Leave';
-import Recruitment from './pages/Recruitment';
+import Dashboard from './pages/Dashboard/Dashboard';
+import Employees from './pages/Employee/Employees';
+import AddEmployee from './pages/Employee/AddEmployee';
+import Payroll from './pages/Payroll/Payroll';
+import Attendance from './pages/Attendance/Attendance';
+import Leave from './pages/Leave/Leave';
+import Recruitment from './pages/Recruitment/Recruitment';
 import Settings from './pages/Settings';
 import Error404 from './pages/Error404';
 import { ConfigProvider } from 'antd';
-import ViewEmployee from './pages/employee/ViewEmployee';
+import ViewEmployee from './pages/Employee/ViewEmployee';
 
 function App() {
   return (

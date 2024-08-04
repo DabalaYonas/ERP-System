@@ -1,6 +1,6 @@
 import { Button, Card, Col, DatePicker, Divider, Flex, Form, Image, Input, Row, Select, Table, Tag, Typography } from 'antd';
 import { PaperClipOutlined, MailOutlined, EditOutlined, UserOutlined, FileTextOutlined, FileDoneOutlined, ProjectOutlined, FieldTimeOutlined, FolderOpenOutlined } from "@ant-design/icons";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tabs } from 'antd';
 import { useParams } from 'react-router-dom';
 import PersonalForm from '../../components/employee/PersonalForm';
@@ -8,6 +8,8 @@ import WorkForm from '../../components/employee/WorkForm';
 import Tab from '../../components/employee/EmployeeTab';
 import DocumentForm from '../../components/employee/DocumentForm';
 import Breadcrumbs from '../../components/Breadcrumbs';
+import { getEmployee } from '../../actions/handleEmployee';
+import { getJopPosition } from '../../actions/handleJopPosition';
 
 const AttendanceChild = () => {
     const fakeData = [{
@@ -79,7 +81,7 @@ const sideTabItems = (mDisabled) =>  {
   {   key: 'profile',
       label: 'Profile',
       icon: <UserOutlined />,
-      children: <Tab disabled={mDisabled} 
+      children: <Tab hasInitial={true} disabled={mDisabled} 
         PersonalChildern={PersonalForm} 
         WorkChildren={WorkForm} 
         DocumentChildren={DocumentForm} />
@@ -114,8 +116,28 @@ const breadcrumbItems = [
 
 
 function ViewEmployee() {
-    const userId = useParams();
     const [disabledForm, setDisabledForm] = useState(true);
+    const [email, setEmail] = useState(null);
+    const [profilePic, setProfilePic] = useState(null);
+    const [name, setName] = useState(null);
+    const [gender, setGender] = useState(null);
+    const [jopPosition, setJopPosition] = useState(null);
+    const params = useParams();
+
+    useEffect(() => {
+      const userId = params ? params.userId : null;
+      if (userId) {
+        getEmployee(userId).then(data => {
+          setEmail(data.email);
+          setName(data.name);
+          setProfilePic(data.profilePic);
+          setGender(data.gender);
+
+          data.jop_position && setJopPosition(data.jop_position.name);
+          
+        });
+      }
+    }, []);
 
     const handleEdit = (e) => {
       setDisabledForm(!disabledForm);
@@ -124,14 +146,14 @@ function ViewEmployee() {
     return (
         <>
         <Breadcrumbs items={breadcrumbItems} />
-        <Card className='text-opacity-85'>
+        <Card className='text-opacity-85 mb-5 mr-5'>
             <Flex justify='space-between'>
               <Flex gap={20}>
-                  <Image src='/photo_profile.jpg' width={100} height={100} className='rounded-md'></Image>
+                  <Image src={profilePic ? profilePic : (gender == "Male" ? "/male-placeholder.jpg" : "/female-placeholder.jpg")} width={100} height={100} className='rounded-md'></Image>
                   <Flex vertical gap={2}>
-                    <h2 className='text-2xl font-semibold'>Dabala Yonas</h2>
-                    <p><PaperClipOutlined /> Content Creator</p>
-                    <p><MailOutlined /> dabo.yonasl@gmail.com</p>
+                    <h2 className='text-2xl font-semibold'> {name}</h2>
+                    {jopPosition && <p><PaperClipOutlined /> {jopPosition}</p>}
+                    <p><MailOutlined /> {email}</p>
                   </Flex>
               </Flex>
 

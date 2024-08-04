@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import Breadcrumbs from "../components/Breadcrumbs";
+import Breadcrumbs from "../../components/Breadcrumbs";
 
 
 const breadcrumbItems = [

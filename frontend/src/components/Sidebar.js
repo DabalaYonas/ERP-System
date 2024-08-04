@@ -87,7 +87,6 @@ const Sidebar = ({ children }) => {
   useEffect(() => {
     const currentPath = location.pathname.slice(1).split("/")[0];
     setCurrent(currentPath);
-    console.log(currentPath.split("/"));
   }, [location]);
 
   

@@ -5,7 +5,9 @@ import {
   MenuUnfoldOutlined,
   UserOutlined,
   BellOutlined,
+  MenuOutlined
 } from '@ant-design/icons';
+import { FaBars } from "react-icons/fa";
 
 const { Header } = Layout;
 
@@ -21,7 +23,7 @@ export default function CustomHeader({ collapsed, setCollapsed, colorBgContainer
           
           <Button
             type="text"
-            icon={collapsed ? <MenuUnfoldOutlined className='text-slate-800' /> : <MenuFoldOutlined className='text-primary-600' />}
+            icon={<FaBars size={20} className='opacity-60' />}
             onClick={() => setCollapsed(!collapsed)}
             style={{
               fontSize: '16px',
@@ -33,7 +35,7 @@ export default function CustomHeader({ collapsed, setCollapsed, colorBgContainer
         </Flex>
 
         <Flex align='center' gap='10rem' style={{marginRight: '50px'}}>
-          <Input.Search placeholder='Searc here' style={{width: '280px'}} />
+          <Input.Search placeholder='Searc here' style={{width: '280px'}} enterButton/>
 
           <Flex align='center' gap='10px' >
             <BellOutlined className='text-base cursor-pointer bg-slate-200 p-2 rounded text-slate-700' />

@@ -1,6 +1,6 @@
 import { Flex, Input, Table, Tag } from 'antd';
 import React from 'react';
-import Breadcrumbs from '../components/Breadcrumbs';
+import Breadcrumbs from '../../components/Breadcrumbs';
 
 const fakeData = [{
   key: "1",

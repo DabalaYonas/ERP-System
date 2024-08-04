@@ -1,26 +1,13 @@
-import { Button, Col, Flex, Form, Row, Space } from 'antd'
+import { AutoComplete, Button, Col, Flex, Form, message, Row, Space } from 'antd'
 import React from 'react'
 import SearchInput from '../SearchInput';
 import { getJopPositions, postJopPositions } from '../../actions/handleJopPosition';
 import { getDepartments, postDepartments } from '../../actions/handleDepartment';
 
-function WorkForm({ disabled, setActiveKey }) {
-
-  const onFinish = (value) => {
-    console.log(value);
-  }
+function WorkForm({ setActiveKey }) {
   
   return (
-    <Form 
-    size='large'
-    disabled={disabled}
-    onFinish={onFinish}
-    initialValues={{
-        remember: true,
-        department: 1,
-        jop_position: 1,
-    }}
-    layout='vertical'>
+    <>
       <Row gutter={20}>
           <Col span={12} className='py-3'>
             <Form.Item label="Department" name="department" className='mb-0'>
@@ -28,6 +15,7 @@ function WorkForm({ disabled, setActiveKey }) {
                 placeholder="Department" 
                 serverData={getDepartments} 
                 canCreate={true} 
+                canCreateEdit={false}
                 create={(value) => {postDepartments({"name": value, "parentDepartment": null})}}/>  
             </Form.Item>
           </Col>
@@ -37,7 +25,8 @@ function WorkForm({ disabled, setActiveKey }) {
               <SearchInput 
                 placeholder="Jop Position" 
                 serverData={getJopPositions} 
-                canCreate={true} 
+                canCreate={true}
+                canCreateEdit={false}
                 create={(value) => {postJopPositions({"name": value})}} />  
             </Form.Item>
           </Col>
@@ -48,7 +37,7 @@ function WorkForm({ disabled, setActiveKey }) {
         <Button htmlType='sumbit' type='primary'>Save</Button>
       </Space>
     </Flex>
-    </Form>
+    </>
   )
 }
 

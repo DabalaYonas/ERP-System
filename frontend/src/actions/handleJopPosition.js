@@ -6,6 +6,10 @@ export async function getJopPositions() {
     return axios.get(URL).then(response => response.data);
 }
 
+export async function getJopPosition(id) {
+    return axios.get(URL + id + "/").then(response => response.data);
+}
+
 export async function postJopPositions(data) {
     return axios.post(URL, data).then(response => response.data);
 }

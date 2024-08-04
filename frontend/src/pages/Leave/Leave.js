@@ -1,6 +1,6 @@
 import { Flex, Input, Table } from 'antd'
 import React from 'react'
-import Breadcrumbs from '../components/Breadcrumbs'
+import Breadcrumbs from '../../components/Breadcrumbs'
 
 function Leave() {
   return (

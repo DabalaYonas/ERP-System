@@ -22,7 +22,7 @@ class Employee(models.Model):
     profilePic = models.ImageField(upload_to=upload_profile_to, null=True, blank=True)
     idImg = models.ImageField(upload_to=upload_id_to, null=True, blank=True)
 
-    department = models.ForeignKey(to=Department, null=True, blank=True, on_delete=models.SET_NULL)
+    department = models.ForeignKey(Department, null=True, blank=True, on_delete=models.SET_NULL)
     jop_position = models.ForeignKey(to=JobPosition, null=True, blank=True, on_delete=models.SET_NULL)
     bank_acc = models.ForeignKey(to=BankAccount, null=True, blank=True, on_delete=models.SET_NULL)
 
