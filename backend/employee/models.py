@@ -23,6 +23,6 @@ class Employee(models.Model):
     idImg = models.ImageField(upload_to=upload_id_to, null=True, blank=True)
 
     department = models.ForeignKey(Department, null=True, blank=True, on_delete=models.SET_NULL)
-    jop_position = models.ForeignKey(to=JobPosition, null=True, blank=True, on_delete=models.SET_NULL)
+    job_position = models.ForeignKey(to=JobPosition, null=True, blank=True, on_delete=models.SET_NULL)
     bank_acc = models.ForeignKey(to=BankAccount, null=True, blank=True, on_delete=models.SET_NULL)
 

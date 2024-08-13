@@ -7,11 +7,7 @@ import { jwtDecode } from 'jwt-decode';
 import { FaRegEnvelope, FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
 import { useDispatch } from "react-redux";
 import { setUser } from '../../features/users/userSlice';
-
-export async function login(user) {
-  return axios.post('http://127.0.0.1:8000/user/login/api/', user, 
-    {headers: {'Content-Type': 'application/json'}, withCredentials: true});
-}
+import { message } from 'antd';
 
 function Login() {
 
@@ -27,7 +23,7 @@ function Login() {
       setInputs(values => ({...values, [name]: value}));
     }
   
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
       e.preventDefault();
       
       const user = {
@@ -35,19 +31,22 @@ function Login() {
         password: inputs.password
       }
 
-      console.log(user);
-
-      login(user).then(response => {
-        if (response.status === 200) {
-          const token =  response.data.jwt;
-          const user = jwtDecode(token);
-          if(token != null) {
-            localStorage.setItem("jwtToken", token);
-            dispatch(setUser(user.id));
-            navigate("/");
-          }
-        }
-      });
+      try {
+        await axios.post('http://127.0.0.1:8000/user/login/api/', user, 
+          {headers: {'Content-Type': 'application/json'}, withCredentials: true}).then(response => {
+            if (response.status === 200) {
+              const token =  response.data.jwt;
+              const user = jwtDecode(token);
+              if(token != null) {
+                localStorage.setItem("jwtToken", token);
+                dispatch(setUser(user.id));
+                navigate("/");
+              }
+            }
+          });
+      } catch (error) {
+        message.error(error.response.data.detail); 
+      }
     }
 
     return <div className="font-[sans-serif] max-w-7xl mx-auto h-screen">
@@ -98,7 +97,7 @@ function Login() {
         </div>
 
         <div className="mt-8">
-          <Button text="Log in" onClick={() => {console.log("Login clicked")}} />
+          <Button text="Log in" />
         </div>
         <p className="text-sm mt-8 text-center text-gray-800">Don't have an account? <Link to="/signup" className="text-primary-600 font-semibold tracking-wide hover:underline ml-1">Register here</Link></p>
       </form>

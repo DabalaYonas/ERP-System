@@ -76,15 +76,17 @@ const SearchInput = forwardRef((props, ref) => {
     }));
 
     const handlerSelect = (data, opt) => {
-          const newLabel = sliceText(opt.label, "\"");
+          const newLabel = sliceText(opt.label, "\"");          
             switch (data) {
               case "create":
-                setValue({value: newLabel, text: newLabel});
+                setValue(newLabel);
+                props.onChange(newLabel);
                 props.create(newLabel);
                 message.success(newLabel + " is created!");
                 break;
               case "createEdit":
-                setValue({value: newLabel, text: newLabel});
+                setValue(newLabel);
+                props.onChange(newLabel);
                 props.createEdit(newLabel); 
                 break;
             
@@ -101,6 +103,7 @@ const SearchInput = forwardRef((props, ref) => {
     const handleChange = (value) => {
       
       setValue(value);
+      
       if (props.onChange) {
         props.onChange(value);
       }

@@ -5,6 +5,7 @@ import PersonalForm from '../../components/employee/PersonalForm';
 import WorkForm from '../../components/employee/WorkForm';
 import DocumentForm from '../../components/employee/DocumentForm';
 import Breadcrumbs from '../../components/Breadcrumbs';
+import PageTitle from '../../components/PageTitle';
 
 const breadcrumbItems = [
     {
@@ -17,26 +18,10 @@ const breadcrumbItems = [
     }
   ];
 
-function AddEmployee() {
-  const onPreview = async (file) => {
-    let src = file.url;
-    if (!src) {
-      src = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file.originFileObj);
-        reader.onload = () => resolve(reader.result);
-      });
-    }
-
-    const image = new Image();
-    image.src = src;
-    const imgWindow = window.open(src);
-    imgWindow?.document.write(image.outerHTML);
-  };
- 
+function AddEmployee() { 
   return (
     <>
-    <Breadcrumbs items={breadcrumbItems} />
+    <PageTitle items={breadcrumbItems} title="New Employee" />
     <Card >
       <Tab 
           PersonalChildern={PersonalForm} 

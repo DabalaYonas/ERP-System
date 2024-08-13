@@ -11,6 +11,7 @@ import { deletEmployee, getEmployees } from "../../actions/handleEmployee";
 import { useEffect, useState } from "react";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { getDepartment } from "../../actions/handleDepartment";
+import PageTitle from "../../components/PageTitle";
 
 const handleDelete = (id) => {
   try {
@@ -45,7 +46,6 @@ const columns = [
     title: 'Department',
     dataIndex: ['department'],
     key: 'department',
-    align: "center"
   },
   {
     title: 'Gender',
@@ -76,9 +76,6 @@ function Employees() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getDepartmentData = async(id) => {
-      return await getDepartment(id);
-    }
     const getEmployeesData = async () => {
       getEmployees().then(response => {
         console.log(response);
@@ -87,14 +84,12 @@ function Employees() {
           key: item.id,
           id: item.id,
           name: <Flex gap={14} align="center">{item.profilePic ? (<Avatar src={item.profilePic}></Avatar>) : (<Avatar icon={<UserOutlined />} />)}<p>{item.name}</p></Flex>,
-          department: item.department ? item.department : "_",
+          department: item.department ? item.department.name : "_",
           gender: item.gender,
           phone_number: item.phone_number,
           actions: ActionButtons(item.id),
         }
         ));
-        
-        // console.log(response);
         
         setDataSource(data);
         setLoading(false);
@@ -106,7 +101,8 @@ function Employees() {
   }, []);
 
     return <>
-            <Breadcrumbs items={breadcrumbItems} />
+            <PageTitle items={breadcrumbItems} title="All Employee" />
+
             <Flex align="center" gap='20px' className="pb-4">
              <Input.Search size="large" placeholder="Search employee" width='300px'/>
               <Link to='/employees/add-employee'>

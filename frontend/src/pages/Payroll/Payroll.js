@@ -2,6 +2,7 @@ import { Button, Flex, Input, Table, Tag } from 'antd';
 import React from 'react';
 import { ImportOutlined, ExportOutlined, PlusCircleFilled } from "@ant-design/icons";
 import Breadcrumbs from '../../components/Breadcrumbs';
+import PageTitle from '../../components/PageTitle';
 
 
 const fakeData = [{
@@ -60,7 +61,7 @@ const columns = [
 function Payroll() {
   return (
     <>
-    <Breadcrumbs items={[
+    <PageTitle title="Employee Payroll" items={[
       {
         path: '/payroll',
         title: 'Payroll',

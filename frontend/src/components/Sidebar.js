@@ -135,6 +135,7 @@ const Sidebar = ({ children }) => {
           style={{
             margin: '0 16px',
             overflowY: "auto",
+            scrollbarWidth: 'none'
           }}>
 
             {children}

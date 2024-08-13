@@ -40,8 +40,6 @@ function Tab({disabled = false, PersonalChildern, WorkChildren, DocumentChildren
         data.bdate = dayjs(data.bdate);
         data.profilePic = null;
         setInitialValues(data);
-        // console.log(data);
-        
       });
     }
   }, []);
@@ -55,8 +53,8 @@ function Tab({disabled = false, PersonalChildern, WorkChildren, DocumentChildren
     formData.append("bdate", value.bdate.format("YYYY-MM-DD"));
     value.profilePic && formData.append("profilePic", value.profilePic.file, value.profilePic.file.name); 
 
-    value.department && formData.append("department", value.department);
-    value.jop_position && formData.append("jop_position", value.jop_position);
+    value.department_id && formData.append("department_id", value.department_id);
+    value.job_position_id && formData.append("job_position_id", value.job_position_id);
     console.log(value);
     
 
@@ -108,13 +106,13 @@ function Tab({disabled = false, PersonalChildern, WorkChildren, DocumentChildren
 
       <Modal
           centered
-          title="Create Jop Position"
-          open={modalJopPosOpen}
-          onCancel={() => {setModalJopPosOpen(false)}}>
+          title="Create Job Position"
+          open={modalJobPosOpen}
+          onCancel={() => {setModalJobPosOpen(false)}}>
 
             <div className='py-4'>
               <Form size='large'>
-                <Input placeholder='Jop Position' value={labelJopPos} onChange={(text) => {setLabelJopPos(text.target.value)}}/>
+                <Input placeholder='Job Position' value={labelJobPos} onChange={(text) => {setLabelJobPos(text.target.value)}}/>
               </Form>
             </div>
       </Modal>   */}

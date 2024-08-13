@@ -1,11 +1,9 @@
 import React from 'react'
-import { Layout, Input, Typography, Flex, Button, Avatar } from 'antd';
+import { Layout, Input, Typography, Flex, Button, Avatar, Row, Col } from 'antd';
 import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
   UserOutlined,
   BellOutlined,
-  MenuOutlined
+  SearchOutlined
 } from '@ant-design/icons';
 import { FaBars } from "react-icons/fa";
 
@@ -34,8 +32,18 @@ export default function CustomHeader({ collapsed, setCollapsed, colorBgContainer
           <Typography.Title level={3} type='secondary' style={{margin: '0px'}}>Hello, Dabala</Typography.Title>
         </Flex>
 
-        <Flex align='center' gap='10rem' style={{marginRight: '50px'}}>
-          <Input.Search placeholder='Searc here' style={{width: '280px'}} enterButton/>
+        <Flex align='center' style={{marginRight: '50px'}}>
+          <Flex align='center'>
+            <Row>
+              <Col xs={0} md={0} lg={24} className='mr-20'>
+                <Input.Search placeholder='Search here' style={{width: '280px', display: "block"}} enterButton/>
+              </Col>
+              
+              <Col xs={24} md={24} lg={0} className='mr-6'>
+                <Button type='primary' shape='circle' icon={<SearchOutlined />}></Button>
+              </Col>
+            </Row>
+          </Flex>
 
           <Flex align='center' gap='10px' >
             <BellOutlined className='text-base cursor-pointer bg-slate-200 p-2 rounded text-slate-700' />

@@ -34,7 +34,6 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
     overflow: auto;
-    height: 100%;
     scrollbar-width: thin;
     scrollbar-color: #d0d0d0 #f1f1f1;
   }
@@ -51,3 +50,7 @@
   .custom-scroll::-webkit-scrollbar-thumb:hover {
     background: #555;
   } */
+
+  .black-text {
+    color: rgba(0, 0, 0, 0.8);
+  }

@@ -15,6 +15,8 @@ import Settings from './pages/Settings';
 import Error404 from './pages/Error404';
 import { ConfigProvider } from 'antd';
 import ViewEmployee from './pages/Employee/ViewEmployee';
+import Applications from './pages/Recruitment/Applications';
+import NewApplication from './pages/Recruitment/NewApplication';
 
 function App() {
   return (
@@ -37,6 +39,8 @@ function App() {
         <Route path='/attendance' element={<LoginRequired><Attendance /></LoginRequired>} />
         <Route path='/leave' element={<LoginRequired><Leave /></LoginRequired>} />
         <Route path='/recruitment' element={<LoginRequired><Recruitment /></LoginRequired>} />
+        <Route path='/recruitment/:recruitmentID/' element={<LoginRequired><Applications /></LoginRequired>} />
+        <Route path='/recruitment/:recruitmentID/:applicationID' element={<LoginRequired><NewApplication /></LoginRequired>} />
         <Route path='/settings' element={<LoginRequired><Settings /></LoginRequired>} />
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<SignUp />} />

@@ -10,7 +10,7 @@ function WorkForm({ setActiveKey }) {
     <>
       <Row gutter={20}>
           <Col span={12} className='py-3'>
-            <Form.Item label="Department" name="department" className='mb-0'>
+            <Form.Item label="Department" name="department_id" className='mb-0'>
               <SearchInput
                 placeholder="Department" 
                 serverData={getDepartments} 
@@ -21,9 +21,9 @@ function WorkForm({ setActiveKey }) {
           </Col>
 
           <Col span={12} className='py-3'>
-            <Form.Item label="Jop Position" name="jop_position" className='mb-0'>
+            <Form.Item label="Job Position" name="job_position_id" className='mb-0'>
               <SearchInput 
-                placeholder="Jop Position" 
+                placeholder="Job Position" 
                 serverData={getJopPositions} 
                 canCreate={true}
                 canCreateEdit={false}

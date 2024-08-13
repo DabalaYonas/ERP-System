@@ -17,7 +17,7 @@ export default function Breadcrumbs({items}) {
   return (
     
     <Breadcrumb
-        className='py-4'
+        className='py-1'
         items={items} 
         itemRender={itemRender} 
         separator=">">

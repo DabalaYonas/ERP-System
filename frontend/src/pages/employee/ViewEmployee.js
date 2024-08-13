@@ -10,6 +10,7 @@ import DocumentForm from '../../components/employee/DocumentForm';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import { getEmployee } from '../../actions/handleEmployee';
 import { getJopPosition } from '../../actions/handleJopPosition';
+import PageTitle from '../../components/PageTitle';
 
 const AttendanceChild = () => {
     const fakeData = [{
@@ -145,7 +146,7 @@ function ViewEmployee() {
     
     return (
         <>
-        <Breadcrumbs items={breadcrumbItems} />
+        <PageTitle items={breadcrumbItems} title="Employee Detail" />
         <Card className='text-opacity-85 mb-5 mr-5'>
             <Flex justify='space-between'>
               <Flex gap={20}>
