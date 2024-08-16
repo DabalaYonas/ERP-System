@@ -4,14 +4,14 @@ import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'rea
 const fetch = (text, serverData, callback, canCreate, canCreateEdit) => {
     
     serverData().then(response => {
-        const results = response.filter(data => data.name.toLowerCase().startsWith(text.toLowerCase()));
+        const results = response.filter(data => data.name ? data.name.toLowerCase().startsWith(text.toLowerCase()) : data.accountNo.startsWith(text.toLowerCase()));
   
           const data = results.map((item) => ({
             value: item.id,
-            label: item.name,
+            label:  item.name ? item.name : item.accountNo,
           }));
 
-        const match = response.filter(data => (data.name.toLowerCase() === text.toLowerCase()));
+        const match = response.filter(data => data.name ? data.name.toLowerCase().startsWith(text.toLowerCase()) : data.accountNo.startsWith(text.toLowerCase()));
         if (!(match.length > 0 || text === "")) {
           
           if (canCreate) {
@@ -31,7 +31,7 @@ const fetchData = (serverData, callback) => {
     serverData().then(response => {
         const data = response.map((item) => ({
             value: item.id,
-            label: item.name,
+            label: item.name ? item.name : item.accountNo,
           }));
 
         callback(data);
@@ -94,6 +94,9 @@ const SearchInput = forwardRef((props, ref) => {
                 setValue(opt.label);
                 break;
             }
+            
+        props.onSelect(opt);
+        
     };
 
     const handleSearch = (text) => {

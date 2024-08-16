@@ -86,6 +86,7 @@ function Attendance() {
         response.forEach(attend => {          
           if (dayjs(attend.checkIn).isSame(dateValue, 'day')) {
             data.push({
+                key: attend.id,
                 employee: attend.employee.name,
                 checkin: dayjs(attend.checkIn).format(formatTime),
                 checkout: dayjs(attend.checkOut).format(formatTime),
@@ -138,6 +139,8 @@ function Attendance() {
       } catch (error) {
         message.error("Can't save this Attendance!");
       }
+    }).catch((errorInfo) => {
+      console.log("Form Error");
     });
 
   }
@@ -154,7 +157,7 @@ function Attendance() {
         <StatisticCard title="Total Absent" value={20} percent={10} />
         <StatisticCard title="Total On Times" value={32} percent={12} />
         <StatisticCard title="Total Lates" value={18} percent={34} decline={true} />
-        <StatisticCard title="Balance" value={-53} suffix="hr" percent={32} decline={true} />
+        {/* <StatisticCard title="Balance" value={-53} suffix="hr" percent={32} decline={true} /> */}
       </Flex>
 
     <Card>
@@ -175,7 +178,7 @@ function Attendance() {
           <Button disabled={disabledToday} onClick={handleSetToday}>Today</Button>
         </Flex>
 
-        <Table columns={columItems} dataSource={dataSource}/>
+        <Table rowSelection columns={columItems} dataSource={dataSource}/>
     </Card>
         
     <Modal 

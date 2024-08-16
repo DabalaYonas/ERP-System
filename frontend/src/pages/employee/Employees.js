@@ -24,12 +24,13 @@ const handleDelete = (id) => {
 
 const ActionButtons = (id) => (
   [<Link to={`/employees/${id}`}><EyeOutlined className="mr-2 text-base cursor-pointer" /></Link>, 
+
   <Popconfirm 
       title="Delete Employee" 
       description="Are you sure to delete this employee?"
       onConfirm={() => handleDelete(id)}
       okText="Delete"
-      cancelText="Cancel"><DeleteOutlined className="mr-2 text-base cursor-pointer"/></Popconfirm>]);
+      cancelText="Cancel"><DeleteOutlined className="mr-2 text-base cursor-pointer transition hover:text-red-500"/></Popconfirm>]);
 
 const columns = [
   {
@@ -77,13 +78,11 @@ function Employees() {
 
   useEffect(() => {
     const getEmployeesData = async () => {
-      getEmployees().then(response => {
-        console.log(response);
-        
+      getEmployees().then(response => {        
         const data = response.map((item) => ({
           key: item.id,
           id: item.id,
-          name: <Flex gap={14} align="center">{item.profilePic ? (<Avatar src={item.profilePic}></Avatar>) : (<Avatar icon={<UserOutlined />} />)}<p>{item.name}</p></Flex>,
+          name: <Flex gap={14} align="center">{item.profilePic ? (<Avatar className="shrink-0" src={item.profilePic}></Avatar>) : (<Avatar className="shrink-0"  icon={<UserOutlined />} />)}<p>{item.name}</p></Flex>,
           department: item.department ? item.department.name : "_",
           gender: item.gender,
           phone_number: item.phone_number,

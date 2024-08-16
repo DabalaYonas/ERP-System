@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Button, Col, DatePicker, Flex, Form, Input, message, Row, Select, Space, Upload } from 'antd';
+import { Button, Col, DatePicker, Flex, Form, Input, Row, Select, Space, Upload } from 'antd';
 import { CameraOutlined } from '@ant-design/icons'
-import ImgCrop from 'antd-img-crop';
 import { DeleteOutlined } from "@ant-design/icons";
 import { useNavigate } from 'react-router-dom';
+import SearchInput from '../SearchInput';
+import { getBankAccounts } from '../../actions/handleLookupDatas';
 
 function PersonalForm({ setActiveKey }) {
   const [fileList, setFileList] = useState([]);
@@ -76,8 +77,8 @@ function PersonalForm({ setActiveKey }) {
       </Col>
 
       <Col span={12} className='py-3'>
-          <Form.Item label="Bank Account" name="bank_acc" className='mb-0'>
-            <Input type='number' placeholder='Account Number'/>
+          <Form.Item label="Bank Account" name="bank_acc_id" className='mb-0'>
+            <SearchInput serverData={getBankAccounts} placeholder='Account Number'/>
           </Form.Item>
       </Col>
     </Row>

@@ -165,7 +165,7 @@ function Applications() {
     <NewButton text='New Application' onClick={() => {navigate("new-application")}}/>
 
     <DragDropContext onDragEnd={onDragEnd}>
-      <Flex className='overflow-y-auto'>
+      <Flex className='overflow-y-auto custom-scroll'>
         {Object.entries(columns).map(([columnId, column]) => (
           <List key={columnId} column={column} columnId={columnId}/>
         ))}

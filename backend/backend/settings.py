@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'attendance',
     'contract',
     'recruitment',
+    'payroll',
     'company',
 ]
 

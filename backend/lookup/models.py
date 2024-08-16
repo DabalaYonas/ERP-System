@@ -14,11 +14,11 @@ class JobPosition(models.Model):
         return self.name
 
 class BankAccount(models.Model):
-    accountNo = models.IntegerField()
-    bank = models.CharField(max_length=200)
+    accountNo = models.CharField(max_length=200, unique=True)
+    bank = models.CharField(max_length=200, null=True, blank=True)
     
     def __str__(self) -> str:
-        return self.name
+        return self.accountNo
 
 class ContractType(models.Model):
     name = models.CharField(max_length=200)

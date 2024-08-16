@@ -17,6 +17,10 @@ import { ConfigProvider } from 'antd';
 import ViewEmployee from './pages/Employee/ViewEmployee';
 import Applications from './pages/Recruitment/Applications';
 import NewApplication from './pages/Recruitment/NewApplication';
+import NewPayslip from './pages/Payroll/NewPayslip';
+import GeneratePayroll from './pages/Payroll/GeneratePayroll';
+import ViewPayroll from './pages/Payroll/ViewPayroll';
+import ViewPayslip from './pages/Payroll/ViewPayslip';
 
 function App() {
   return (
@@ -36,6 +40,10 @@ function App() {
         <Route path='/employees/:userId' element={<LoginRequired><ViewEmployee /></LoginRequired>} />
         <Route path='/employees/add-employee' element={<LoginRequired><AddEmployee /></LoginRequired>} />
         <Route path='/payroll' element={<LoginRequired><Payroll /></LoginRequired>} />
+        <Route path='/payroll/:payrollId' element={<LoginRequired><ViewPayroll /></LoginRequired>} />
+        <Route path='/payroll/payslip/:payslipId' element={<LoginRequired><ViewPayslip /></LoginRequired>} />
+        <Route path='/payroll/new-payslip' element={<LoginRequired><NewPayslip /></LoginRequired>} />
+        <Route path='/payroll/generate' element={<LoginRequired><GeneratePayroll /></LoginRequired>} />
         <Route path='/attendance' element={<LoginRequired><Attendance /></LoginRequired>} />
         <Route path='/leave' element={<LoginRequired><Leave /></LoginRequired>} />
         <Route path='/recruitment' element={<LoginRequired><Recruitment /></LoginRequired>} />

@@ -4,6 +4,7 @@ import { UserOutlined, FileTextOutlined, FolderOpenOutlined } from "@ant-design/
 import dayjs from "dayjs";
 import { getEmployee, postEmployees, putEmployee } from '../../actions/handleEmployee';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 
 const profileTabItems = (PersonalChildern, WorkChildren, DocumentChildren, setActiveKey) => {
@@ -39,12 +40,19 @@ function Tab({disabled = false, PersonalChildern, WorkChildren, DocumentChildren
         data.remember = true;
         data.bdate = dayjs(data.bdate);
         data.profilePic = null;
+
+        data.department_id = data.department && data.department.id;
+        data.job_position_id = data.job_position && data.job_position.id;
+        data.bank_acc_id = data.bank_acc && data.bank_acc.id;
         setInitialValues(data);
+
+        console.log(data);
+        
       });
     }
   }, []);
 
-  const onFinish = (value) => {
+  const onFinish = async (value) => {
     const formData = new FormData();
     formData.append("name", value.name);
     formData.append("email", value.email);
@@ -55,8 +63,8 @@ function Tab({disabled = false, PersonalChildern, WorkChildren, DocumentChildren
 
     value.department_id && formData.append("department_id", value.department_id);
     value.job_position_id && formData.append("job_position_id", value.job_position_id);
-    console.log(value);
-    
+    const response = value.bank_acc_id ? await axios.post("http://127.0.0.1:8000/lookup/api/bank-account/", {accountNo: value.bank_acc_id}).then(response => response.data) : null;
+    response && formData.append("bank_acc_id", response.id);
 
     try {
       userId ? putEmployee(formData, userId) : postEmployees(formData); 
@@ -81,6 +89,7 @@ function Tab({disabled = false, PersonalChildern, WorkChildren, DocumentChildren
         disabled={disabled}
         initialValues={initialValues}
         layout='vertical'>
+          
       <Tabs
         activeKey={activeKey}
         onChange={(key) => {setActiveKey(key)}}
