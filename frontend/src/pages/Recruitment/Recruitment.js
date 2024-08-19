@@ -60,7 +60,7 @@ export const MyTitle = ({children}) => {
 }
 
 export const MyCard = ({ value, index, navigate }) => {
-  return (<Card>
+  return (<Card className='cursor-default'>
     <Flex align='center' gap={10} justify='start'>
       <BoxIcon color={boxItems[index % boxItems.length].color}>{boxItems[index % boxItems.length].icon}</BoxIcon>
       <MyTitle>{value.title}</MyTitle>
@@ -118,7 +118,7 @@ function Recruitment() {
   return <>
   <Flex align='center' className='py-5' justify='space-between'>
     <Flex align='center' gap={100}>
-      <h2 className='text-2xl font-medium'>All Jobs</h2>
+      <h2 className='text-2xl font-medium cursor-default'>All Jobs</h2>
       <Button type="primary" 
         size='middle' 
         icon={<FaPlusCircle />}

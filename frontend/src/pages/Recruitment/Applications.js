@@ -35,7 +35,7 @@ const ListItem = ({item, index}) => {
 }
 
 const List = ({column, columnId}) => {
-  return <div className='my-2 p-3'>
+  return <div className='my-2 p-3 cursor-default'>
       <h2 className='font-medium text-lg border-b-8 pb-2'>{column.name}</h2>
       <Droppable key={columnId} droppableId={columnId}>
       {(provided) => (

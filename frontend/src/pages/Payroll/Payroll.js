@@ -1,4 +1,4 @@
-import { Button, Card, Flex, Input, Skeleton, Table, Tabs, Tag } from 'antd';
+import { Button, Card, Flex, Input, message, Modal, Skeleton, Table, Tabs, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { ImportOutlined, ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import PageTitle from '../../components/PageTitle';
@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import dayjs  from 'dayjs';
 import ExportToExcel from '../../components/ExportToExcel';
+import SuccessButton from '../../components/Button';
 
 const columns = [
   {
@@ -48,17 +49,20 @@ const columns = [
   },
 ];
 
+const PAYROLL_URL = "http://127.0.0.1:8000/payroll/api/";
+
 const PayrollTab = () => {
   const [dataSource, setDataSource] = useState();
   const [payrollDatas, setPayrollDatas] = useState();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [exportData, setExportData] = useState();
   const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const loadPayrollDatas = async() => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/payroll/api/");
+        const response = await axios.get(PAYROLL_URL);
         setPayrollDatas(response.data);
         
         const data = response.data.map(value => ({
@@ -79,7 +83,7 @@ const PayrollTab = () => {
     }
 
     loadPayrollDatas();
-  }, []);
+  }, [modalOpen]);
 
   const onSelectChange = async(newSelectedRowKeys) => {
     setSelectedRowKeys(newSelectedRowKeys);
@@ -104,6 +108,15 @@ const PayrollTab = () => {
     onChange: onSelectChange,
   };
 
+  const handleAsPaid = () => {
+   selectedRowKeys.forEach(element => {
+    axios.patch(`${PAYROLL_URL}${element}/`, {status: "paid"}).then(data => {
+      message.success("Payroll is marked as paid");
+      setModalOpen(false);
+    });
+   });
+  }
+
   if (loading) {
     return <Skeleton />
   }
@@ -114,12 +127,19 @@ const PayrollTab = () => {
         <Input.Search placeholder='Search Employee Payroll' style={{ maxWidth: "420px"}} enterButton/>
         <Flex gap={10}>
           {/* <Button type='primary' icon={<ImportOutlined />} size='middle'>Import Excel</Button> */}
-          {selectedRowKeys.length > 0 && <ExportToExcel tableData={exportData} fileName="Payroll Sheet"/>}
+          <SuccessButton onClick={() => {setModalOpen(true)}} className='bg-green-500 text-white' disabled={selectedRowKeys.length <= 0}>Mark as Paid</SuccessButton>
+          <ExportToExcel tableData={exportData} fileName="Payroll Sheet" disabled={selectedRowKeys.length <= 0}/>
           <Link to="generate"><Button type='primary' size='middle'>Generate Payroll</Button></Link>
         </Flex>
       </Flex>
 
       <Table rowSelection={rowSelection} columns={columns} dataSource={dataSource}/>
+      <Modal 
+        open={modalOpen}
+        title="Are you sure?"
+        children={<p>Do you want to mark this payroll as <Tag color='green'>paid</Tag>?</p>}
+        onCancel={() => {setModalOpen(false)}}
+        onOk={handleAsPaid}/>
     </>
 }
 
@@ -134,18 +154,19 @@ const tabsItems = [
     children: <PayrollTab />,
   },
   {
-    key: 3,
+    key: 2,
     label: "Payslips",
     children: <Payslip />,
   },
   // {
-  //   key: 2,
+  //   key: 3,
   //   label: "Tax Definitions",
   //   children: <TaxTab />,
   // },
 ];
 
 function Payroll() {
+
   return (
     <>
     <PageTitle title="Employee Payroll" items={[
@@ -154,7 +175,7 @@ function Payroll() {
         title: 'Payroll',
       }
     ]} />
-      <Card><Tabs items={tabsItems}/></Card>
+        <Tabs items={tabsItems} />
     </>
   )
 }

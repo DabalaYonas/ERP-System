@@ -1,108 +1,26 @@
-import { Button, Card, Col, DatePicker, Divider, Flex, Form, Input, message, Modal, Row, Space, Statistic, Table, Tag, TimePicker, Typography } from 'antd';
-import React, { useEffect, useState } from 'react';
-import Breadcrumbs from '../../components/Breadcrumbs';
+import { Button, Card, Col, DatePicker, Divider, Flex, Form, Input, message, Modal, Row, Space, } from 'antd';
+import React, { useState } from 'react';
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import SearchInput from '../../components/SearchInput';
 import { getEmployees } from '../../actions/handleEmployee';
-import { getAttedances, postAttedances } from '../../actions/handleAttendance';
+import { postAttedances } from '../../actions/handleAttendance';
 import StatisticCard from '../../components/StatisticCard';
 import PageTitle from '../../components/PageTitle';
+import AttendanceTable from '../../components/attendance/AttendanceTable';
 
 const dateFormat = "DD-MM-YYYY";
-const formatTime = "hh:mm A";
-
-const columItems = [
-{
-key: "employee",
-dataIndex: "employee",
-title: "Employee",
-},
-{
-key: "checkin",
-dataIndex: "checkin",
-title: "Check In",
-},
-{
-key: "checkout",
-dataIndex: "checkout",
-title: "Check Out",
-},
-{
-key: "break",
-dataIndex: "break",
-title: "Break",
-},
-{
-key: "workinghour",
-dataIndex: "workinghour",
-title: "Working Hour",
-},
-{
-key: "status",
-dataIndex: "status",
-title: "Status",
-render: (_, { status }) => {
-  let color = status.toLowerCase() === "late" ? 'red' : 'green';
-  return <Tag color={color} key={status}>
-    {status}
-  </Tag>
-}
-},
-];
 
 const isTodayHandler = (value, setDisableToday) => { 
   const currentDate = dayjs();
   setDisableToday(value.isSame(currentDate, 'day'));
 }
 
-function isLate(scheduledTime, tolerance = 0) {
-  const startTime = dayjs('08:30 AM', formatTime);
-
-  const latestArrivalTime = dayjs(scheduledTime).add(tolerance, 'minute');
-  
-  return startTime.isBefore(dayjs(latestArrivalTime, formatTime));
-}
-
-const attendanceStatus = (value) => {
-  const status = isLate(value) ? "Late" : "On Time";
-  
-  return status;
-}
-
 function Attendance() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [disabledToday, setDisableToday] = useState(true);
   const [dateValue, setDateValue] = useState(dayjs());
-  const [dataSource, setDataSource] = useState([]);
   const [form] = Form.useForm();
-
-  useEffect(() => {
-    const getAttedancesData = () => {
-      getAttedances().then(response => {
-
-        const data = [];
-
-        response.forEach(attend => {          
-          if (dayjs(attend.checkIn).isSame(dateValue, 'day')) {
-            data.push({
-                key: attend.id,
-                employee: attend.employee.name,
-                checkin: dayjs(attend.checkIn).format(formatTime),
-                checkout: dayjs(attend.checkOut).format(formatTime),
-                workinghour: dayjs(attend.checkOut).subtract(dayjs(attend.checkIn)).format(formatTime),
-                status: attendanceStatus(attend.checkIn),
-              });
-          }
-        });
-
-        setDataSource(data);
-
-      });
-    }
-
-    getAttedancesData();
-  }, [isModalOpen, dateValue]);
 
   const handleSetToday = () => {
     const datejs = dayjs();
@@ -159,11 +77,12 @@ function Attendance() {
         <StatisticCard title="Total Lates" value={18} percent={34} decline={true} />
         {/* <StatisticCard title="Balance" value={-53} suffix="hr" percent={32} decline={true} /> */}
       </Flex>
+      <Divider />
 
-    <Card>
-        <Flex className="mb-3" gap={6} align='center' justify='space-between'>
+    {/* <Card> */}
+        <Flex className="mt-3" gap={6} align='center' justify='space-between'>
+          <Input.Search style={{ width: "420px"}} placeholder='Search Employee Attendance' size='middle' enterButton/>
           <Button type='primary' size='middle' onClick={() => {setIsModalOpen(true)}}>New Attendance</Button>
-          <Input.Search placeholder='Search Employee Attendance' size='middle' enterButton/>
         </Flex>
 
         <Divider />
@@ -177,9 +96,9 @@ function Attendance() {
 
           <Button disabled={disabledToday} onClick={handleSetToday}>Today</Button>
         </Flex>
-
-        <Table rowSelection columns={columItems} dataSource={dataSource}/>
-    </Card>
+        
+        <AttendanceTable date={dateValue} />
+    {/* </Card> */}
         
     <Modal 
         open={isModalOpen} 

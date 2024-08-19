@@ -4,7 +4,7 @@ import * as XLSX from 'xlsx';
 import { Button } from 'antd';
 import { ExportOutlined } from "@ant-design/icons";
 
-const ExportToExcel = ({ tableData, fileName }) => {
+const ExportToExcel = ({ tableData, fileName, disabled }) => {
   const saveExcel = () => {
     const ws = XLSX.utils.json_to_sheet(tableData);
     
@@ -17,7 +17,7 @@ const ExportToExcel = ({ tableData, fileName }) => {
     saveAs(blob, `${fileName}.xlsx`);
   };
 
-  return <Button type='primary' onClick={saveExcel} icon={<ExportOutlined />}>Export to Excel</Button>
+  return <Button type='primary' onClick={saveExcel} icon={<ExportOutlined />} disabled={disabled}>Export to Excel</Button>
 };
 
 export default ExportToExcel;

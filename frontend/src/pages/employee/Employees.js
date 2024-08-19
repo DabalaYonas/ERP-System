@@ -1,6 +1,5 @@
-import { Button, Card, Flex, Input, Table, Avatar, Typography, message, Popconfirm } from "antd";
+import { Button, Flex, Input, Table, Avatar, message, Popconfirm } from "antd";
 import {
-  EditOutlined,
   DeleteOutlined,
   EyeOutlined,
   PlusCircleOutlined,
@@ -9,8 +8,6 @@ import {
 import { Link } from "react-router-dom";
 import { deletEmployee, getEmployees } from "../../actions/handleEmployee";
 import { useEffect, useState } from "react";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import { getDepartment } from "../../actions/handleDepartment";
 import PageTitle from "../../components/PageTitle";
 
 const handleDelete = (id) => {
@@ -102,10 +99,10 @@ function Employees() {
     return <>
             <PageTitle items={breadcrumbItems} title="All Employee" />
 
-            <Flex align="center" gap='20px' className="pb-4">
-             <Input.Search size="large" placeholder="Search employee" width='300px'/>
+            <Flex align="center" gap='20px' className="pb-4" justify="space-between">
+             <Input.Search style={{width: 420}} placeholder="Search employee" enterButton />
               <Link to='/employees/add-employee'>
-                <Button type="primary" icon={<PlusCircleOutlined />} size="large">Add Employee</Button>
+                <Button type="primary" icon={<PlusCircleOutlined />} >Add Employee</Button>
               </Link>
             </Flex>
             

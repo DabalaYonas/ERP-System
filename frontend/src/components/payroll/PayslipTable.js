@@ -1,7 +1,7 @@
-import { Avatar, Flex, message, Popconfirm, Skeleton, Table } from 'antd'
+import { Avatar, Flex, message, Popconfirm, Skeleton, Table, Tooltip } from 'antd'
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { UserOutlined } from "@ant-design/icons";
+import { UserOutlined, EyeOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import dayjs  from 'dayjs';
 import { Link } from 'react-router-dom';
 
@@ -67,13 +67,19 @@ function PayslipTable({ infinity = false, paymentDate, noSelection=false, callba
   }
 
   const ActionButton = ({id}) => {
-    return <Flex gap={6}><Link to={`${id}/`} className='cursor-pointer text-primary-500 hover:text-primary-400'>Edit</Link>
+    return <Flex gap={6}>
+      <Tooltip title="Edit Payslip">
+        <Link to={`payslip/${id}/`} className='cursor-pointer text-primary-500 hover:text-primary-400'><EyeOutlined /></Link>
+      </Tooltip>
+      <Tooltip title="View Payslip">
+        <Link to={`payslip/${id}/edit-payslip`} className='cursor-pointer text-primary-500 hover:text-primary-400'><EditOutlined /></Link>  
+      </Tooltip>
     <Popconfirm
       title="Delete Employee" 
       description="Are you sure to delete this employee?"
       onConfirm={() => handleDelete(id)}
       okText="Delete"
-      cancelText="Cancel"><span className='cursor-pointer text-red-500 hover:text-red-400'>Delete</span></Popconfirm></Flex>
+      cancelText="Cancel"><span className='cursor-pointer text-red-500 hover:text-red-400'><Tooltip title="Delete Payslip"><DeleteOutlined /></Tooltip></span></Popconfirm></Flex>
   }
 
   useEffect(() => {

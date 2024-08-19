@@ -1,9 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
-import Button from "../../components/Button";
 import TextField from "../../components/TextField";
 import { FaGlobe, FaRegEnvelope, FaRegEye, FaRegEyeSlash, FaUser } from "react-icons/fa";
 import { useState } from "react";
 import axios from "axios";
+import { Button } from "antd";
 
 export async function register(user) {
     return axios.post('http://127.0.0.1:8000/user/register/api/', user, 
@@ -109,7 +109,7 @@ function SignUp() {
         </div>
 
         <div className="mt-8">
-          <Button type="submit" text="Register" onClick={() => {console.log("Login clicked")}} />
+          <Button type='primary' className='w-full' size='large' htmlType='submit'>Sign up</Button>
         </div>
         <p className="text-sm mt-8 text-center text-gray-800">I have an account? <Link to="/login" className="text-primary-600 font-semibold tracking-wide hover:underline ml-1">Log in here</Link></p>
       

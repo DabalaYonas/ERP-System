@@ -52,5 +52,22 @@
   } */
 
   .black-text {
-    color: rgba(0, 0, 0, 0.76);
+    color: rgba(0, 0, 0, 0.8);
+  }
+  
+  .custom-table tr:last-child {
+    font-weight: 600;
+  }
+
+  .custom-table td, .custom-table th {
+    padding: 0.8rem 4rem;
+    gap:14px;
+    position:relative;
+    cursor:default;
+    border:2px solid #f6f6f6;
+  }
+
+  .custom-table thead{
+      background-color: #172437;
+      color: white;
   }

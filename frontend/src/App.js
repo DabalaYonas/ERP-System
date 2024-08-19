@@ -42,6 +42,7 @@ function App() {
         <Route path='/payroll' element={<LoginRequired><Payroll /></LoginRequired>} />
         <Route path='/payroll/:payrollId' element={<LoginRequired><ViewPayroll /></LoginRequired>} />
         <Route path='/payroll/payslip/:payslipId' element={<LoginRequired><ViewPayslip /></LoginRequired>} />
+        <Route path='/payroll/payslip/:payslipId/edit-payslip/' element={<LoginRequired><NewPayslip /></LoginRequired>} />
         <Route path='/payroll/new-payslip' element={<LoginRequired><NewPayslip /></LoginRequired>} />
         <Route path='/payroll/generate' element={<LoginRequired><GeneratePayroll /></LoginRequired>} />
         <Route path='/attendance' element={<LoginRequired><Attendance /></LoginRequired>} />

@@ -1,5 +1,4 @@
 import TextField from '../../components/TextField';
-import Button from '../../components/Button';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
@@ -7,7 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 import { FaRegEnvelope, FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
 import { useDispatch } from "react-redux";
 import { setUser } from '../../features/users/userSlice';
-import { message } from 'antd';
+import { Button, message } from 'antd';
 
 function Login() {
 
@@ -97,7 +96,7 @@ function Login() {
         </div>
 
         <div className="mt-8">
-          <Button text="Log in" />
+          <Button type='primary' className='w-full' size='large' htmlType='submit'>Log in</Button>
         </div>
         <p className="text-sm mt-8 text-center text-gray-800">Don't have an account? <Link to="/signup" className="text-primary-600 font-semibold tracking-wide hover:underline ml-1">Register here</Link></p>
       </form>

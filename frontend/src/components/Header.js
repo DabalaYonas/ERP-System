@@ -36,7 +36,7 @@ export default function CustomHeader({ collapsed, setCollapsed, colorBgContainer
           <Flex align='center'>
             <Row>
               <Col xs={0} md={0} lg={24} className='mr-20'>
-                <Input.Search placeholder='Search here' style={{width: '280px', display: "block"}} enterButton/>
+                <Input.Search placeholder='Search here' style={{width: '320px', display: "block"}} />
               </Col>
               
               <Col xs={24} md={24} lg={0} className='mr-6'>

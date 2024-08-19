@@ -1,12 +1,35 @@
-import { Button, Card, Col, DatePicker, Flex, Form, Input, InputNumber, message, Row } from 'antd';
-import React from 'react'
+import { Button, Card, Col, DatePicker, Flex, Form, Input, InputNumber, message, Row, Skeleton, Space } from 'antd';
+import React, { useEffect, useState } from 'react'
 import SearchInput from '../../components/SearchInput';
 import { getEmployee, getEmployees } from '../../actions/handleEmployee';
 import PageTitle from '../../components/PageTitle';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import dayjs from "dayjs";
+
+const CURRENCY_SYMBOL = "Br";
 
 function NewPayslip() {
     const [form] = Form.useForm();
+    const [initialValues, setInitialValues] = useState();
+    const [loading, setLoading] = useState(true);
+    const { payslipId } = useParams();
+
+    useEffect(() => {
+        const loadInitialValue = async() => {
+            if (payslipId) {
+                const data = await axios.get(`http://127.0.0.1:8000/payroll/payslip/api/${payslipId}/`).then(response => response.data);
+                data.name = data.employee.id;
+                data.accountNo = data.employee.bank_acc && data.employee.bank_acc.accountNo;
+                data.payment_date = dayjs(data.payment_date);
+                setLoading(false);
+                setInitialValues(data);
+            } else {
+                setLoading(false);
+            }
+        }
+        loadInitialValue();
+    }, []);
 
     const onEmployeeChanges = (data) => {        
         data && getEmployee(data.value).then(data => {
@@ -111,18 +134,27 @@ function NewPayslip() {
        formData.append("other_deductions", checkNullNumber(values.other_deductions));
 
        try {
-        await axios.post("http://127.0.0.1:8000/payroll/payslip/api/", formData).then(response => response.data);
-        message.success("Payslip created successfully!");
-        form.resetFields();
+        if (payslipId) {
+            await axios.put(`http://127.0.0.1:8000/payroll/payslip/api/${payslipId}/`, formData);
+            message.success("Payslip saved successfully!");
+        } else {
+            await axios.post("http://127.0.0.1:8000/payroll/payslip/api/", formData);
+            message.success("Payslip created successfully!");
+            form.resetFields();
+        }
        } catch (error) {
         console.log(error);
-        message.error("Can't create payslip for now!")
+        message.error("Incorrect employee payslip! Please try again!")
        }
+    }
+
+    if (loading) {
+        return <Skeleton />
     }
 
   return (
     <>
-        <PageTitle title="Payslip" items={[
+        {/* <PageTitle title="Payslip" items={[
       {
         path: '/payroll',
         title: 'Payroll',
@@ -130,9 +162,11 @@ function NewPayslip() {
       {
         path: '/payslip',
         title: 'Payslip',
-      }]}/>
+      }]}/> */}
+      <PageTitle backable />
       <Form.Provider onFormChange={handleFormChange}>
         <Form
+            initialValues={initialValues}
             onFinish={onFinish}
             className='my-3'
             form={form}
@@ -142,7 +176,7 @@ function NewPayslip() {
             <Card title="Basic Information" className='mb-3'>
                 <Row gutter={20}>
                     <Col span={8}>       
-                        <Form.Item label="Employee Name" name="name">
+                        <Form.Item label="Employee Name" name="name" rules={[{required: true, message: "Employee Name is required!"}]}>
                             <SearchInput placeholder="Employee Name" serverData={getEmployees} onSelect={onEmployeeChanges}/>
                         </Form.Item>
                     </Col>
@@ -152,7 +186,7 @@ function NewPayslip() {
                         </Form.Item>
                     </Col>
                     <Col span={8}>
-                        <Form.Item label="Payment Date" name="payment_date">
+                        <Form.Item label="Payment Date" name="payment_date" rules={[{required: true, message: "Payment date is required!"}]}>
                             <DatePicker placeholder='Payment Date' className='w-full' picker='month'/>
                         </Form.Item>
                     </Col>
@@ -166,42 +200,42 @@ function NewPayslip() {
                             <InputNumber
                             formatter={formatNumber}
                             parser={(value) => value?.replace(/\$\s?|(,*)/g, '')}
-                            className='w-full' suffix="ETB" placeholder="Basic Salary" />
+                            className='w-full' suffix={CURRENCY_SYMBOL} placeholder="Basic Salary" />
                         </Form.Item>
                     </Col>
                     <Col span={8}>
                         <Form.Item label="Non taxable Transport Allowance" name="non_tax_transp_allow">
                             <InputNumber
                             formatter={formatNumber}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix="ETB" placeholder="Non taxable Transport Allowance" />
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix={CURRENCY_SYMBOL} placeholder="Non taxable Transport Allowance" />
                         </Form.Item>
                     </Col>
                     <Col span={8}>
                         <Form.Item label="Taxable Transport Allowance" name="transp_allow">
                             <InputNumber
                             formatter={formatNumber}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix="ETB" placeholder="Taxable Transport Allowance " />
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix={CURRENCY_SYMBOL} placeholder="Taxable Transport Allowance " />
                         </Form.Item>
                     </Col>
                     <Col span={8}>
                         <Form.Item label="Telephone allowance taxable" name="tele_allow">
                             <InputNumber
                             formatter={formatNumber}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix="ETB" placeholder="Telephone  allowance taxable" />
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix={CURRENCY_SYMBOL} placeholder="Telephone  allowance taxable" />
                         </Form.Item>
                     </Col>
                     <Col span={8}>
                         <Form.Item label="Position Allowance Taxable" name="pos_allow">
                             <InputNumber
                             formatter={formatNumber}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix="ETB" placeholder="Position Allowance Taxable" />
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix={CURRENCY_SYMBOL} placeholder="Position Allowance Taxable" />
                         </Form.Item>
                     </Col>
                     <Col span={8}>
                         <Form.Item label="Overtime" name="overtime">
                             <InputNumber
                             formatter={formatNumber}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix="ETB" placeholder="Overtime" />
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix={CURRENCY_SYMBOL} placeholder="Overtime" />
                         </Form.Item>
                     </Col>
                     <Col span={8}>
@@ -209,14 +243,14 @@ function NewPayslip() {
                             <InputNumber
                             formatter={formatNumber}
                             parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} 
-                            className='w-full' suffix="ETB" placeholder="Gross Earning" readOnly/>
+                            className='w-full' suffix={CURRENCY_SYMBOL} placeholder="Gross Earning" readOnly/>
                         </Form.Item>
                     </Col>
                     <Col span={8}>
                         <Form.Item label="Taxable Income" name="taxable_income">
                             <InputNumber
                             formatter={formatNumber}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix="ETB" placeholder="Taxable Income" readOnly/>
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix={CURRENCY_SYMBOL} placeholder="Taxable Income" readOnly/>
                         </Form.Item>
                     </Col>
                 </Row>
@@ -228,56 +262,56 @@ function NewPayslip() {
                         <Form.Item label="Income Tax" name="income_tax">
                             <InputNumber
                             formatter={formatNumber}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix="ETB" placeholder="Income Tax" readOnly/>
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix={CURRENCY_SYMBOL} placeholder="Income Tax" readOnly/>
                         </Form.Item>
                     </Col>
                     <Col span={8}>
                         <Form.Item label="Penalty / Absent" name="penalty">
                             <InputNumber
                             formatter={formatNumber}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix="ETB" placeholder="Penalty / Absent" />
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix={CURRENCY_SYMBOL} placeholder="Penalty / Absent" />
                         </Form.Item>
                     </Col>
                     <Col span={8}>
                         <Form.Item label="Staff Loan" name="staff_loan">
                             <InputNumber
                             formatter={formatNumber}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix="ETB" placeholder="Staff Loan" />
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix={CURRENCY_SYMBOL} placeholder="Staff Loan" />
                         </Form.Item>
                     </Col>
                     <Col span={8}>
                         <Form.Item label="Cost Sharing" name="cost_sharing">
                             <InputNumber
                             formatter={formatNumber}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix="ETB" placeholder="Cost Sharing" />
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix={CURRENCY_SYMBOL} placeholder="Cost Sharing" />
                         </Form.Item>
                     </Col>
                     <Col span={8}>
                         <Form.Item label="Pension 7%" name="pension_7">
                             <InputNumber
                             formatter={formatNumber}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix="ETB" placeholder="Pension 7%" readOnly/>
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix={CURRENCY_SYMBOL} placeholder="Pension 7%" readOnly/>
                         </Form.Item>
                     </Col>
                     <Col span={8}>
                         <Form.Item label="Pension 11%" name="pension_11">
                             <InputNumber
                             formatter={formatNumber}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix="ETB" placeholder="Pension 11%" readOnly/>
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix={CURRENCY_SYMBOL} placeholder="Pension 11%" readOnly/>
                         </Form.Item>
                     </Col>
                     <Col span={8}>
                         <Form.Item label="Other Deductions" name="other_deductions">
                             <InputNumber
                             formatter={formatNumber}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix="ETB" placeholder="Other Deductions" />
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix={CURRENCY_SYMBOL} placeholder="Other Deductions" />
                         </Form.Item>
                     </Col>
                     <Col span={8}>
                         <Form.Item label="Total Deduction" name="total_deduction">
                             <InputNumber
                             formatter={formatNumber}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix="ETB" placeholder="Total Deduction" readOnly/>
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix={CURRENCY_SYMBOL} placeholder="Total Deduction" readOnly/>
                         </Form.Item>
                     </Col>
                 </Row>
@@ -289,14 +323,14 @@ function NewPayslip() {
                         <Form.Item label="Net Salary" name="net_salary">
                             <InputNumber
                             formatter={formatNumber}
-                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix="ETB" placeholder="Net Salary" readOnly/>
+                            parser={(value) => value?.replace(/\$\s?|(,*)/g, '')} className='w-full' suffix={CURRENCY_SYMBOL} placeholder="Net Salary" readOnly/>
                         </Form.Item>
                     </Col>
                 </Row>
             </Card>
 
             <Flex justify='end'>
-                <Button type='primary' htmlType='sumbit'>Create Payslip</Button>
+                <Button type='primary' htmlType='sumbit'>{payslipId ? "Save Payslip" : "Create Payslip"}</Button>
             </Flex>
         </Form>
         </Form.Provider>
