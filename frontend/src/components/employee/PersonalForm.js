@@ -38,10 +38,7 @@ function PersonalForm({ setActiveKey }) {
                         <DeleteOutlined onClick={(e) => {setFileList([]); setImageUrl()}} className='z-50 absolute hover:bg-slate-600 hover:bg-opacity-60 p-1 text-lg top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 opacity-50 hover:opacity-100'/>
                         <img src={imageUrl} alt="profile-image" className='object-contain w-full h-full over' />
                       </div>) :
-                    <Button type='text' style={{
-                          border: 0,
-                          background: 'none',
-                        }} icon={<CameraOutlined />}> Upload</Button>}
+                    <Button type='text' className=' border-0 bg-none' icon={<CameraOutlined />}> Upload</Button>}
                   </Upload>
               {/* </ImgCrop> */}
             </Form.Item>

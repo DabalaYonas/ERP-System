@@ -55,7 +55,6 @@ function NewApplication() {
             id: value.id,
             title: value.name
           }));
-          console.log("Stage", application.stage_id);
           
           setCurrent(application.stage_id - 1);
           
@@ -80,44 +79,53 @@ function NewApplication() {
         setStages(result);
         setLoading(false);
       }
-    }
+    }    
 
     loadStages();
-  }, []);
+  }, [applicationID, recruitmentID]);
 
   const createApplicant = async (data) => {
     return await postApplicant(data);
   }
 
-  const onFinish = (values) => {try {
-    const save = async() => {
-      const applicantData = new FormData();
-      applicantData.append("name", values.name);
-      applicantData.append("email", values.email);
-      applicantData.append("phone_number", values.phone_number);
-      applicantData.append("degree", values.degree);
-      applicantData.append("linkidin_profile", values.linkidin_profile);
-      
-      const applicant =  isNewApplicationUrl() ? await createApplicant(applicantData) : await putApplicant(application.applicant.id, applicantData);
-      
-      const formData = new FormData();
-      formData.append("recruitment_id", recruitmentID);
-      formData.append("applicant_id", applicant.id);
-      formData.append("department_id", values.department_id);
-      formData.append("job_position_id", 1);
-      formData.append("expected_salary", values.expected_salary);
-      formData.append("proposed_salary", values.proposed_salary);
-      formData.append("stage_id", stages[current].id);
+  const onFinish = (values) => {
+    try {
+      const save = async() => {
+        const applicantData = new FormData();
+        applicantData.append("name", values.name);
+        values.email && applicantData.append("email", values.email);
+        applicantData.append("phone_number", values.phone_number);
+        values.degree && applicantData.append("degree", values.degree);
+        values.linkidin_profile && applicantData.append("linkidin_profile", values.linkidin_profile);
+        
+        const applicant =  isNewApplicationUrl() ? await createApplicant(applicantData) : await putApplicant(application.applicant.id, applicantData);
+        
+        const formData = new FormData();
+        formData.append("recruitment_id", recruitmentID);
+        formData.append("applicant_id", applicant.id);
+        values.department_id && formData.append("department_id", values.department_id);
+        formData.append("job_position_id", values.job_position_id);
+        values.expected_salary && formData.append("expected_salary", values.expected_salary);
+        values.proposed_salary && formData.append("proposed_salary", values.proposed_salary);
+        formData.append("stage_id", stages[current].id);
 
-      isNewApplicationUrl() ? postApplication(formData) : putApplication(applicationID, formData);
+        isNewApplicationUrl() ? postApplication(formData) : putApplication(applicationID, formData);
+      }
+      save();
+      const msg = isNewApplicationUrl() ? "Application created successfully!" : "Application updated successfully!";
+      message.success(msg);
+    } catch (error) {
+      message.error("Can't create this application!");
     }
-    save();
-    const msg = isNewApplicationUrl() ? "Application created successfully!" : "Application updated successfully!";
-    message.success(msg);
-    navigate(-1);
-  } catch (error) {
-    message.error("Can't create this application!");
   }
+
+  const onClickNewApplication = async() => {
+    try {
+      await form.validateFields();
+      form.submit();
+    } catch (error) {
+      console.log(message);
+    }
   }
 
   if (!isNewApplicationUrl()) {
@@ -126,10 +134,6 @@ function NewApplication() {
     } else if (!application) {
         return <Error404 />
     }
-  }
-  
-  if (loading) {
-    return <Skeleton />
   }
 
   return (
@@ -150,8 +154,8 @@ function NewApplication() {
     ]} />
     
     <Flex align='center' gap={20} className='py-2'>
-      <Button type='primary' size='middle' icon={<PlusCircleOutlined />}>New Application</Button>
-      <Typography.Title level={5}>Developer</Typography.Title>
+      <Button type='primary' size='middle' icon={<PlusCircleOutlined />} onClick={onClickNewApplication}>New Application</Button>
+      <Typography.Title level={5}>{application ? application.recruitment.job_position_name : "New Application"}</Typography.Title>
     </Flex>
     
     <Flex align='center' gap={50} className='custom-scroll py-2 overflow-y-auto'>
@@ -171,13 +175,13 @@ function NewApplication() {
         <Form initialValues={initialValues} form={form} onFinish={onFinish} layout='vertical' size='large'>
           <Row gutter={22}>
             <Col span={12}>
-              <Form.Item label="Applicant's Name" name="name">
+              <Form.Item label="Applicant's Name" name="name" rules={[{required: true, message: "Applicant name is required!"}]}>
                 <Input placeholder="Applicant's Name"/>
               </Form.Item>
             </Col>
 
             <Col span={12}>
-              <Form.Item label="Phone Number" name="phone_number">
+              <Form.Item label="Phone Number" name="phone_number" rules={[{required: true, message: "Applicant phone number is required!"}]}>
                 <Input placeholder="Phone Number"/>
               </Form.Item>
             </Col>
@@ -209,7 +213,7 @@ function NewApplication() {
               <Form.Item label="Department" name="department_id">
                 <SearchInput placeholder="Applied Job" serverData={getDepartments}/>
               </Form.Item>
-              <Form.Item label="Applied Job" name="job_position_id">
+              <Form.Item label="Applied Job" name="job_position_id" rules={[{required: true, message: "Job Position is required!"}]}>
                 <SearchInput placeholder="Applied Job" serverData={getJopPositions}/>
               </Form.Item>
             </Col>
@@ -217,10 +221,10 @@ function NewApplication() {
             <Col span={12}>
               <Divider orientation='left'>Contract</Divider>
               <Form.Item label="Expected Salary" name="expected_salary">
-                <InputNumber className='w-full' placeholder="Expected Salary" suffix="ETB"/>
+                <InputNumber className='w-full' placeholder="Expected Salary" suffix="Br"/>
               </Form.Item>
               <Form.Item label="Proposed Salary" name="proposed_salary">
-                <InputNumber className='w-full' placeholder="Proposed Salary" suffix="ETB"/>
+                <InputNumber className='w-full' placeholder="Proposed Salary" suffix="Br"/>
               </Form.Item>
             </Col>
           </Row>
@@ -228,7 +232,7 @@ function NewApplication() {
       </Card>
       <Flex gap={10} className='py-3' justify='end'>
         <Button onClick={() => {navigate(-1)}}>Cancel</Button>
-        <Button type='primary' onClick={() => {form.submit()}}>Save Close</Button>
+        <Button type='primary' onClick={() => {form.submit(); navigate(-1);}}>Save Close</Button>
       </Flex>
 
     </Layout.Content>

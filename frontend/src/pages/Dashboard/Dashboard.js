@@ -53,8 +53,8 @@ function Dashboard() {
     }
 
     return <>
-        {/* <PageTitle title="Dashboard" items={breadcrumbItems} /> */}
-        <Flex gap="middle" className="py-4">
+        <PageTitle title="Dashboard" items={breadcrumbItems} />
+        <Flex gap="middle" className="pb-4">
           <Flex gap="middle" vertical>
             <Flex gap="middle">
               <StatisticCard title="Total Employee" icon={<UsergroupAddOutlined />} value={56} percent={10.0} />

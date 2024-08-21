@@ -20,16 +20,16 @@ class Recruitment(models.Model):
 class Applicant(models.Model):
     name = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=200)
-    email = models.EmailField(max_length=200)
+    email = models.EmailField(max_length=200, null=True, blank=True)
     degree = models.ForeignKey(to=Degree, on_delete=models.SET_NULL, related_name='appl_degree', null=True, blank=True)
-    linkidin_profile = models.CharField(max_length=200)
+    linkidin_profile = models.CharField(max_length=200, null=True, blank=True)
 
 
 class Application(models.Model):
     recruitment = models.ForeignKey(to=Recruitment, related_name='app_recruitment', on_delete=models.CASCADE)
     applicant = models.ForeignKey(to=Applicant, related_name='app_applicant', on_delete=models.CASCADE)
     department_id = models.ForeignKey(to=Department, related_name='app_department', on_delete=models.SET_NULL, null=True, blank=True)
-    expected_salary = models.FloatField()
-    proposed_salary = models.FloatField()
+    expected_salary = models.FloatField(null=True, blank=True)
+    proposed_salary = models.FloatField(null=True, blank=True)
     stage_id = models.ForeignKey(to=Stage, on_delete=models.SET_NULL, related_name='app_stage', null=True, blank=True)
 

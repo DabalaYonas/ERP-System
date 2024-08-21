@@ -57,7 +57,7 @@ const formatTime = "hh:mm A";
     return status;
   }
 
-function AttendanceTable({ date = dayjs() }) {
+function AttendanceTable({ date = dayjs(), rowSelection = false }) {
     const [dataSource, setDataSource] = useState([]);
 
   useEffect(() => {
@@ -88,7 +88,7 @@ function AttendanceTable({ date = dayjs() }) {
   }, [dayjs(date).format("YYYY-MM-DD")]);
 
   return <>
-        <Table rowSelection columns={columItems} dataSource={dataSource}/>
+        <Table rowSelection={rowSelection} columns={columItems} dataSource={dataSource}/>
     </>
 }
 

@@ -1,8 +1,9 @@
-import { AutoComplete, Button, Col, Flex, Form, message, Row, Space } from 'antd'
+import { AutoComplete, Button, Col, Flex, Form, InputNumber, message, Row, Space } from 'antd'
 import React from 'react'
 import SearchInput from '../SearchInput';
 import { getJopPositions, postJopPositions } from '../../actions/handleJopPosition';
 import { getDepartments, postDepartments } from '../../actions/handleDepartment';
+import { Link } from 'react-router-dom';
 
 function WorkForm({ setActiveKey }) {
   
@@ -29,6 +30,13 @@ function WorkForm({ setActiveKey }) {
                 canCreateEdit={false}
                 create={(value) => {postJopPositions({"name": value})}} />  
             </Form.Item>
+          </Col>
+
+          <Col span={12} className='py-3'>
+            <Form.Item label="Employee ID Number" name="employee_id" className='mb-0'>
+              <InputNumber className='w-full' placeholder="Employee ID Number"  />  
+            </Form.Item>
+            <Link to="id_card/" className='mt-2'>Generat ID Card</Link>
           </Col>
       </Row>
     <Flex className='py-3' justify='end'>

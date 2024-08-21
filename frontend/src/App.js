@@ -11,7 +11,7 @@ import Payroll from './pages/Payroll/Payroll';
 import Attendance from './pages/Attendance/Attendance';
 import Leave from './pages/Leave/Leave';
 import Recruitment from './pages/Recruitment/Recruitment';
-import Settings from './pages/Settings';
+import Settings from './pages/Settings/Settings';
 import Error404 from './pages/Error404';
 import { ConfigProvider } from 'antd';
 import ViewEmployee from './pages/Employee/ViewEmployee';
@@ -21,6 +21,7 @@ import NewPayslip from './pages/Payroll/NewPayslip';
 import GeneratePayroll from './pages/Payroll/GeneratePayroll';
 import ViewPayroll from './pages/Payroll/ViewPayroll';
 import ViewPayslip from './pages/Payroll/ViewPayslip';
+import IDCard from './components/IDCard';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         <Route path='*' element={<Error404 />} />
         <Route path='/employees' element={<LoginRequired><Employees /></LoginRequired>} />
         <Route path='/employees/:userId' element={<LoginRequired><ViewEmployee /></LoginRequired>} />
+        <Route path='/employees/:userId/id_card' element={<LoginRequired><IDCard /></LoginRequired>} />
         <Route path='/employees/add-employee' element={<LoginRequired><AddEmployee /></LoginRequired>} />
         <Route path='/payroll' element={<LoginRequired><Payroll /></LoginRequired>} />
         <Route path='/payroll/:payrollId' element={<LoginRequired><ViewPayroll /></LoginRequired>} />

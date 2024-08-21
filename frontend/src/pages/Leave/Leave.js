@@ -1,15 +1,18 @@
 import { Flex, Input, Table } from 'antd'
 import React from 'react'
-import Breadcrumbs from '../../components/Breadcrumbs'
+import PageTitle from '../../components/PageTitle'
+
 
 function Leave() {
   return (
-    <><Breadcrumbs items={[
+    <>
+    <PageTitle title="Employee Leave" items={[
       {
         path: '/leave',
         title: 'Leave',
       }
     ]} />
+
     <Flex className='mb-4'>
       <Input.Search placeholder='Search Employee Leave' size='large' />
     </Flex>

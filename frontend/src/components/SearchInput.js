@@ -95,8 +95,7 @@ const SearchInput = forwardRef((props, ref) => {
                 break;
             }
             
-        props.onSelect(opt);
-        
+        props.onSelect && props.onSelect(opt);
     };
 
     const handleSearch = (text) => {
