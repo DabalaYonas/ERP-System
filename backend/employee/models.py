@@ -28,3 +28,6 @@ class Employee(models.Model):
     bank_acc = models.CharField(null=True, blank=True, unique=True)
     company = models.ForeignKey(to=Company, on_delete=models.CASCADE, null=True, blank=True)
 
+    def __str__(self) -> str:
+        return self.name
+
