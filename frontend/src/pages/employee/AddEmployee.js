@@ -4,7 +4,6 @@ import Tab from '../../components/employee/EmployeeTab';
 import PersonalForm from '../../components/employee/PersonalForm';
 import WorkForm from '../../components/employee/WorkForm';
 import DocumentForm from '../../components/employee/DocumentForm';
-import Breadcrumbs from '../../components/Breadcrumbs';
 import PageTitle from '../../components/PageTitle';
 
 const breadcrumbItems = [

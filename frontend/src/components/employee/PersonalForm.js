@@ -1,26 +1,14 @@
 import React, { useState } from 'react';
-import { Button, Col, DatePicker, Flex, Form, Input, Row, Select, Space, Upload } from 'antd';
+import { Button, Col, DatePicker, Flex, Form, Input, InputNumber, Row, Select, Space, Upload } from 'antd';
 import { CameraOutlined } from '@ant-design/icons'
 import { DeleteOutlined } from "@ant-design/icons";
 import { useNavigate } from 'react-router-dom';
 import SearchInput from '../SearchInput';
 import { getBankAccounts } from '../../actions/handleLookupDatas';
+import ImageUpload from '../ImageUpload';
 
 function PersonalForm({ setActiveKey }) {
-  const [fileList, setFileList] = useState([]);
-  const [imageUrl, setImageUrl] = useState();
   const navigate = useNavigate();
-
-  const handleBeforeUpload = (file) => {
-    setFileList([file]);
-    return false;
-  }
-
-  const handleChange = (file) => {
-    const imgUrl = URL.createObjectURL(file.file);
-    setImageUrl(imgUrl);
-    // setFileList([file]);
-  }
 
   return (
   <>
@@ -28,18 +16,7 @@ function PersonalForm({ setActiveKey }) {
           <Col span={24} className='py-3'>
             <Form.Item name="profilePic" className='mb-0' label="Profile Image">
               {/* <ImgCrop> */}
-                <Upload
-                  fileList={fileList}
-                  showUploadList={false}
-                  onChange={handleChange}
-                  beforeUpload={handleBeforeUpload}
-                  listType='picture-card'>
-                  {imageUrl ? (<div className='w-full h-full rounded-lg relative bg-gray-100'>
-                        <DeleteOutlined onClick={(e) => {setFileList([]); setImageUrl()}} className='z-50 absolute hover:bg-slate-600 hover:bg-opacity-60 p-1 text-lg top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 opacity-50 hover:opacity-100'/>
-                        <img src={imageUrl} alt="profile-image" className='object-contain w-full h-full over' />
-                      </div>) :
-                    <Button type='text' className=' border-0 bg-none' icon={<CameraOutlined />}> Upload</Button>}
-                  </Upload>
+                <ImageUpload />
               {/* </ImgCrop> */}
             </Form.Item>
           </Col>
@@ -74,8 +51,8 @@ function PersonalForm({ setActiveKey }) {
       </Col>
 
       <Col span={12} className='py-3'>
-          <Form.Item label="Bank Account" name="bank_acc_id" className='mb-0'>
-            <SearchInput serverData={getBankAccounts} placeholder='Account Number'/>
+          <Form.Item label="Bank Account" name="bank_acc" className='mb-0'>
+            <InputNumber className='w-full' placeholder='Account Number'/>
           </Form.Item>
       </Col>
     </Row>

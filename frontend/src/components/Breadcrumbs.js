@@ -24,6 +24,7 @@ export default function Breadcrumbs({items}) {
         items={items} 
         itemRender={itemRender} 
         separator=">">
+          
     </Breadcrumb>
   )
 }

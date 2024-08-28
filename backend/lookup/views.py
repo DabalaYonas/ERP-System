@@ -28,3 +28,7 @@ class DegreeView(viewsets.ModelViewSet):
 class StageView(viewsets.ModelViewSet):
     serializer_class = serializers.StageSerializer
     queryset = models.Stage.objects.all()
+
+class CurrencyView(viewsets.ModelViewSet):
+    serializer_class = serializers.CurrencySerializer
+    queryset = models.Currency.objects.all()

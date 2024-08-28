@@ -1,5 +1,5 @@
-import { Button, Card, Col, DatePicker, Divider, Flex, Form, Image, Input, Row, Select, Table, Tag, Typography } from 'antd';
-import { PaperClipOutlined, MailOutlined, EditOutlined, UserOutlined, FileTextOutlined, FileDoneOutlined, ProjectOutlined, FieldTimeOutlined, FolderOpenOutlined } from "@ant-design/icons";
+import { Button, Card, Divider, Flex, Image, Table, Tag, Typography } from 'antd';
+import { PaperClipOutlined, MailOutlined, EditOutlined, UserOutlined, FileDoneOutlined, ProjectOutlined, FieldTimeOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from 'react';
 import { Tabs } from 'antd';
 import { useParams } from 'react-router-dom';
@@ -7,70 +7,70 @@ import PersonalForm from '../../components/employee/PersonalForm';
 import WorkForm from '../../components/employee/WorkForm';
 import Tab from '../../components/employee/EmployeeTab';
 import DocumentForm from '../../components/employee/DocumentForm';
-import Breadcrumbs from '../../components/Breadcrumbs';
 import { getEmployee } from '../../actions/handleEmployee';
-import { getJopPosition } from '../../actions/handleJopPosition';
 import PageTitle from '../../components/PageTitle';
+import axios from 'axios';
+import dayjs from "dayjs";
+import { attendanceStatus } from '../../components/attendance/AttendanceTable';
 
 const AttendanceChild = () => {
-    const fakeData = [{
-        key: "1",
-        date: "Jul 9, 2024",
-        checkin: "09:10 AM",
-        checkout: "07:33 AM",
-        break: "00:30 Hrs",
-        workinghour: "08:00 Hrs",
-        status: "On Time"
-    },
-    {
-      key: "2",
-      date: "Nov 12, 2024",
-      checkin: "08:10 PM",
-      checkout: "05:33 AM",
-      break: "00:28 Hrs",
-      workinghour: "07:30 Hrs",
-      status: "Late",
-  },];
+    const [dataSource, setDataSource] = useState(); 
+    const params = useParams();
+    const userId = params ? params.userId : null;  
 
-const columItems = [
-  {
-      key: "date",
-      dataIndex: "date",
-      title: "Date",
-  },
-  {
-      key: "checkin",
-      dataIndex: "checkin",
-      title: "Check In",
-  },
-  {
-      key: "checkout",
-      dataIndex: "checkout",
-      title: "Check Out",
-  },
-  {
-      key: "break",
-      dataIndex: "break",
-      title: "Break",
-  },
-  {
-      key: "workinghour",
-      dataIndex: "workinghour",
-      title: "Working Houre",
-  },
-  {
-      key: "status",
-      dataIndex: "status",
-      title: "Status",
-      render: (_, { status }) => {
-        let color = status.toLowerCase() === "late" ? 'red' : 'green';
-        return <Tag color={color} key={status}>
-          {status}
-        </Tag>
+    useEffect(() =>{
+      const loadDatas = async() => {
+        const responseDatas = await axios.get("http://127.0.0.1:8000/attendance/api/").then(response => response.data).catch(error => console.error(error));
+        const result = responseDatas.filter(data => data.employee.id == userId);     
+        const datas = result.map(data => ({
+          date: dayjs(data.checkIn).format("MMM DD, YYYY"),
+          checkin: dayjs(data.checkIn).format("hh:mm A"),
+          checkout: dayjs(data.checkOut).format("hh:mm A"),
+          workinghour: dayjs(data.checkIn).subtract(dayjs(data.checkOut)).format("hh:mm A"),
+          status: attendanceStatus(dayjs(data.checkIn)),
+        }));
+
+        setDataSource(datas);
       }
-  },
-];
-    return <Table className='w-full' rowSelection columns={columItems} dataSource={fakeData}></Table>
+
+      loadDatas();
+    }, []);
+
+    const columItems = [
+      {
+          key: "date",
+          dataIndex: "date",
+          title: "Date",
+      },
+      {
+          key: "checkin",
+          dataIndex: "checkin",
+          title: "Check In",
+      },
+      {
+          key: "checkout",
+          dataIndex: "checkout",
+          title: "Check Out",
+      },
+      {
+          key: "workinghour",
+          dataIndex: "workinghour",
+          title: "Working Hour",
+      },
+      {
+          key: "status",
+          dataIndex: "status",
+          title: "Status",
+          render: (_, { status }) => {
+            let color = status.toLowerCase() === "late" ? 'red' : 'green';
+            return <Tag color={color} key={status}>
+              {status}
+            </Tag>
+          }
+      },
+    ];
+
+    return <Table className='w-full' columns={columItems} dataSource={dataSource}></Table>
 };
 
 const ComingSoon = () => (
@@ -104,18 +104,6 @@ const sideTabItems = (mDisabled) =>  {
   },
 ]};
 
-const breadcrumbItems = [
-    {
-      path: '/employees',
-      title: 'All Employee',
-    },
-    {
-      path: '/employees/1',
-      title: 'Dabala Yonas',
-    }
-  ];
-
-
 function ViewEmployee() {
     const [disabledForm, setDisabledForm] = useState(true);
     const [email, setEmail] = useState(null);
@@ -124,9 +112,9 @@ function ViewEmployee() {
     const [gender, setGender] = useState(null);
     const [jopPosition, setJopPosition] = useState(null);
     const params = useParams();
+    const userId = params ? params.userId : null;  
 
     useEffect(() => {
-      const userId = params ? params.userId : null;
       if (userId) {
         getEmployee(userId).then(data => {
           setEmail(data.email);
@@ -143,6 +131,18 @@ function ViewEmployee() {
     const handleEdit = (e) => {
       setDisabledForm(!disabledForm);
     }
+
+    const breadcrumbItems = [
+        {
+          path: '/employees',
+          title: 'All Employee',
+        },
+        {
+          path: `/employees/${userId}`,
+          title: name,
+        }
+      ];
+    
     
     return (
         <>
@@ -150,7 +150,7 @@ function ViewEmployee() {
         <Card className='text-opacity-85 mb-5 mr-5'>
             <Flex justify='space-between'>
               <Flex gap={20}>
-                  <Image src={profilePic ? profilePic : (gender == "Male" ? "/male-placeholder.jpg" : "/female-placeholder.jpg")} width={100} height={100} className='rounded-md'></Image>
+                  <Image src={profilePic ? profilePic : (gender == "Male" ? "/male-placeholder.jpg" : "/female-placeholder.jpg")} width={100} height={100} className='rounded-md object-cover object-center'></Image>
                   <Flex vertical gap={2}>
                     <h2 className='text-2xl font-semibold'> {name}</h2>
                     {jopPosition && <p><PaperClipOutlined /> {jopPosition}</p>}

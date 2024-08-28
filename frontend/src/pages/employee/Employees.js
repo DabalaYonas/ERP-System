@@ -97,21 +97,20 @@ function Employees() {
   }, []);
 
     return <>
-            <PageTitle items={breadcrumbItems} title="All Employee" />
+      <PageTitle items={breadcrumbItems} title="All Employee" />
 
-            <Flex align="center" gap='20px' className="pb-4" justify="space-between">
-             <Input.Search style={{width: 420}} placeholder="Search employee" enterButton />
-              <Link to='/employees/add-employee'>
-                <Button type="primary" icon={<PlusCircleOutlined />} >Add Employee</Button>
-              </Link>
-            </Flex>
-            
-            <Table 
-              rowSelection
-              rowKey="id"
-              dataSource={dataSource} 
-              columns={columns} 
-              loading={loading}/>
+      <Flex align="center" gap='20px' className="pb-4" justify="space-between">
+        <Input.Search style={{width: 420}} placeholder="Search employee" enterButton />
+        <Link to='/employees/add-employee'>
+          <Button type="primary" icon={<PlusCircleOutlined />} >Add Employee</Button>
+        </Link>
+      </Flex>
+      
+      <Table 
+        rowSelection
+        dataSource={dataSource} 
+        columns={columns} 
+        loading={loading}/>
     </>
 }
 

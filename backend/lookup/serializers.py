@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Department, JobPosition, BankAccount, ContractType, Degree, Stage
+from .models import Department, JobPosition, BankAccount, ContractType, Degree, Stage, Currency
 
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,4 +29,9 @@ class DegreeSerializer(serializers.ModelSerializer):
 class StageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stage
+        fields = '__all__'
+
+class CurrencySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Currency
         fields = '__all__'

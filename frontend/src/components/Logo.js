@@ -1,9 +1,9 @@
 import React from 'react';
 
-export default function Logo() {
+export default function Logo({logo}) {
   return (
     <div className='p-4 flex'>
-        <img src="/logo_no_txt.png" className='w-16' />
+        <img src={logo ? logo : ""} alt='Logo Image' className='w-16' />
     </div>
   )
 }

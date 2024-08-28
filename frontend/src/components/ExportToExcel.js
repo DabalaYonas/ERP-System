@@ -9,6 +9,7 @@ const ExportToExcel = ({ tableData, fileName, disabled }) => {
     const ws = XLSX.utils.json_to_sheet(tableData);
     
     const wb = XLSX.utils.book_new();
+    
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     
     const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });

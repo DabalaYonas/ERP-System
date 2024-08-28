@@ -15,7 +15,7 @@ export default function StatisticCard({ title, value, icon, suffix, prefix, perc
         valueStyle={{ color: '#3a3a3a', fontWeight: '600', fontSize: 26}}/>
   
         {/* <p className={`ml-4 self-end ${decline ? "text-red-500" : "text-green-500"} text-base`}>{decline ? <FallOutlined /> : <RiseOutlined />} {percent}%</p> */}
-        <Tag className='self-end' color={`${decline ? "red" : "green"}`}>{decline ? <FallOutlined /> : <RiseOutlined />} {percent}%</Tag>
+        {percent && <Tag className='self-end' color={`${decline ? "red" : "green"}`}>{decline ? <FallOutlined /> : <RiseOutlined />} {percent}%</Tag>}
       </Flex>
   </Card>
 }

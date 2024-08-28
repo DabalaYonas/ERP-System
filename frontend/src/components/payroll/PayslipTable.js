@@ -107,8 +107,8 @@ function PayslipTable({ infinity = false, paymentDate, noSelection=false, callba
         callback && callback(data.length);
         setLoading(false);
       } catch (error) {
-          console.log(error);
-          message.error("Can't load payslip right now!");
+        console.log(error);
+        message.error("Can't load payslip right now!");
       }
     }
 
@@ -116,13 +116,14 @@ function PayslipTable({ infinity = false, paymentDate, noSelection=false, callba
 
   }, [paymentDate]);
 
-  if (loading) {
-    return <Skeleton active />
-  }
-
   return (
     <>
-        <Table pagination={!infinity} rowSelection={!noSelection} columns={columns} dataSource={dataSource}/>
+        <Table 
+          loading={loading} 
+          pagination={!infinity} 
+          rowSelection={!noSelection} 
+          columns={columns} 
+          dataSource={dataSource}/>
     </>
   )
 }

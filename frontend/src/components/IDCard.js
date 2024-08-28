@@ -5,6 +5,7 @@ import jsPDF from 'jspdf';
 import { Button, Flex, Skeleton } from 'antd';
 import { useParams } from 'react-router-dom';
 import { getEmployee } from '../actions/handleEmployee';
+import PageTitle from "../components/PageTitle";
 
 const IDCard = () => {
   const componentRef = useRef();
@@ -17,7 +18,7 @@ const IDCard = () => {
         const loadEmployeeData = () => {
             getEmployee(userId).then(data => {
                 setEmployee(data);
-                console.log(data);
+                // console.log(data);
                 setLoading(false);
                 
             });
@@ -53,18 +54,19 @@ const IDCard = () => {
   }
 
   return <>
+  {/* <PageTitle backable/> */}
   <Flex align='center' className='mb-5' vertical>
     <div>
-  <div class="id-card-tag"></div>
-	<div class="id-card-tag-strip"></div>
-	<div class="id-card-hook"></div>
+  <div className="id-card-tag"></div>
+	<div className="id-card-tag-strip"></div>
+	<div className="id-card-hook"></div>
 
-	<div ref={componentRef} class="id-card-holder">
+	<div ref={componentRef} className="id-card-holder">
   <div  style={{ width: "3.1875in", height: "5.0625in"}} className='bg-white cursor-default bg-opacity-85 rounded shadow overflow-clip relative'>
     <Flex gap={8} align='center' className='py-5' vertical>
       <img alt='Company Logo' src='/logo_no_txt.png' style={{ width: 70 }} />
       <h2 className='text-xl font-semibold text-black text-opacity-75' level={3}>Next General Trading</h2>
-      <img alt='Id Photo' src={employee.profilePic} className='z-10 rounded-full border-4 object-cover object-center' style={{ width: 120, height: 120, borderBlockColor: "#dedede"}} />
+      <img alt='Id' src={employee.profilePic} className='z-10 rounded-full border-4 object-cover object-center' style={{ width: 120, height: 120, borderBlockColor: "#dedede"}} />
       
       <div className='text-center z-10'>
         <h2 className='text-xl font-semibold text-white text-opacity-95' level={3}>{employee.name}</h2>

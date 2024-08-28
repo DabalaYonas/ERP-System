@@ -1,5 +1,6 @@
 from django.db import models
 from lookup.models import Department, JobPosition, BankAccount
+from company.models import Company
 
 def upload_profile_to(int, filename):
     return ("images/profilePic/" + int.name + "_" + filename)
@@ -24,5 +25,6 @@ class Employee(models.Model):
 
     department = models.ForeignKey(Department, null=True, blank=True, on_delete=models.SET_NULL)
     job_position = models.ForeignKey(to=JobPosition, null=True, blank=True, on_delete=models.SET_NULL)
-    bank_acc = models.ForeignKey(to=BankAccount, null=True, blank=True, on_delete=models.SET_NULL)
+    bank_acc = models.CharField(null=True, blank=True, unique=True)
+    company = models.ForeignKey(to=Company, on_delete=models.CASCADE, null=True, blank=True)
 

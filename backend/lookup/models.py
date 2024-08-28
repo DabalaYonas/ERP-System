@@ -37,3 +37,12 @@ class Stage(models.Model):
     
     def __str__(self) -> str:
         return self.name
+
+
+class Currency(models.Model):
+    code = models.CharField(max_length=200)
+    symbol = models.CharField(max_length=200)
+    country = models.CharField(max_length=200)
+    
+    def __str__(self) -> str:
+        return self.code

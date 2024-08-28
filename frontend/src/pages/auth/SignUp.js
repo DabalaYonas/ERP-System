@@ -3,11 +3,15 @@ import TextField from "../../components/TextField";
 import { FaGlobe, FaRegEnvelope, FaRegEye, FaRegEyeSlash, FaUser } from "react-icons/fa";
 import { useState } from "react";
 import axios from "axios";
-import { Button } from "antd";
+import { Button, message } from "antd";
 
 export async function register(user) {
+  try {
     return axios.post('http://127.0.0.1:8000/user/register/api/', user, 
       {headers: {'Content-Type': 'application/json'}, withCredentials: true});
+  } catch (error) {
+    return null;
+  }
 }
 
 function SignUp() {
@@ -22,24 +26,38 @@ function SignUp() {
       setInputs(values => ({...values, [name]: value}));
     }
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
       e.preventDefault();
-      console.log(inputs);
 
-      const user = {
-        name: inputs.fullName,
-        email: inputs.email,
-        password: inputs.password
-      }
-
-      console.log(user);
-
-      register(user).then(response => {
-        if (response.status === 200) {
-          console.log(response.data);
-          // navigate("/");
+      if (inputs.password === inputs.confirmPassword) {
+        const user = {
+          name: inputs.fullName,
+          email: inputs.email,
+          password: inputs.password
         }
-      });
+     
+        const response = await register(user);
+        
+        if (response) {
+          const companyForm = new FormData();
+          companyForm.append("name", inputs.companyName);   
+          companyForm.append("currency_id", "");       
+          
+          try {
+            
+            await axios.post("http://127.0.0.1:8000/company/api/", companyForm);
+            if (response.status === 200) {
+              console.log(response.data);
+              navigate("/");
+              message.success("Sign Up Seccussfully!")
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        } 
+      } else {
+        console.log("Password is not match!");
+      } 
     }
 
     return <div className="font-[sans-serif] bg-gray-50 h-lvh">
@@ -57,7 +75,7 @@ function SignUp() {
             type="text"
             name="fullName"
             handleChange={handleChange}
-            value={inputs.firstName}>
+            value={inputs.fullname}>
               <FaUser className="w-[18px] h-[18px] absolute right-4 cursor-pointer" fill="#bbb" stroke="#bbb"/>
           </TextField>
 
@@ -67,7 +85,7 @@ function SignUp() {
             type="email"
             name="email"
             handleChange={handleChange}
-            value={inputs.lastName}>
+            value={inputs.email}>
               <FaRegEnvelope className="w-[18px] h-[18px] absolute right-4 cursor-pointer" fill="#bbb" stroke="#bbb"/>
           </TextField>
           
@@ -77,7 +95,7 @@ function SignUp() {
             type="text"
             name="companyName"
             handleChange={handleChange}
-            value={inputs.phoneNumber}>
+            value={inputs.companyName}>
               <FaGlobe className="w-[18px] h-[18px] absolute right-4 cursor-pointer" fill="#bbb" stroke="#bbb"/>
           </TextField>
 

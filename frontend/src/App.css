@@ -162,7 +162,7 @@
       height: 0;
       border-left: 50px solid transparent;
       border-right: 50px solid transparent;
-      border-top: 100px solid white;
+      border-top: 100px solid whitesmoke;
       margin: -10px auto -30px auto;
       position: relative;
       top: -130px;
@@ -170,7 +170,7 @@
   }
 
   .card-rectangle  {
-    background-color: #171f27;
+    background-color: #9e9e9e;
     height: 55%;
   }
 
@@ -183,6 +183,6 @@
     top: -138px;
     left: -10px;
     border-top: 50px solid transparent;
-    border-bottom: 90px solid #171f27;
+    border-bottom: 90px solid #9e9e9e;
     border-left: 320px solid transparent;
   }

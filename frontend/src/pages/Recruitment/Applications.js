@@ -1,16 +1,53 @@
-import { Badge, Card, Flex, message, Skeleton, Tag, Tooltip } from 'antd';
+import { Badge, Card, Dropdown, Flex, message, Skeleton, Tag, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Link, useNavigate, useParams } from "react-router-dom";
-import Breadcrumbs from '../../components/Breadcrumbs';
 import { getApplications, getRecruitment, patchApplication } from '../../actions/handleRecruitment';
+import { EditOutlined, UserOutlined, DeleteOutlined, MoreOutlined} from "@ant-design/icons";
 import NewButton from '../../components/NewButton';
 import { getStages } from '../../actions/handleLookupDatas';
 import PageTitle from '../../components/PageTitle';
+import axios from 'axios';
 
 const COLORS = ["magenta", "red", "green", "blue", "purple", "lime", "gold", "volcano", "orange", "cyan"];
 
-const ListItem = ({item, index}) => {    
+const ListItem = ({item, index}) => {  
+  const items = [
+    {
+      label: 'Edit Application',
+      key: '1',
+      icon: <EditOutlined />,
+    },
+    {
+      label: 'View Application',
+      key: '2',
+      icon: <UserOutlined />,
+    },
+    {
+      label: 'Delete Application',
+      key: '3',
+      icon: <DeleteOutlined />,
+      danger: true,
+    },
+  ]  
+
+  const handleDelete = async() => {
+    await axios.delete(`http://127.0.0.1:8000/recruitment/application/api/${item.id}/`).then(response => {
+      // message.success("Deleted application successfully!");
+      window.location.reload();
+    }).catch(error => {console.error(error);})
+  }
+
+  const onClick = ({ key }) => {
+    switch(key) {
+      case '1':
+        return
+      case '2':
+        return
+      case '3':
+        handleDelete(key);
+    }    
+  }
   return <Draggable key={item.id} draggableId={item.id} index={index}>
     {(provided) => (
       <Card
@@ -22,13 +59,18 @@ const ListItem = ({item, index}) => {
           padding: 0,
           margin: '10px 0 0 0',
           ...provided.draggableProps.style,
-        }}
+        }} 
         title={<Flex justify='space-between'>
-          <Tag color={COLORS[item.id % COLORS.length]}>{item.jobPosition}</Tag> 
-          <Tooltip title={item.status} color={item.status == "Success" ? "green" : item.status == "Error" ? "red" : "gray"}><Badge status={item.status.toLowerCase()} /></Tooltip>
-          </Flex>}
-      >
-        <Link to={item.id} className='text-base font-medium'>{item.name}</Link>
+            <Tag color={COLORS[item.id % COLORS.length]}>{item.jobPosition}</Tag> 
+            <Dropdown menu={{items, onClick}} trigger={["click"]}><MoreOutlined /></Dropdown>
+          </Flex>}>
+          
+        <Flex justify='space-between'>
+          <Link to={item.id} className='text-base font-medium'>{item.name}</Link>
+          <Tooltip className='cursor-pointer' title={item.status} color={item.status === "Success" ? "green" : item.status === "Error" ? "red" : "gray"}>
+            <Badge status={item.status.toLowerCase()} />
+          </Tooltip>
+        </Flex>
       </Card>
     )}
   </Draggable>
@@ -60,7 +102,7 @@ function Applications() {
   const [columns, setColumns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [recrtParams, setRecrtParams] = useState(null);
-  const recruitmentID = useParams()["recruitmentID"];
+  const {recruitmentID} = useParams();
   const navigate = useNavigate();
   
   const onDragEnd = (result) => {
@@ -162,7 +204,7 @@ function Applications() {
       title: `${recrtParams}`,
     },
   ]} />
-    <NewButton text='New Application' onClick={() => {navigate("new-application")}}/>
+    <NewButton onClick={() => {navigate("new-application")}}>New Application</NewButton>
 
     <DragDropContext onDragEnd={onDragEnd}>
       <Flex className='overflow-y-auto custom-scroll'>

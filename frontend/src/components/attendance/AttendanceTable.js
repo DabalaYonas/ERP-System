@@ -43,19 +43,20 @@ const columItems = [
     ];
 
 const formatTime = "hh:mm A";
-  function isLate(scheduledTime, tolerance = 0) {
-    const startTime = dayjs('08:30 AM', formatTime);
+
+function isLate(scheduledTime, tolerance = 0) {
+  const startTime = dayjs('08:30 AM', formatTime);
+
+  const latestArrivalTime = dayjs(scheduledTime).add(tolerance, 'minute');
   
-    const latestArrivalTime = dayjs(scheduledTime).add(tolerance, 'minute');
-    
-    return startTime.isBefore(dayjs(latestArrivalTime, formatTime));
-  }
+  return startTime.isBefore(dayjs(latestArrivalTime, formatTime));
+}
   
-  const attendanceStatus = (value) => {
-    const status = isLate(value) ? "Late" : "On Time";
-    
-    return status;
-  }
+export const attendanceStatus = (value) => {
+  const status = isLate(value) ? "Late" : "On Time";
+  
+  return status;
+}
 
 function AttendanceTable({ date = dayjs(), rowSelection = false }) {
     const [dataSource, setDataSource] = useState([]);

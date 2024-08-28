@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Sidebar from './components/Sidebar';
 import Login from './pages/auth/Login';
@@ -22,8 +22,40 @@ import GeneratePayroll from './pages/Payroll/GeneratePayroll';
 import ViewPayroll from './pages/Payroll/ViewPayroll';
 import ViewPayslip from './pages/Payroll/ViewPayslip';
 import IDCard from './components/IDCard';
+import { useDispatch } from 'react-redux';
+import { setUser } from './features/users/userSlice';
+import { useEffect } from 'react';
+import { setCompany } from './features/company/companySlice';
+import { getCurrentUser } from './actions/getCurrentUser';
+import { getCurrentCompany } from './services/getCurrentCompany';
+import isLoggedIn from './actions/isLoggedIn';
 
-function App() {
+function App() {  
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchData = async() => {
+      if (isLoggedIn()) {
+        const currentUser = await getCurrentUser();
+        const currentCompany = await getCurrentCompany();
+        
+        if (currentUser) {
+          dispatch(setUser(currentUser));
+          dispatch(setCompany(currentCompany));
+        }
+      } else {
+        
+      }
+    }
+
+    fetchData();
+  }, [dispatch]);
+
+  // const handleLogout = () => {
+  //   dispatch(logout());
+  //   localStorage.removeItem('userInfo');
+  // };  
+  
   return (
     <ConfigProvider 
     theme={{
@@ -33,30 +65,37 @@ function App() {
       }
     }}>
     <BrowserRouter>
-    <Sidebar>
+    {/* <Sidebar> */}
       <Routes>
-        <Route path='/' element={<LoginRequired><Dashboard /></LoginRequired>} />
-        <Route path='*' element={<Error404 />} />
-        <Route path='/employees' element={<LoginRequired><Employees /></LoginRequired>} />
-        <Route path='/employees/:userId' element={<LoginRequired><ViewEmployee /></LoginRequired>} />
-        <Route path='/employees/:userId/id_card' element={<LoginRequired><IDCard /></LoginRequired>} />
-        <Route path='/employees/add-employee' element={<LoginRequired><AddEmployee /></LoginRequired>} />
-        <Route path='/payroll' element={<LoginRequired><Payroll /></LoginRequired>} />
-        <Route path='/payroll/:payrollId' element={<LoginRequired><ViewPayroll /></LoginRequired>} />
-        <Route path='/payroll/payslip/:payslipId' element={<LoginRequired><ViewPayslip /></LoginRequired>} />
-        <Route path='/payroll/payslip/:payslipId/edit-payslip/' element={<LoginRequired><NewPayslip /></LoginRequired>} />
-        <Route path='/payroll/new-payslip' element={<LoginRequired><NewPayslip /></LoginRequired>} />
-        <Route path='/payroll/generate' element={<LoginRequired><GeneratePayroll /></LoginRequired>} />
-        <Route path='/attendance' element={<LoginRequired><Attendance /></LoginRequired>} />
-        <Route path='/leave' element={<LoginRequired><Leave /></LoginRequired>} />
-        <Route path='/recruitment' element={<LoginRequired><Recruitment /></LoginRequired>} />
-        <Route path='/recruitment/:recruitmentID/' element={<LoginRequired><Applications /></LoginRequired>} />
-        <Route path='/recruitment/:recruitmentID/:applicationID' element={<LoginRequired><NewApplication /></LoginRequired>} />
-        <Route path='/settings' element={<LoginRequired><Settings /></LoginRequired>} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/signup' element={<SignUp />} />
+        <Route element={<LoginRequired><Sidebar /></LoginRequired>}>
+          <Route path='/' element={<LoginRequired><Dashboard /></LoginRequired>} />
+          <Route path='/employees' element={<LoginRequired><Employees /></LoginRequired>} />
+          <Route path='/employees/:userId' element={<LoginRequired><ViewEmployee /></LoginRequired>} />
+          <Route path='/employees/:userId/id_card' element={<LoginRequired><IDCard /></LoginRequired>} />
+          <Route path='/employees/add-employee' element={<LoginRequired><AddEmployee /></LoginRequired>} />
+          <Route path='/payroll' element={<LoginRequired><Payroll /></LoginRequired>} />
+          <Route path='/payroll/:payrollId' element={<LoginRequired><ViewPayroll /></LoginRequired>} />
+          <Route path='/payroll/payslip/:payslipId' element={<LoginRequired><ViewPayslip /></LoginRequired>} />
+          <Route path='/payroll/payslip/:payslipId/edit-payslip/' element={<LoginRequired><NewPayslip /></LoginRequired>} />
+          <Route path='/payroll/new-payslip' element={<LoginRequired><NewPayslip /></LoginRequired>} />
+          <Route path='/payroll/generate' element={<LoginRequired><GeneratePayroll /></LoginRequired>} />
+          <Route path='/attendance' element={<LoginRequired><Attendance /></LoginRequired>} />
+          <Route path='/leave' element={<LoginRequired><Leave /></LoginRequired>} />
+          <Route path='/recruitment' element={<LoginRequired><Recruitment /></LoginRequired>} />
+          <Route path='/recruitment/:recruitmentID/' element={<LoginRequired><Applications /></LoginRequired>} />
+          <Route path='/recruitment/:recruitmentID/:applicationID' element={<LoginRequired><NewApplication /></LoginRequired>} />
+          <Route path='/settings' element={<LoginRequired><Settings /></LoginRequired>} />
+        </Route>
+        <Route>
+          <Route path='*' element={<Error404 />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/signup' element={<SignUp />} />
+        </Route>
       </Routes>
-    </Sidebar>
+    {/* </Sidebar> */}
+    <Routes>
+      
+    </Routes>
     </BrowserRouter>
     </ConfigProvider>
   );

@@ -1,7 +1,7 @@
-from typing import Iterable
 from django.db import models
 from lookup.models import JobPosition, Department, Degree, Stage
 from employee.models import Employee
+# from company.models import Company
 
 class Recruitment(models.Model):
     job_position_id = models.ForeignKey(to=JobPosition, on_delete=models.CASCADE, null=True, blank=True)

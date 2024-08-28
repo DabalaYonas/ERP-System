@@ -1,11 +1,24 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, UserActivity, Role
+from company.models import Company
+from company.serializers import CompanySerializer
+
+class RoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = "__all__"
 
 
 class UserSerializer(serializers.ModelSerializer):
+    company = CompanySerializer(read_only=True)
+    company_id = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), write_only=True, source="company")
+
+    role = RoleSerializer(read_only=True)
+    role_id = serializers.PrimaryKeyRelatedField(queryset=Role.objects.all(), write_only=True, source="role")
+    
     class Meta:
         model = User
-        fields = ['name', 'email', 'password']
+        fields = ['id', 'name', 'email', 'password', 'profilePic', 'company', 'company_id', 'role', 'role_id']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -17,3 +30,12 @@ class UserSerializer(serializers.ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
+    
+
+class UserActivitySerializer(serializers.ModelSerializer):
+    # user = UserSerializer(read_only=True)
+    # user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True, source="user")
+
+    class Meta:
+        model = UserActivity
+        fields = ['id', 'user', 'last_active', 'online']

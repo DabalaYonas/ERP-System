@@ -1,6 +1,6 @@
-import { Button, Card, Flex, Input, message, Modal, Skeleton, Table, Tabs, Tag } from 'antd';
+import { Button, Flex, Input, message, Modal, Skeleton, Table, Tabs, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { ImportOutlined, ExportOutlined, EyeOutlined } from "@ant-design/icons";
+import { EyeOutlined } from "@ant-design/icons";
 import PageTitle from '../../components/PageTitle';
 import Payslip from './Payslip';
 import { Link } from 'react-router-dom';
@@ -91,12 +91,19 @@ const PayrollTab = () => {
     const listOfData = [];
 
     newSelectedRowKeys.forEach(key => {
-      const payment_date = payrollDatas.filter(data => data.id == key)[0].payment_month_year;
+      const payment_date = payrollDatas.filter(data => data.id === key)[0].payment_month_year;
       const result = responseData.filter(data => dayjs(data.payment_date).isSame(dayjs(payment_date), 'month'));
       const data = result.map(item => ({...item, employee: item.employee.name}));
-      data.forEach(element => {
-        listOfData.push(element);
-      });                  
+      // data.forEach(element => {
+      //   console.log(element);
+        
+      //   listOfData.push(element);
+      // });            
+      const capitalizeSenten = (sentence) => {
+        return sentence.substr(0, 1).toUpperCase() + sentence.slice(1);
+      }
+      const listOfData1 = Object.fromEntries(Object.entries(data[0]).map(([key, value]) => [capitalizeSenten(key.replaceAll("_", " ")), value]));
+      listOfData.push(listOfData1);      
     });
     
     
@@ -116,13 +123,15 @@ const PayrollTab = () => {
     });
    });
   }
-
-  if (loading) {
-    return <Skeleton />
-  }
-
+  
   return <> 
-      <h3 className='text-2xl font-semibold mb-3 black-text'>Employee Payroll History</h3>
+  <PageTitle title="Employee Payroll" items={[
+    {
+      path: '/payroll',
+      title: 'Payroll',
+    }
+  ]} />
+      {/* <h3 className='text-2xl font-semibold mb-3 black-text'>Employee Payroll History</h3> */}
       <Flex className='mb-3' align='center' justify='space-between'>
         <Input.Search placeholder='Search Employee Payroll' style={{ maxWidth: "420px"}} enterButton/>
         <Flex gap={10}>
@@ -133,7 +142,7 @@ const PayrollTab = () => {
         </Flex>
       </Flex>
 
-      <Table rowSelection={rowSelection} columns={columns} dataSource={dataSource}/>
+      <Table loading={loading} rowSelection={rowSelection} columns={columns} dataSource={dataSource}/>
       <Modal 
         open={modalOpen}
         title="Are you sure?"
@@ -169,12 +178,6 @@ function Payroll() {
 
   return (
     <>
-    <PageTitle title="Employee Payroll" items={[
-      {
-        path: '/payroll',
-        title: 'Payroll',
-      }
-    ]} />
         <Tabs items={tabsItems} />
     </>
   )

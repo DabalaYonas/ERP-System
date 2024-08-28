@@ -1,4 +1,4 @@
-import { AutoComplete, Button, Col, Flex, Form, InputNumber, message, Row, Space } from 'antd'
+import { Button, Col, Flex, Form, InputNumber, Row, Space } from 'antd'
 import React from 'react'
 import SearchInput from '../SearchInput';
 import { getJopPositions, postJopPositions } from '../../actions/handleJopPosition';

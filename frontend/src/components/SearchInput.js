@@ -15,11 +15,11 @@ const fetch = (text, serverData, callback, canCreate, canCreateEdit) => {
         if (!(match.length > 0 || text === "")) {
           
           if (canCreate) {
-            data.push({value: "create", label: `Create \"${text}\"`});
+            data.push({value: "create", label: `Create "${text}"`});
           }
           
           if (canCreateEdit) {
-            data.push({value: "createEdit", label: `Create and edit \"${text}\"`});
+            data.push({value: "createEdit", label: `Create and edit "${text}"`});
           }
         }
           
@@ -56,9 +56,10 @@ const SearchInput = forwardRef((props, ref) => {
     useEffect(() => {
       try {
         fetchData(props.serverData, setOptions);
+        
         setValue(props.value);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     }, []); 
 
@@ -95,11 +96,11 @@ const SearchInput = forwardRef((props, ref) => {
                 break;
             }
             
-        props.onSelect && props.onSelect(opt);
+        props.onSelect && props.onSelect(opt);        
     };
 
     const handleSearch = (text) => {
-        fetch(text, props.serverData, setOptions, props.canCreate, props.canCreateEdit);
+        // fetch(text, props.serverData, setOptions, props.canCreate, props.canCreateEdit);
     };
 
     const handleChange = (value) => {
@@ -108,10 +109,11 @@ const SearchInput = forwardRef((props, ref) => {
       
       if (props.onChange) {
         props.onChange(value);
-      }
+      }      
     };
   
     return (<AutoComplete
+        disabled={props.disabled}
         value={value}
         onChange={handleChange}
         onSelect={handlerSelect}

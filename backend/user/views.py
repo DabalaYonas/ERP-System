@@ -1,10 +1,13 @@
-from .models import User
+from .models import User, UserActivity, Role
 from rest_framework.views import APIView
-from .serializers import UserSerializer
+from .serializers import UserSerializer, UserActivitySerializer, RoleSerializer
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from django.http import JsonResponse
 import jwt, datetime
+from employee.serializers import EmployeeSerializer
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets
 
 class RegisterView(APIView):
     
@@ -40,29 +43,31 @@ class LoginView(APIView):
         token = jwt.encode(payload, 'secret', algorithm='HS256')
         response = Response()
 
-        response.set_cookie(key='jwt', value=token, httponly=True)
+        response.set_cookie(key='jwt', value=token, httponly=True, max_age=3600, samesite="None", secure=True)
         response.data = {
             'jwt': token
         }
 
+        # EmployeeSerializer(data=request.data, context={'request': request})
+
         return response
-    
+
 class UserView(APIView):
     def get(self, request):
         token = request.COOKIES.get("jwt")
+        
         if not token:
-            raise AuthenticationFailed("UnAuthenticated")
+            raise AuthenticationFailed("UnAuthenticated 1!")
         
         try:
             payload = jwt.decode(token, 'secret', algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed("UnAuthenticated")
+            raise AuthenticationFailed("UnAuthenticated 2!")
         
         user = User.objects.filter(id=payload['id']).first()
         serializer = UserSerializer(user)
 
-        return Response(serializer.data)
-    
+        return Response(serializer.data)    
     
 class LogoutView(APIView):
     def post(self, request):
@@ -73,3 +78,14 @@ class LogoutView(APIView):
         }
 
         return response
+    
+
+class UserActivityViewSet(viewsets.ModelViewSet):
+    queryset = UserActivity.objects.all()
+    serializer_class = UserActivitySerializer
+    permission_classes = [IsAuthenticated]
+
+
+class RoleViewSet(viewsets.ModelViewSet):
+    queryset = Role.objects.all()
+    serializer_class = RoleSerializer

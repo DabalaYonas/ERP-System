@@ -1,10 +1,10 @@
 import { useSelector } from "react-redux";
 import PageTitle from '../../components/PageTitle';
 import StatisticCard from '../../components/StatisticCard';
-import { Affix, Calendar, Card, Col, Divider, Flex, Row, Table, Tag, theme, Timeline } from "antd";
+import { Affix, Calendar, Card, Col, Divider, Flex, message, Row, Table, Tag, theme, Timeline } from "antd";
 import AttendanceTable from "../../components/attendance/AttendanceTable";
 import { UsergroupAddOutlined, FileDoneOutlined, DollarCircleOutlined, FileSyncOutlined, CalendarOutlined } from "@ant-design/icons";
-import { Area } from "@ant-design/charts";
+// import { Area } from "@ant-design/charts";
 import MyTypography from "../../components/MyTypography";
 
 const breadcrumbItems = [
@@ -14,8 +14,9 @@ const breadcrumbItems = [
     }
   ];
 function Dashboard() {
-    // const user = useSelector((state) => state.user);
-  const { token } = theme.useToken();
+    const { token } = theme.useToken();
+    // const user = useSelector(state => state.user);
+    
     const data = [ 
       { year : '1991' , value : 3 } ,   
       { year : '1992' , value : 4 } ,   
@@ -65,7 +66,7 @@ function Dashboard() {
 
             <div style={cardStyle}>
                 <MyTypography level={3} className="py-3">Payment History</MyTypography>
-              <Area {...config} />
+              {/* <Area {...config} /> */}
             </div>
 
             <div style={cardStyle}>

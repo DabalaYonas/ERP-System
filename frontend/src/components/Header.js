@@ -1,15 +1,17 @@
 import React from 'react'
-import { Layout, Input, Typography, Flex, Button, Avatar, Row, Col } from 'antd';
+import { Layout, Input, Typography, Flex, Button, Avatar, Row, Col, Skeleton } from 'antd';
 import {
   UserOutlined,
   BellOutlined,
   SearchOutlined
 } from '@ant-design/icons';
 import { FaBars } from "react-icons/fa";
+import { useSelector } from 'react-redux';
 
 const { Header } = Layout;
 
-export default function CustomHeader({ collapsed, setCollapsed, colorBgContainer }) {
+export default function CustomHeader({ profilePic, collapsed, setCollapsed, colorBgContainer }) {
+
   return (
     <Header
     style={{
@@ -47,7 +49,7 @@ export default function CustomHeader({ collapsed, setCollapsed, colorBgContainer
 
           <Flex align='center' gap='10px' >
             <BellOutlined className='text-base cursor-pointer bg-slate-200 p-2 rounded text-slate-700' />
-            <Avatar icon={<UserOutlined />} />
+            {profilePic ? <Avatar src={profilePic} /> : <Avatar icon={<UserOutlined />} />}
           </Flex>
           
         </Flex>

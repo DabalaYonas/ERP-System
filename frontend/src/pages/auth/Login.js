@@ -7,6 +7,9 @@ import { FaRegEnvelope, FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
 import { useDispatch } from "react-redux";
 import { setUser } from '../../features/users/userSlice';
 import { Button, message } from 'antd';
+import { getCurrentUser } from '../../actions/getCurrentUser';
+import { getCurrentCompany } from '../../services/getCurrentCompany';
+import { setCompany } from '../../features/company/companySlice';
 
 function Login() {
 
@@ -31,18 +34,22 @@ function Login() {
       }
 
       try {
-        await axios.post('http://127.0.0.1:8000/user/login/api/', user, 
-          {headers: {'Content-Type': 'application/json'}, withCredentials: true}).then(response => {
-            if (response.status === 200) {
-              const token =  response.data.jwt;
-              const user = jwtDecode(token);
-              if(token != null) {
-                localStorage.setItem("jwtToken", token);
-                dispatch(setUser(user.id));
-                navigate("/");
-              }
-            }
-          });
+        const response = await axios.post('http://127.0.0.1:8000/user/login/api/', user, {headers: {'Content-Type': 'application/json'}, withCredentials: true});
+        if (response.status === 200) {
+          const token =  response.data.jwt;
+          
+          const user = await getCurrentUser();
+          const company = await getCurrentCompany();
+          if(token != null) {
+            localStorage.setItem("jwtToken", token);
+                            
+            dispatch(setUser(user));
+            dispatch(setCompany(company));
+            
+            navigate("/");
+          }
+        }
+
       } catch (error) {
         message.error(error.response.data.detail); 
       }

@@ -33,107 +33,6 @@ const colums2 = [
   },
 ]
 
-const items = [{
-  key: 1,
-  label: "Basic Salary",
-  children: "44,823",
-  span: 1,
-},
-{
-  key: 3,
-  label: "Transport Allowance",
-  children: "8,823",
-  span: 1,
-},
-{
-  key: 4,
-  label: "Position Allowance",
-  children: "13,823",
-  span: 1,
-},
-{
-  key: 5,
-  label: "Overtime",
-  children: "13,823",
-  span: 1,
-},
-{
-  key: 6,
-  label: "Penalty",
-  children: "13,823",
-  span: 1,
-},
-{
-  key: 7,
-  label: "Gross Earning",
-  children: "63,823",
-  span: 3,
-},]
-
-
-const items2 =[
-{
-  key: 8,
-  label: "Taxable Income",
-  children: "13,823",
-  span: 1,
-},
-{
-  key: 9,
-  label: "Income Tax",
-  children: "13,823",
-  span: 1,
-},
-{
-  key: 10,
-  label: "Staff Loan",
-  children: "13,823",
-  span: 1,
-},
-{
-  key: 11,
-  label: "Cost Sharing",
-  children: "13,823",
-  span: 1,
-},
-{
-  key: 12,
-  label: "Pension 7%",
-  children: "13,823",
-  span: 1,
-},
-{
-  key: 13,
-  label: "Pension 11%",
-  children: "13,823",
-  span: 1,
-},
-{
-  key: 14,
-  label: "Pension Total 18%",
-  children: "13,823",
-  span: 1,
-},
-{
-  key: 15,
-  label: "Other Deductions",
-  children: "13,823",
-  span: 1,
-},
-{
-  key: 16,
-  label: "Total Deduction",
-  children: "13,823",
-  span: 1,
-},
-{
-  key: 17,
-  label: "Net Pay",
-  children: "263,823",
-  span: 3,
-},
-]
-
 const SalaryTable = ({ colums, items }) => {
 
   return <table className='custom-table'>
@@ -226,7 +125,7 @@ function ViewPayslip() {
             if (i < 11 && i > 2) {
             salaryData.push({
               key: i, 
-              label: salaryKeys.find(item => item.key == key).title,
+              label: salaryKeys.find(item => item.key === key).title,
               amount: value.toString(),
             })
               
@@ -234,7 +133,7 @@ function ViewPayslip() {
             if (i > 10) {              
               deductionData.push({
                 key: i, 
-                label: deductionKeys.find(item => item.key == key).title,
+                label: deductionKeys.find(item => item.key === key).title,
                 amount: value.toString(),
               })
             }

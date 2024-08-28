@@ -9,11 +9,12 @@ import {
   DollarOutlined,
   ArrowLeftOutlined
 } from '@ant-design/icons';
-import { Breadcrumb, Divider, Layout, Menu, theme } from 'antd';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Divider, Layout, Menu, Skeleton, theme } from 'antd';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import CustomHeader from './Header';
 import Logo from './Logo';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const { Sider, Content } = Layout;
 
@@ -67,10 +68,11 @@ const Sidebar = ({ children }) => {
   const location = useLocation();
   const hideSidebarPath = ['/login', '/signup', '*'];
   const navigate = useNavigate();
+  const user = useSelector(state => state.user);  
+  const company = useSelector(state => state.company);  
 
-  
   const onClick = (info) => {
-    if(info.key == 'logout') {
+    if(info.key === 'logout') {
       localStorage.removeItem('jwtToken');
       logout();
       navigate('/login');
@@ -81,7 +83,7 @@ const Sidebar = ({ children }) => {
   };
 
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { colorBgContainer },
   } = theme.useToken();
 
   useEffect(() => {
@@ -94,6 +96,10 @@ const Sidebar = ({ children }) => {
     return <>{children}</>
   }
 
+  if (!user || !company) {
+    return <Skeleton />
+  }
+
   return (
     <Layout hasSider className='custom-scroll' style={{height: '100vh'}}>
       <Sider 
@@ -103,7 +109,7 @@ const Sidebar = ({ children }) => {
         collapsible 
         collapsed={collapsed}>
 
-          <Logo />
+          <Logo logo={company.company.logo_img}/>
         
         <Menu  
           className='mysidebar-menu flex flex-col gap-3 font-medium'
@@ -129,16 +135,17 @@ const Sidebar = ({ children }) => {
 
       <Layout>
 
-       <CustomHeader collapsed={collapsed} setCollapsed={setCollapsed} colorBgContainer={colorBgContainer} />
+       <CustomHeader profilePic={user.user.profilePic} collapsed={collapsed} setCollapsed={setCollapsed} colorBgContainer={colorBgContainer} />
 
         <Content className='custom-scroll' 
           style={{
-            margin: '0 16px',
+            margin: '10px 16px',
             overflowY: "auto",
             scrollbarWidth: 'none'
           }}>
 
-            {children}
+            {/* {children} */}
+            <Outlet />
         </Content>
       </Layout>
     </Layout>

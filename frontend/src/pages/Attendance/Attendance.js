@@ -1,6 +1,6 @@
 import { Button, Card, Col, DatePicker, Divider, Flex, Form, Input, message, Modal, Row, Space, } from 'antd';
 import React, { useState } from 'react';
-import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, ArrowRightOutlined, CalendarOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import SearchInput from '../../components/SearchInput';
 import { getEmployees } from '../../actions/handleEmployee';
@@ -70,31 +70,32 @@ function Attendance() {
         {path: '/attendance',
           title: 'Attendance',}]} title="Employee Attendace" />
 
-      <Flex justify='space-between' gap={20} className='mb-3'>
+      <Flex justify='space-between' gap="middle" className='mb-3'>
         <StatisticCard title="Total Present" value={50} percent={10} />
         <StatisticCard title="Total Absent" value={20} percent={10} />
         <StatisticCard title="Total On Times" value={32} percent={12} />
         <StatisticCard title="Total Lates" value={18} percent={34} decline={true} />
         {/* <StatisticCard title="Balance" value={-53} suffix="hr" percent={32} decline={true} /> */}
       </Flex>
-      <Divider />
 
     {/* <Card> */}
-        <Flex className="mt-3" gap={6} align='center' justify='space-between'>
-          <Input.Search style={{ width: "420px"}} placeholder='Search Employee Attendance' size='middle' enterButton/>
-          <Button type='primary' size='middle' onClick={() => {setIsModalOpen(true)}}>New Attendance</Button>
-        </Flex>
 
         <Divider />
         
         <Flex className='mb-2' justify='space-between'>
           <Space>
-            <Button onClick={(e) => {changeDate(-1)}} icon={<ArrowLeftOutlined className='opacity-80'/>}/>
-            <DatePicker allowClear={false} value={dateValue} onChange={handleDateChange} defaultValue={dayjs("08/05/2024", dateFormat)}/>
-            <Button onClick={(e) => {changeDate(1)}} icon={<ArrowRightOutlined className='opacity-80'/>} />
+            <Space>
+              <Button onClick={(e) => {changeDate(-1)}} icon={<ArrowLeftOutlined className='opacity-80'/>}/>
+              <DatePicker allowClear={false} value={dateValue} onChange={handleDateChange} defaultValue={dayjs("08/05/2024", dateFormat)}/>
+              <Button onClick={(e) => {changeDate(1)}} icon={<ArrowRightOutlined className='opacity-80'/>} />
+            </Space>
+            
+            <Button disabled={disabledToday} icon={<CalendarOutlined />} onClick={handleSetToday}>Today</Button>
           </Space>
-
-          <Button disabled={disabledToday} onClick={handleSetToday}>Today</Button>
+          <Space>
+            <Input.Search style={{ width: "420px"}} placeholder='Search Employee Attendance' size='middle' enterButton/>
+            <Button type='primary' size='middle' onClick={() => {setIsModalOpen(true)}}>New Attendance</Button>
+          </Space>
         </Flex>
         
         <AttendanceTable date={dateValue} />

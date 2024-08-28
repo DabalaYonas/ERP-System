@@ -18,7 +18,7 @@ export default function PageTitle({title, items, backable, description}) {
     }, []);
 
   return <>
-  <Flex align='center' justify='space-between' className='py-3 cursor-default'>
+  <Flex align='center' justify='space-between' className='mb-3 cursor-default'>
       <Flex gap={2} vertical>
       {backable && <Link to={-1}><p className='mt-4 text-primary-600 text-lg hover:text-primary-400'><LeftOutlined className='mr-1'/> back</p></Link>}
         <h2 className='font-medium text-black text-opacity-75' style={{fontSize: 26}}>{title}</h2>

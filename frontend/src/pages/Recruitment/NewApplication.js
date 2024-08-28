@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Breadcrumbs from '../../components/Breadcrumbs';
 import { Button, Card, Col, Divider, Flex, Form, Input, InputNumber, Layout, message, Row, Skeleton, Steps, Typography } from 'antd';
 import { PlusCircleOutlined } from "@ant-design/icons";
 import SearchInput from '../../components/SearchInput';
@@ -28,7 +27,7 @@ function NewApplication() {
   const navigate = useNavigate();
 
   const isNewApplicationUrl = () => {
-    return applicationID.toLowerCase() == "new-application";
+    return applicationID.toLowerCase() === "new-application";
   }
   
 
@@ -75,6 +74,7 @@ function NewApplication() {
         const recrt = await getRecruitment(recruitmentID);
         
         setRecrtParams(recrt.job_position_name);   
+        setInitialValues({job_position_id: recrt.job_position_name});
         setAppParams("New Application");
         setStages(result);
         setLoading(false);
@@ -128,12 +128,10 @@ function NewApplication() {
     }
   }
 
-  if (!isNewApplicationUrl()) {
-    if (loading) {
-      return <Skeleton />
-    } else if (!application) {
-        return <Error404 />
-    }
+  if (loading) {
+    return <Skeleton />
+  } else if (!application && !isNewApplicationUrl()) {
+    return <Error404 />
   }
 
   return (
@@ -214,7 +212,7 @@ function NewApplication() {
                 <SearchInput placeholder="Applied Job" serverData={getDepartments}/>
               </Form.Item>
               <Form.Item label="Applied Job" name="job_position_id" rules={[{required: true, message: "Job Position is required!"}]}>
-                <SearchInput placeholder="Applied Job" serverData={getJopPositions}/>
+                <SearchInput disabled placeholder="Applied Job" serverData={getJopPositions}/>
               </Form.Item>
             </Col>
 
