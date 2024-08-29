@@ -1,30 +1,37 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Col, Divider, Flex, Form, Input, Row, Skeleton, Upload } from 'antd';
+import { Button, Card, Col, Divider, Flex, Form, Input, message, Row, Skeleton, Upload } from 'antd';
 import MyTypography from '../../components/MyTypography';
 import { CameraOutlined, LockOutlined, SafetyOutlined, WarningOutlined} from "@ant-design/icons";
 import { useSelector } from 'react-redux';
 import { DescText } from '../DecriptionText';
+import axios from 'axios';
+
 
 const UserSetting = () => {
-    const [initialUserValues, setInitialUserValues] = useState();
-    const [loading, setLoading] = useState(true);
     const user = useSelector(state => state.user.user);
+    const [userForm] = Form.useForm();
   
-    useEffect(() => {
-      const loadCompanyData = async() => {
-        try {
-          setInitialUserValues(user);
-          setLoading(false);
-          
-        } catch (error) {
-          console.log(error);
-        } 
-      }
+    const USER_URL = "http://127.0.0.1:8000/user/api/";
+
+    const onClick = async (values) => {
+      const formData = new FormData();
+      values.forEach(name => {
+        const value = userForm.getFieldValue(name);
+        if (!(name == "profilePic" && typeof(value) === "string")) {
+          value && formData.append(name, value);
+        }    
+      });
+
+      await axios.patch(`${USER_URL}`, formData, {headers : {"Content-Type": "application/json"}, withCredentials: true}).then(response => {
+        window.location.reload(); 
+        message.success("User informations are updated!");   
+      }).catch(error => {
+            message.error("Can't update User informations!");
+            console.log(error);
+        });  
+    }
   
-      loadCompanyData();
-    }, []);
-  
-    if (loading) {
+    if (!user) {
       return <Skeleton />
     }
     
@@ -33,25 +40,26 @@ const UserSetting = () => {
     {/* <Card className='mb-4'> */}
     <Flex className='my-2' align='center' vertical>
       <Form
+      form={userForm}
       layout='vertical'
       className='max-w-screen-xl'
       size='large'
-      initialValues={initialUserValues}>
+      initialValues={user}>
         <Row gutter={32}>
           <Col span={24}>
             <MyTypography level={3}>Your Profile</MyTypography>
             <DescText>Choose how you are displayed.</DescText>
           </Col>
           <Col span={12}>
-            <Form.Item label="Name" name="name" rules={[{required: true}]}>
+            <Form.Item label="Name" name="name">
               <Input placeholder='Name' />
             </Form.Item>
-            <Button htmlType='submit' type='primary'>
+            <Button htmlType='submit' type='primary' onClick={() => {onClick(["name", "profilePic"])}}>
               Save Changes
             </Button>
           </Col>
           <Col span={6}>
-            <Form.Item label="Profile Picture" name="profilePic" rules={[{required: true}]}>
+            <Form.Item label="Profile Picture" name="profilePic">
               <Upload 
                 showUploadList={false}
                 listType='picture-circle'>
@@ -68,20 +76,20 @@ const UserSetting = () => {
           </Col>
           <Col span={12}>
           <Flex align='center' gap="middle">
-            <Form.Item className='flex-grow' label="Email" name="email" rules={[{required: true}]}>
+            <Form.Item className='flex-grow' label="Email" name="email">
               <Input placeholder='Enter you email' />
             </Form.Item>
-            <Button  type='primary' className='mt-1'>Update</Button>
+            <Button  type='primary' className='mt-1' onClick={() => {onClick(["email"])}}>Update</Button>
   
           </Flex>
           </Col>
           <Col span={12}>
             <Flex align='center' gap="middle">
-              <Form.Item className='flex-grow' label="Phone Number" name="phone_number" rules={[{required: true}]}>
+              <Form.Item className='flex-grow' label="Phone Number" name="phone_number">
                 <Input placeholder='Enter you Phone Number' />
               </Form.Item>
   
-              <Button type='primary' className='mt-1'>Update</Button>
+              <Button type='primary' className='mt-1' onClick={() => {onClick(["phone_number"])}}>Update</Button>
             </Flex>
           </Col>
           <Divider />

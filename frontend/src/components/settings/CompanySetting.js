@@ -7,6 +7,7 @@ import ImageUpload from '../../components/ImageUpload';
 import { DescText } from '../DecriptionText';
 import { useSelector } from 'react-redux';
 
+
 const CompanySetting = () => {
     const company = useSelector(state => state.company);
     const [companyForm] = Form.useForm();

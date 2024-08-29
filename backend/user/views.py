@@ -57,17 +57,56 @@ class UserView(APIView):
         token = request.COOKIES.get("jwt")
         
         if not token:
-            raise AuthenticationFailed("UnAuthenticated 1!")
+            raise AuthenticationFailed("UnAuthenticated!")
         
         try:
             payload = jwt.decode(token, 'secret', algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed("UnAuthenticated 2!")
+            raise AuthenticationFailed("UnAuthenticated!")
         
         user = User.objects.filter(id=payload['id']).first()
         serializer = UserSerializer(user)
 
         return Response(serializer.data)    
+    
+    def put(self, request):
+        token = request.COOKIES.get("jwt")
+        
+        if not token:
+            raise AuthenticationFailed("UnAuthenticated!")
+        
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed("UnAuthenticated!")
+        
+        user = User.objects.filter(id=payload['id']).first()
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+    
+
+    def patch(self, request, pk=None):
+        token = request.COOKIES.get("jwt")
+        
+        if not token:
+            raise AuthenticationFailed("UnAuthenticated!")
+        
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed("UnAuthenticated!")
+        
+        user = User.objects.filter(id=payload['id']).first()
+        serializer = UserSerializer(user, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(serializer.errors, status=400)
     
 class LogoutView(APIView):
     def post(self, request):
