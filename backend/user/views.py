@@ -111,18 +111,29 @@ class UserView(APIView):
 class LogoutView(APIView):
     def post(self, request):
         response = Response()
-        response.delete_cookie('jwt')
+        response.delete_cookie('jwt', samesite="None")
         response.data = {
-            "message": "logout seccussful"
+            "message": "logout successful"
         }
 
         return response
     
 
-class UserActivityViewSet(viewsets.ModelViewSet):
-    queryset = UserActivity.objects.all()
-    serializer_class = UserActivitySerializer
-    permission_classes = [IsAuthenticated]
+class AllUsersAPI(APIView):
+    serializer_class = UserSerializer
+
+    def get(self, request):
+        token = request.COOKIES.get("jwt")
+        if not token:
+            raise AuthenticationFailed("UnAuthenticated!")
+        
+        try:
+            jwt.decode(token, 'secret', algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed("UnAuthenticated!")
+        
+        users = User.objects.all()
+        return Response(UserSerializer(users, many=True).data)
 
 
 class RoleViewSet(viewsets.ModelViewSet):

@@ -33,32 +33,40 @@ const columns = [
   {
     title: 'Employee Name',
     dataIndex: 'name',
-    key: 'name',
   },
   {
     title: 'Employee ID',
     dataIndex: 'id',
-    key: 'id',
   },
   {
     title: 'Department',
-    dataIndex: ['department'],
-    key: 'department',
+    dataIndex: 'department',
   },
   {
     title: 'Gender',
     dataIndex: 'gender',
-    key: 'gender',
   },
   {
     title: 'Phone Number',
     dataIndex: 'phone_number',
-    key: 'phone_number',
   },
   {
     title: 'Actions',
     dataIndex: 'actions',
-    key: 'actions',
+    render: (value, value2) => {
+      const id = value2.id;
+      
+      return value && <Flex>
+        <Link to={`/employees/${id}`}><EyeOutlined className="mr-2 text-base cursor-pointer" /></Link>, 
+
+        <Popconfirm 
+            title="Delete Employee" 
+            description="Are you sure to delete this employee?"
+            onConfirm={() => handleDelete(id)}
+            okText="Delete"
+            cancelText="Cancel"><DeleteOutlined className="mr-2 text-base cursor-pointer transition hover:text-red-500"/></Popconfirm>
+        </Flex>
+    }
   },
 ];
 
@@ -75,15 +83,15 @@ function Employees() {
 
   useEffect(() => {
     const getEmployeesData = async () => {
-      getEmployees().then(response => {        
+      getEmployees().then(response => {                
         const data = response.map((item) => ({
           key: item.id,
           id: item.id,
-          name: <Flex gap={14} align="center">{item.profilePic ? (<Avatar className="shrink-0" src={item.profilePic}></Avatar>) : (<Avatar className="shrink-0"  icon={<UserOutlined />} />)}<p>{item.name}</p></Flex>,
+          name: <Flex key={item.id} gap={14} align="center">{item.profilePic ? (<Avatar className="shrink-0" src={item.profilePic}></Avatar>) : (<Avatar className="shrink-0"  icon={<UserOutlined />} />)}<p>{item.name}</p></Flex>,
           department: item.department ? item.department.name : "_",
           gender: item.gender,
           phone_number: item.phone_number,
-          actions: ActionButtons(item.id),
+          actions: true,
         }
         ));
         

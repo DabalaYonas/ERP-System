@@ -14,11 +14,11 @@ class UserSerializer(serializers.ModelSerializer):
     company_id = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), write_only=True, source="company")
 
     role = RoleSerializer(read_only=True)
-    role_id = serializers.PrimaryKeyRelatedField(queryset=Role.objects.all(), write_only=True, source="role")
+    role_id = serializers.PrimaryKeyRelatedField(queryset=Role.objects.all(), write_only=True, allow_null=True, source="role")
     
     class Meta:
         model = User
-        fields = ['id', 'name', 'email', 'password', 'profilePic', 'company', 'company_id', 'role', 'role_id']
+        fields = ['id', 'name', 'email', 'password', 'profilePic', 'company', 'company_id', 'role', 'role_id', 'last_login', 'is_online', "date_joined"]
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -33,9 +33,6 @@ class UserSerializer(serializers.ModelSerializer):
     
 
 class UserActivitySerializer(serializers.ModelSerializer):
-    # user = UserSerializer(read_only=True)
-    # user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True, source="user")
-
     class Meta:
         model = UserActivity
         fields = ['id', 'user', 'last_active', 'online']

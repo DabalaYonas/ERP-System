@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   DashboardOutlined,
   TeamOutlined,
@@ -9,12 +9,11 @@ import {
   DollarOutlined,
   ArrowLeftOutlined
 } from '@ant-design/icons';
-import { Divider, Layout, Menu, Skeleton, theme } from 'antd';
+import { Divider, Layout, Menu, message, Skeleton, theme } from 'antd';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import CustomHeader from './Header';
 import Logo from './Logo';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { AuthContext } from '../context/AuthContext';
 
 const { Sider, Content } = Layout;
 
@@ -56,10 +55,6 @@ const items = [
   },
 ];
 
-const logout = () => {
-  return axios.post('http://127.0.0.1:8000/user/logout/api/');
-}
-
 const Sidebar = ({ children }) => {
 
   const [collapsed, setCollapsed] = useState(false);
@@ -68,14 +63,16 @@ const Sidebar = ({ children }) => {
   const location = useLocation();
   const hideSidebarPath = ['/login', '/signup', '*'];
   const navigate = useNavigate();
-  const user = useSelector(state => state.user);  
-  const company = useSelector(state => state.company);  
+  const { logout, user, company } = useContext(AuthContext);
 
-  const onClick = (info) => {
+  const onClick = async (info) => {
     if(info.key === 'logout') {
-      localStorage.removeItem('jwtToken');
-      logout();
-      navigate('/login');
+      try {
+        await logout();
+        navigate('/login');
+      } catch (error) {
+        message.error("Can't logout for now!");
+      }
     } else {
       setCurrent(info.key);
       navigate('/' + info.key); 
@@ -109,7 +106,7 @@ const Sidebar = ({ children }) => {
         collapsible 
         collapsed={collapsed}>
 
-          <Logo logo={company.company.logo_img}/>
+          <Logo logo={company.logo_img}/>
         
         <Menu  
           className='mysidebar-menu flex flex-col gap-3 font-medium'
@@ -135,7 +132,7 @@ const Sidebar = ({ children }) => {
 
       <Layout>
 
-       <CustomHeader profilePic={user.user.profilePic} collapsed={collapsed} setCollapsed={setCollapsed} colorBgContainer={colorBgContainer} />
+       <CustomHeader profilePic={`http://127.0.0.1:8000/${user.profilePic}`} collapsed={collapsed} setCollapsed={setCollapsed} colorBgContainer={colorBgContainer} />
 
         <Content className='custom-scroll' 
           style={{

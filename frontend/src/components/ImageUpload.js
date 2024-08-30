@@ -18,11 +18,9 @@ const ImageUpload = forwardRef(({onChange, listType="picture-card"}, ref) => {
       if (onChange) {
         onChange(file.file);
       }
-      
       setImageUrl(imgUrl);
     }
-  
-
+    
     useImperativeHandle(ref, () => ({
       getValue: () => fileList,
       setValue: (val) => setFileList(val),

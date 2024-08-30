@@ -22,12 +22,16 @@ class UpdateLastActivityMiddleware:
         
         user = User.objects.filter(id=payload['id']).first()
         request.user = user
+        print("User is active!", user.is_authenticated)
 
         if user.is_authenticated:
-            UserActivity.objects.update_or_create(
-                user_id=user,
-                defaults={'last_active': timezone.now(), 'online': True}
-            )
+            user.last_login = timezone.now()
+            user.is_online = False
+            user.save()
+            # User.objects.update_or_create(
+            #     user_id=user,
+            #     defaults={'last_active': timezone.now(), 'online': True}
+            # )
 
         response = self.get_response(request)
         

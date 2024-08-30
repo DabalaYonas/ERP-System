@@ -9,7 +9,7 @@ router.register('bank-account', views.BankAccountView, 'Bank Account')
 router.register('contract-type', views.ContractTypeView, 'Contract Type')
 router.register('degree', views.DegreeView, 'Degree Type')
 router.register('stage', views.StageView, 'Stage Type')
-router.register('currency', views.StageView, 'Currency')
+router.register('currency', views.CurrencyView, 'Currency')
 
 urlpatterns = [
     path('api/', include(router.urls)),

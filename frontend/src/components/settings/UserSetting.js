@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button, Card, Col, Divider, Flex, Form, Input, message, Row, Skeleton, Upload } from 'antd';
 import MyTypography from '../../components/MyTypography';
 import { CameraOutlined, LockOutlined, SafetyOutlined, WarningOutlined} from "@ant-design/icons";
-import { useSelector } from 'react-redux';
 import { DescText } from '../DecriptionText';
 import axios from 'axios';
+import { AuthContext } from '../../context/AuthContext';
+import ImageUpload from '../ImageUpload';
 
 
 const UserSetting = () => {
-    const user = useSelector(state => state.user.user);
+    const {user} = useContext(AuthContext);
     const [userForm] = Form.useForm();
+    const [emailDisabled, setEmailDisabled] = useState(true);
+    const [phoneDisabled, setPhoneDisabled] = useState(true);
+    const [nameDisabled, setNameDisabled] = useState(true);
   
     const USER_URL = "http://127.0.0.1:8000/user/api/";
 
@@ -22,7 +26,7 @@ const UserSetting = () => {
         }    
       });
 
-      await axios.patch(`${USER_URL}`, formData, {headers : {"Content-Type": "application/json"}, withCredentials: true}).then(response => {
+      await axios.patch(`${USER_URL}`, formData, {withCredentials: true}).then(response => {
         window.location.reload(); 
         message.success("User informations are updated!");   
       }).catch(error => {
@@ -37,7 +41,6 @@ const UserSetting = () => {
     
   
     return <>
-    {/* <Card className='mb-4'> */}
     <Flex className='my-2' align='center' vertical>
       <Form
       form={userForm}
@@ -52,21 +55,15 @@ const UserSetting = () => {
           </Col>
           <Col span={12}>
             <Form.Item label="Name" name="name">
-              <Input placeholder='Name' />
+              <Input placeholder='Name' disabled={nameDisabled}/>
             </Form.Item>
-            <Button htmlType='submit' type='primary' onClick={() => {onClick(["name", "profilePic"])}}>
-              Save Changes
+            <Button htmlType='submit' type='primary' onClick={() => nameDisabled ? setNameDisabled(false) : onClick(["name", "profilePic"])}>
+              {nameDisabled ? "Edit Name" : "Save Changes"}
             </Button>
           </Col>
           <Col span={6}>
             <Form.Item label="Profile Picture" name="profilePic">
-              <Upload 
-                showUploadList={false}
-                listType='picture-circle'>
-                  <div className='flex items-center justify-center w-full h-full relative rounded-full to-primary-400 from-purple-400 bg-gradient-to-t'>
-                      <Button type='text' className=' border-0 bg-none text-white'icon={<CameraOutlined />}> Upload</Button>
-                  </div>
-              </Upload>
+              <ImageUpload listType={"picture-circle"}/>
             </Form.Item>
           </Col>
       <Divider />
@@ -77,19 +74,19 @@ const UserSetting = () => {
           <Col span={12}>
           <Flex align='center' gap="middle">
             <Form.Item className='flex-grow' label="Email" name="email">
-              <Input placeholder='Enter you email' />
+              <Input placeholder='Enter you email' disabled={emailDisabled}/>
             </Form.Item>
-            <Button  type='primary' className='mt-1' onClick={() => {onClick(["email"])}}>Update</Button>
+            <Button  type='primary' className='mt-1' onClick={() => emailDisabled ? setEmailDisabled(false) : onClick(["email"])}>{emailDisabled ? "Edit Email" : "Update"}</Button>
   
           </Flex>
           </Col>
           <Col span={12}>
             <Flex align='center' gap="middle">
               <Form.Item className='flex-grow' label="Phone Number" name="phone_number">
-                <Input placeholder='Enter you Phone Number' />
+                <Input placeholder='Enter you Phone Number' disabled={phoneDisabled}/>
               </Form.Item>
   
-              <Button type='primary' className='mt-1' onClick={() => {onClick(["phone_number"])}}>Update</Button>
+              <Button type='primary' className='mt-1' onClick={() => {phoneDisabled ? setPhoneDisabled(false) : onClick(["phone_number"])}}>{phoneDisabled ? "Edit Phone number" : "Update"}</Button>
             </Flex>
           </Col>
           <Divider />
@@ -136,7 +133,6 @@ const UserSetting = () => {
       </Form>
   
     </Flex>
-    {/* </Card> */}
     </>
   }
 

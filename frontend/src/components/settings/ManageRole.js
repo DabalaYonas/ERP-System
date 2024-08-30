@@ -103,7 +103,11 @@ const ManageRole = () => {
       </Space>
     </Flex>
   
-      <Table rowSelection dataSource={roleDataSource} columns={columns}></Table>
+      <Table 
+        rowSelection 
+        pagination={columns.length > 10}
+        dataSource={roleDataSource} 
+        columns={columns}></Table>
 
       <Modal 
         onCancel={() => {setOpen(false)}}

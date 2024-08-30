@@ -31,7 +31,7 @@ const fetchData = (serverData, callback) => {
     serverData().then(response => {
         const data = response.map((item) => ({
             value: item.id,
-            label: item.name ? item.name : item.accountNo,
+            label: item.name ? item.name : item.accountNo ? item.accountNo : item.code,
           }));
 
         callback(data);
@@ -92,6 +92,8 @@ const SearchInput = forwardRef((props, ref) => {
                 break;
             
               default:
+                console.log(opt);
+                
                 setValue(opt.label);
                 break;
             }
@@ -106,13 +108,16 @@ const SearchInput = forwardRef((props, ref) => {
     const handleChange = (value) => {
       
       setValue(value);
+      console.log(value);
+      
       
       if (props.onChange) {
         props.onChange(value);
       }      
     };
   
-    return (<AutoComplete
+    return (
+    <AutoComplete
         disabled={props.disabled}
         value={value}
         onChange={handleChange}

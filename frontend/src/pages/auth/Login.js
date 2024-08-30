@@ -1,6 +1,6 @@
 import TextField from '../../components/TextField';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { FaRegEnvelope, FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
@@ -10,6 +10,7 @@ import { Button, message } from 'antd';
 import { getCurrentUser } from '../../actions/getCurrentUser';
 import { getCurrentCompany } from '../../services/getCurrentCompany';
 import { setCompany } from '../../features/company/companySlice';
+import { AuthContext } from '../../context/AuthContext';
 
 function Login() {
 
@@ -17,7 +18,7 @@ function Login() {
     const [eyeOpened, setEyeOpened] = useState(false);
     const [paaswordType, setPasswordType] = useState("password");
     const navigate = useNavigate();
-    const dispatch = useDispatch();
+    const { login } = useContext(AuthContext);
     
     function handleChange(e) {
       var name = e.target.name;
@@ -27,31 +28,13 @@ function Login() {
   
     async function handleSubmit(e) {
       e.preventDefault();
-      
-      const user = {
-        email: inputs.email,
-        password: inputs.password
-      }
-
       try {
-        const response = await axios.post('http://127.0.0.1:8000/user/login/api/', user, {headers: {'Content-Type': 'application/json'}, withCredentials: true});
-        if (response.status === 200) {
-          const token =  response.data.jwt;
-          
-          const user = await getCurrentUser();
-          const company = await getCurrentCompany();
-          if(token != null) {
-            localStorage.setItem("jwtToken", token);
-                            
-            dispatch(setUser(user));
-            dispatch(setCompany(company));
-            
-            navigate("/");
-          }
-        }
-
+        await login(inputs.email, inputs.password);
+        navigate("/");
       } catch (error) {
-        message.error(error.response.data.detail); 
+        const msg = error.response.data.detail;
+        message.error(msg);
+        console.error(msg);
       }
     }
 

@@ -22,39 +22,26 @@ import GeneratePayroll from './pages/Payroll/GeneratePayroll';
 import ViewPayroll from './pages/Payroll/ViewPayroll';
 import ViewPayslip from './pages/Payroll/ViewPayslip';
 import IDCard from './components/IDCard';
-import { useDispatch } from 'react-redux';
-import { setUser } from './features/users/userSlice';
 import { useEffect } from 'react';
-import { setCompany } from './features/company/companySlice';
-import { getCurrentUser } from './actions/getCurrentUser';
-import { getCurrentCompany } from './services/getCurrentCompany';
-import isLoggedIn from './actions/isLoggedIn';
+import axios from 'axios';
 
 function App() {  
-  const dispatch = useDispatch();
-
+  
   useEffect(() => {
-    const fetchData = async() => {
-      if (isLoggedIn()) {
-        const currentUser = await getCurrentUser();
-        const currentCompany = await getCurrentCompany();
-        
-        if (currentUser) {
-          dispatch(setUser(currentUser));
-          dispatch(setCompany(currentCompany));
-        }
-      } else {
-        
-      }
-    }
+  const updateOnlineStatus = () => {
+    console.log("Is Online", navigator.onLine);
+    
+    axios.patch('http://127.0.0.1:8000/user/api/', { is_online: !navigator.onLine }, {headers : {"Content-Type": "application/json"}, withCredentials: true});
+  };
 
-    fetchData();
-  }, [dispatch]);
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
 
-  // const handleLogout = () => {
-  //   dispatch(logout());
-  //   localStorage.removeItem('userInfo');
-  // };  
+  return () => {
+    window.removeEventListener('online', updateOnlineStatus);
+    window.removeEventListener('offline', updateOnlineStatus);
+  };
+}, []);
   
   return (
     <ConfigProvider 
@@ -65,7 +52,6 @@ function App() {
       }
     }}>
     <BrowserRouter>
-    {/* <Sidebar> */}
       <Routes>
         <Route element={<LoginRequired><Sidebar /></LoginRequired>}>
           <Route path='/' element={<LoginRequired><Dashboard /></LoginRequired>} />
@@ -92,7 +78,6 @@ function App() {
           <Route path='/signup' element={<SignUp />} />
         </Route>
       </Routes>
-    {/* </Sidebar> */}
     <Routes>
       
     </Routes>

@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {Button, Col, ColorPicker, Divider, Flex, Form, Input, message, Row, Skeleton } from 'antd';
 import MyTypography from '../../components/MyTypography';
 import SearchInput from '../../components/SearchInput';
 import axios from 'axios';
-import ImageUpload from '../../components/ImageUpload';
+import ImageUpload from '../ImageUpload';
 import { DescText } from '../DecriptionText';
-import { useSelector } from 'react-redux';
+import { AuthContext } from '../../context/AuthContext';
 
+const getCurrency = async() => {
+  return await axios.get("http://127.0.0.1:8000/lookup/api/currency/").then(response => response.data);
+}
 
 const CompanySetting = () => {
-    const company = useSelector(state => state.company);
     const [companyForm] = Form.useForm();
+    const { company } = useContext(AuthContext);
   
     const COMPANY_URL = "http://127.0.0.1:8000/company/api/";
 
@@ -24,15 +27,15 @@ const CompanySetting = () => {
 
         formData.append(name, name == "brand_color" ? value.toHexString() : value);
       });
-      await axios.patch(`${COMPANY_URL + company.company.id}/`, formData).then(response => {
+      await axios.patch(`${COMPANY_URL + company.id}/`, formData).then(response => {
         message.success("Company informations are updated!");   
         window.location.reload(); 
+        console.log(values);
+        
       }).catch(error => {
             message.error("Can't update company informations!");
             console.log(error);
         });  
-        
-      // const title = values[0].charAt(0).toUpperCase() + values[0].slice(1);
     }
     
     if (!company) {
@@ -46,7 +49,7 @@ const CompanySetting = () => {
       layout='vertical'
       className='max-w-screen-xl'
       size='large'
-      initialValues={company.company}>
+      initialValues={{...company,  currency_id: company.currency && company.currency.id}}>
   
         <Row gutter={32}>
           <Col span={24}>
@@ -54,7 +57,7 @@ const CompanySetting = () => {
             <DescText>Choose how company are displayed.</DescText>
           </Col>
           <Col span={12}>
-            <Form.Item label="Company Name" name="name" rules={[{required: true}]}>
+            <Form.Item label="Company Name" name="name">
               <Input placeholder='Enter Company Name' />
             </Form.Item>
             <Button type='primary' onClick={() => {onClick(["name", "logo_img"])}}>
@@ -62,15 +65,8 @@ const CompanySetting = () => {
             </Button>
           </Col>
           <Col span={6}>
-            <Form.Item label="Logo" name="logo_img" rules={[{required: true}]}>
+            <Form.Item label="Logo" name="logo_img">
               <ImageUpload listType={"picture-circle"}/>
-              {/* <Upload 
-                showUploadList={false}
-                listType='picture-circle'>
-                  <div className='flex items-center justify-center w-full h-full relative rounded-full to-primary-400 from-purple-400 bg-gradient-to-t'>
-                      <Button type='text' className=' border-0 bg-none text-white'icon={<CameraOutlined />}> Upload</Button>
-                  </div>
-              </Upload> */}
             </Form.Item>
           </Col>
           
@@ -82,20 +78,20 @@ const CompanySetting = () => {
           </Col>
           <Col span={12}>
           <Flex align='center' gap="middle">
-            <Form.Item className='flex-grow' name="email" label="Email" rules={[{required: true}]}>
+            <Form.Item className='flex-grow' name="email" label="Email">
               <Input placeholder='Enter you email' />
             </Form.Item>
-            <Button  type='primary' className='mt-1' onClick={() => {onClick("email")}}>Update</Button>
+            <Button  type='primary' className='mt-1' onClick={() => {onClick(["email"])}}>Update</Button>
   
           </Flex>
           </Col>
           <Col span={12}>
             <Flex align='center' gap="middle">
-              <Form.Item className='flex-grow' name="phone_number" label="Phone Number" rules={[{required: true}]}>
+              <Form.Item className='flex-grow' name="phone_number" label="Phone Number">
                 <Input placeholder='Enter you Phone Number'/>
               </Form.Item>
   
-              <Button type='primary' className='mt-1' onClick={() => {onClick("phone_number")}}>Update</Button>
+              <Button type='primary' className='mt-1' onClick={() => {onClick(["phone_number"])}}>Update</Button>
             </Flex>
           </Col>
           
@@ -112,7 +108,7 @@ const CompanySetting = () => {
                   allowClear 
                   showText
                   mode={['single', 'gradient']}
-                  onChangeComplete={() => {onClick("brand_color")}}
+                  onChangeComplete={() => {onClick(["brand_color"])}}
                   />
               </Form.Item>
           </Col>
@@ -137,17 +133,17 @@ const CompanySetting = () => {
             <Form.Item className='flex-grow' label="Website" name="website">
               <Input addonBefore="https://" placeholder='Enter you website'/>
             </Form.Item>
-            <Button  type='primary' className='mt-1' onClick={() => {onClick("website")}} >Update</Button>
+            <Button  type='primary' className='mt-1' onClick={() => {onClick(["website"])}} >Update</Button>
   
           </Flex>
           </Col>
           <Col span={12}>
             <Flex align='center' gap="middle">
-              <Form.Item className='flex-grow' label="TIN" name="tin" rules={[{required: true}]}>
+              <Form.Item className='flex-grow' label="TIN" name="tin">
                 <Input placeholder='Enter your TIN'/>
               </Form.Item>
   
-              <Button type='primary' className='mt-1' onClick={() => {onClick("tin")}}>Update</Button>
+              <Button type='primary' className='mt-1' onClick={() => {onClick(["tin"])}}>Update</Button>
             </Flex>
           </Col>
   
@@ -159,9 +155,11 @@ const CompanySetting = () => {
           </Col>
           <Col span={12}>
             <Flex align='center' gap="middle">
-              <Form.Item className='flex-grow' label="Currency" name="currency">
-                <SearchInput placeholder="Currency" />
+              <Form.Item className='flex-grow' label="Currency" name="currency_id">
+                <SearchInput placeholder="Currency" serverData={getCurrency} />
               </Form.Item>
+
+              <Button type='primary' className='mt-1' onClick={() => {onClick(["currency_id"])}}>Update</Button>
             </Flex>
           </Col>
   

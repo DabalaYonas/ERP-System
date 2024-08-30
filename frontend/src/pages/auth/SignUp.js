@@ -1,24 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
 import TextField from "../../components/TextField";
 import { FaGlobe, FaRegEnvelope, FaRegEye, FaRegEyeSlash, FaUser } from "react-icons/fa";
-import { useState } from "react";
-import axios from "axios";
+import { useContext, useState } from "react";
 import { Button, message } from "antd";
-
-export async function register(user) {
-  try {
-    return axios.post('http://127.0.0.1:8000/user/register/api/', user, 
-      {headers: {'Content-Type': 'application/json'}, withCredentials: true});
-  } catch (error) {
-    return null;
-  }
-}
+import { AuthContext } from "../../context/AuthContext";
 
 function SignUp() {
     const [inputs, setInputs] = useState({});
     const [eyeOpened, setEyeOpened] = useState(false);
     const [paaswordType, setPasswordType] = useState("password");
     const navigate = useNavigate();
+    const { register } = useContext(AuthContext);
     
     function handleChange(e) {
       var name = e.target.name;
@@ -29,34 +21,17 @@ function SignUp() {
     async function handleSubmit(e) {
       e.preventDefault();
 
-      if (inputs.password === inputs.confirmPassword) {
-        const user = {
-          name: inputs.fullName,
-          email: inputs.email,
-          password: inputs.password
-        }
-     
-        const response = await register(user);
-        
-        if (response) {
-          const companyForm = new FormData();
-          companyForm.append("name", inputs.companyName);   
-          companyForm.append("currency_id", "");       
-          
-          try {
-            
-            await axios.post("http://127.0.0.1:8000/company/api/", companyForm);
-            if (response.status === 200) {
-              console.log(response.data);
-              navigate("/");
-              message.success("Sign Up Seccussfully!")
-            }
+      if (inputs.password === inputs.confirmPassword) {          
+          try {     
+            await register(inputs.fullName, inputs.email, inputs.password, inputs.companyName);   
+            navigate("/login");
+            message.success("Sign up successfully!")
           } catch (error) {
-            console.log(error);
+            message.error(error.message);
+            console.error(error);
           }
-        } 
       } else {
-        console.log("Password is not match!");
+        console.error("Password is not match!");
       } 
     }
 

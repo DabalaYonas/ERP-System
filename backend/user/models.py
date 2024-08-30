@@ -22,6 +22,9 @@ class User(AbstractUser):
     profilePic = models.ImageField(upload_to=upload_image_to, blank=True, null=True)
     company = models.ForeignKey(to=Company, on_delete=models.CASCADE)
     role = models.ForeignKey(to=Role, on_delete=models.SET_NULL, null=True, blank=True)
+    last_login = models.DateTimeField(auto_now=True)
+    is_online = models.BooleanField(default=False)
+
     username = None
     first_name = None
     last_name = None
@@ -30,7 +33,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
     def __str__(self) -> str:
-        return self.name
+        return self.email
 
 
 class UserActivity(models.Model):
