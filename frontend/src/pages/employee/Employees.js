@@ -6,7 +6,7 @@ import {
   UserOutlined
 } from '@ant-design/icons';
 import { Link } from "react-router-dom";
-import { deletEmployee, getEmployees } from "../../actions/handleEmployee";
+import { deletEmployee, getEmployees } from "../../services/handleEmployee";
 import { useEffect, useState } from "react";
 import PageTitle from "../../components/PageTitle";
 

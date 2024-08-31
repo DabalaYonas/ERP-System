@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { getCurrentUser } from '../actions/getCurrentUser';
+import { getCurrentUser } from '../services/getCurrentUser';
 import { getCurrentCompany } from '../services/getCurrentCompany';
 import isLoggedIn from '../actions/isLoggedIn';
 

@@ -1,7 +1,7 @@
 import { Button, Card, Col, DatePicker, Flex, Form, InputNumber, message, Row, Skeleton } from 'antd';
 import React, { useEffect, useState } from 'react'
 import SearchInput from '../../components/SearchInput';
-import { getEmployee, getEmployees } from '../../actions/handleEmployee';
+import { getEmployee, getEmployees } from '../../services/handleEmployee';
 import PageTitle from '../../components/PageTitle';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
@@ -33,7 +33,7 @@ function NewPayslip() {
 
     const onEmployeeChanges = (data) => {        
         data && getEmployee(data.value).then(data => {
-            form.setFieldValue("accountNo", data.bank_acc && data.bank_acc.accountNo)
+            form.setFieldValue("accountNo", data.bank_acc)
         })
     }
 

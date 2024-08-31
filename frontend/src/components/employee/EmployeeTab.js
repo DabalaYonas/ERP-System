@@ -1,8 +1,8 @@
-import { Form, message, Skeleton, Tabs } from 'antd'
+import { Form, Skeleton, Tabs } from 'antd'
 import React, { useEffect, useState } from 'react';
 import { UserOutlined, FileTextOutlined, FolderOpenOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { getEmployee, postEmployees, putEmployee } from '../../actions/handleEmployee';
+import { getEmployee, postEmployees, putEmployee } from '../../services/handleEmployee';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 

@@ -1,15 +1,8 @@
 import TextField from '../../components/TextField';
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext, useState } from 'react';
-import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
 import { FaRegEnvelope, FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
-import { useDispatch } from "react-redux";
-import { setUser } from '../../features/users/userSlice';
 import { Button, message } from 'antd';
-import { getCurrentUser } from '../../actions/getCurrentUser';
-import { getCurrentCompany } from '../../services/getCurrentCompany';
-import { setCompany } from '../../features/company/companySlice';
 import { AuthContext } from '../../context/AuthContext';
 
 function Login() {

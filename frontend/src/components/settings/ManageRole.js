@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Col, Divider, Flex, Form, Input, message, Modal, Row, Space, Switch, Table} from 'antd';
+import { Col, Flex, Form, Input, message, Modal, Row, Space, Switch, Table} from 'antd';
 import MyTypography from '../../components/MyTypography';
 import axios from 'axios';
 import NewButton from '../../components/NewButton';

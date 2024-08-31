@@ -7,7 +7,7 @@ import PersonalForm from '../../components/employee/PersonalForm';
 import WorkForm from '../../components/employee/WorkForm';
 import Tab from '../../components/employee/EmployeeTab';
 import DocumentForm from '../../components/employee/DocumentForm';
-import { getEmployee } from '../../actions/handleEmployee';
+import { getEmployee } from '../../services/handleEmployee';
 import PageTitle from '../../components/PageTitle';
 import axios from 'axios';
 import dayjs from "dayjs";

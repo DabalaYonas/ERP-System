@@ -1,8 +1,8 @@
 import { Button, Col, Flex, Form, InputNumber, Row, Space } from 'antd'
 import React from 'react'
 import SearchInput from '../SearchInput';
-import { getJopPositions, postJopPositions } from '../../actions/handleJopPosition';
-import { getDepartments, postDepartments } from '../../actions/handleDepartment';
+import { getJopPositions, postJopPositions } from '../../services/handleJopPosition';
+import { getDepartments, postDepartments } from '../../services/handleDepartment';
 import { Link } from 'react-router-dom';
 
 function WorkForm({ setActiveKey }) {

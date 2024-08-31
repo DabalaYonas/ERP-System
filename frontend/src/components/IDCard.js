@@ -4,8 +4,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { Button, Flex, Skeleton } from 'antd';
 import { useParams } from 'react-router-dom';
-import { getEmployee } from '../actions/handleEmployee';
-import PageTitle from "../components/PageTitle";
+import { getEmployee } from '../services/handleEmployee';
 
 const IDCard = () => {
   const componentRef = useRef();

@@ -1,4 +1,4 @@
-import { Avatar, Flex, message, Popconfirm, Skeleton, Table, Tooltip } from 'antd'
+import { Avatar, Flex, message, Popconfirm, Table, Tooltip } from 'antd'
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { UserOutlined, EyeOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";

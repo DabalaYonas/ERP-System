@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getAttedances } from '../../actions/handleAttendance';
+import { getAttedances } from '../../services/handleAttendance';
 import dayjs from "dayjs";
 import { Table, Tag } from 'antd';
 

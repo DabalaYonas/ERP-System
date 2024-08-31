@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
-import { Button, Col, DatePicker, Flex, Form, Input, InputNumber, Row, Select, Space, Upload } from 'antd';
-import { CameraOutlined } from '@ant-design/icons'
-import { DeleteOutlined } from "@ant-design/icons";
+import React from 'react';
+import { Button, Col, DatePicker, Flex, Form, Input, InputNumber, Row, Select, Space } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import SearchInput from '../SearchInput';
-import { getBankAccounts } from '../../actions/handleLookupDatas';
+import { getBankAccounts } from '../../services/handleLookupDatas';
 import ImageUpload from '../ImageUpload';
 
 function PersonalForm({ setActiveKey }) {
@@ -15,9 +13,7 @@ function PersonalForm({ setActiveKey }) {
     <Row gutter={20}>
           <Col span={24} className='py-3'>
             <Form.Item name="profilePic" className='mb-0' label="Profile Image">
-              {/* <ImgCrop> */}
                 <ImageUpload />
-              {/* </ImgCrop> */}
             </Form.Item>
           </Col>
       <Col span={12} className='py-2'>

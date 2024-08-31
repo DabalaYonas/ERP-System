@@ -2,10 +2,10 @@ import { Badge, Card, Dropdown, Flex, message, Skeleton, Tag, Tooltip } from 'an
 import React, { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { getApplications, getRecruitment, patchApplication } from '../../actions/handleRecruitment';
+import { getApplications, getRecruitment, patchApplication } from '../../services/handleRecruitment';
 import { EditOutlined, UserOutlined, DeleteOutlined, MoreOutlined} from "@ant-design/icons";
 import NewButton from '../../components/NewButton';
-import { getStages } from '../../actions/handleLookupDatas';
+import { getStages } from '../../services/handleLookupDatas';
 import PageTitle from '../../components/PageTitle';
 import axios from 'axios';
 

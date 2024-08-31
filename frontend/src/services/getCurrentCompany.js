@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getCurrentUser } from "../actions/getCurrentUser";
+import { getCurrentUser } from "../services/getCurrentUser";
 
 export const getCurrentCompany = async() => {
     const user = await getCurrentUser();
