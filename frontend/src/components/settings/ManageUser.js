@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Avatar, Badge, Button, Dropdown, Flex, Form, Input, Select, Space, Table } from 'antd';
+import React, { useContext, useEffect, useState } from 'react';
+import { Avatar, Badge, Button, Dropdown, Flex, Form, Input, message, Select, Space, Table } from 'antd';
 import MyTypography from '../../components/MyTypography';
 import { EditOutlined, UserOutlined, DeleteOutlined, MoreOutlined} from "@ant-design/icons";
 import NewButton from '../../components/NewButton';
@@ -7,6 +7,7 @@ import { DescText } from '../../components/DecriptionText';
 import axios from 'axios';
 import dayjs from "dayjs";
 import SearchInput from '../SearchInput';
+import { AuthContext } from '../../context/AuthContext';
 
 const fetchRoles = async() => {
   return await axios.get("http://127.0.0.1:8000/user/api/role/").then(response => response.data);
@@ -15,6 +16,40 @@ const fetchRoles = async() => {
 const ManageUser = () => {
   const [dataSource, setDataSource] = useState();
   const [loading, setLoading] = useState(true);
+  const { user } = useContext(AuthContext);
+
+  const fetchUsersData = async() => {
+    setLoading(true);
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/user/api/all/", {headers: {"Content-Type": "application/json"}, withCredentials: true});
+      const data = response.data.map(values => ({
+        key: values.id,
+        id: values.id,
+        user: values.name,
+        email: values.email,
+        role: values.role && values.role.id,
+        last_login: dayjs(values.last_login).format("MMM DD, YY - hh:mm A"),
+        date_added: dayjs(values.date_joined).format("MMM DD, YYYY"),
+      }));
+
+      setDataSource(data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+    
+  }
+
+
+  const updateRole = async(option) => {
+    try {
+      await axios.patch("http://127.0.0.1:8000/user/api/", {role_id: option.value}, {headers : {'Content-Type': 'application/json'}, withCredentials: true});
+      message.success("Successfully updated user role!");
+      fetchRoles();
+    } catch (error) {
+      message.error("Can't updated user role!");
+    }
+  }
     const items = [
       {
         label: 'Edit User',
@@ -54,10 +89,13 @@ const ManageUser = () => {
         key: "role",
         dataIndex: "role",
         title: "Role",
-        render: (value, _) => {
-          return <Form.Item initialValue={value} style={{marginBottom: 0}}>
-            <SearchInput serverData={fetchRoles} placeholder="Permission"></SearchInput>
-            </Form.Item>
+        render: (value, {id}) => {
+          
+          return <Form initialValues={{ role: value}} disabled={id !== user.id}>
+                  <Form.Item className='w-52' name="role" style={{marginBottom: 0}}>
+                    <SearchInput serverData={fetchRoles} placeholder="Role" onSelect={updateRole}></SearchInput>
+                  </Form.Item>
+                </Form>
         }
       },
       { 
@@ -81,28 +119,6 @@ const ManageUser = () => {
     ]
 
     useEffect(() => {
-      const fetchUsersData = async() => {
-        setLoading(true);
-        try {
-          const response = await axios.get("http://127.0.0.1:8000/user/api/all/", {headers: {"Content-Type": "application/json"}, withCredentials: true});
-          const data = response.data.map(values => ({
-            key: values.id,
-            id: values.id,
-            user: values.name,
-            email: values.email,
-            role: values.role && values.role.id,
-            last_login: dayjs(values.last_login).format("MMM DD, YY - hh:mm A"),
-            date_added: dayjs(values.date_joined).format("MMM DD, YYYY"),
-          }));
-
-          setDataSource(data);
-          setLoading(false);
-        } catch (error) {
-          console.error(error);
-        }
-        
-      }
-
       const interval = setInterval(() => {
         fetchUsersData();
       }, 300000);
@@ -111,12 +127,6 @@ const ManageUser = () => {
 
       return () => clearInterval(interval);
     }, []);
-  
-    const SelectMenu = ({defaultValue}) => (
-      <Select style={{ width: 180}} defaultValue={defaultValue} placeholder="Permission">
-        <Select.Option value={1}>Admin</Select.Option>
-        <Select.Option value={2}>Viewer</Select.Option>
-      </Select>);
   
     return <>
     

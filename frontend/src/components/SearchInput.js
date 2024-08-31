@@ -50,10 +50,10 @@ function sliceText(text, startText) {
 }
 
 const SearchInput = forwardRef((props, ref) => {
-    const [value, setValue] = useState('');
+    const [value, setValue] = useState(props.value);
     const [options, setOptions] = useState([]);
     
-    useEffect(() => {
+    useEffect(() => {      
       try {
         fetchData(props.serverData, setOptions);
         
@@ -91,9 +91,7 @@ const SearchInput = forwardRef((props, ref) => {
                 props.createEdit(newLabel); 
                 break;
             
-              default:
-                console.log(opt);
-                
+              default:                
                 setValue(opt.label);
                 break;
             }
@@ -107,10 +105,7 @@ const SearchInput = forwardRef((props, ref) => {
 
     const handleChange = (value) => {
       
-      setValue(value);
-      console.log(value);
-      
-      
+      setValue(value);      
       if (props.onChange) {
         props.onChange(value);
       }      

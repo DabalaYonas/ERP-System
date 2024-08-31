@@ -52,7 +52,7 @@ export default function Settings() {
         title: 'Settings',
       }
     ]} />
-    <Card className='mb-3'>
+    <Card>
       <Tabs size='large' centered items={tabItems} />
     </Card>
     </>
