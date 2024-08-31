@@ -1,7 +1,7 @@
 from django.db import models
 from lookup.models import JobPosition, Department, Degree, Stage
 from employee.models import Employee
-# from company.models import Company
+from company.models import Company
 
 class Recruitment(models.Model):
     job_position_id = models.ForeignKey(to=JobPosition, on_delete=models.CASCADE, null=True, blank=True)
@@ -9,6 +9,7 @@ class Recruitment(models.Model):
     email_alias = models.CharField(max_length=200)
     target = models.IntegerField(null=True, blank=True)
     recruiter = models.ForeignKey(to=Employee, on_delete=models.SET_NULL, related_name='recruiter', null=True, blank=True)
+    company = models.ForeignKey(to=Company, on_delete=models.CASCADE, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         jobPosition = JobPosition(name=self.job_position_name)

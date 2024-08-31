@@ -6,7 +6,7 @@ import UserSetting from '../../components/settings/UserSetting';
 import ManageRole from '../../components/settings/ManageRole';
 import GeneralSetting from '../../components/settings/GeneralSetting';
 import Notification from '../../components/settings/Notifications';
-import ManageUser from '../../components/settings/ManageUser';
+import ManageUsers from '../../components/settings/ManageUsers';
 
 const tabItems = [
   {
@@ -27,7 +27,7 @@ const tabItems = [
   {
     key: 4,
     label: "Manage Users",
-    children: <ManageUser />
+    children: <ManageUsers />
   },
   {
     key: 5,

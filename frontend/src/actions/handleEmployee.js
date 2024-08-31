@@ -4,15 +4,15 @@ import axios from "axios";
 export const URL = "http://127.0.0.1:8000/employee/api/";
 
 export async function getEmployees() {
-    return axios.get(URL).then(response => response.data).catch(error => error);
+    return axios.get(URL, {withCredentials: true}).then(response => response.data).catch(error => error);
 }
 
 export async function getEmployee(id) {
-    return axios.get(URL + id + "/").then(response => response.data).catch(error => error);
+    return axios.get(URL + id + "/", {withCredentials: true}).then(response => response.data).catch(error => error);
 }
 
 export async function postEmployees(data) {
-    return axios.post(URL, data, {headers: {'content-type': 'multipart/form-data'}}).then(response => {
+    return axios.post(URL, data, {headers: {'content-type': 'multipart/form-data'}, withCredentials: true}).then(response => {
         message.success("Employee created seccussfully!");
         return response.data;
     }).catch(error => {
@@ -23,7 +23,7 @@ export async function postEmployees(data) {
 }
 
 export async function putEmployee(data, id) {
-    return axios.put(URL + id + "/", data, {headers: {'content-type': 'multipart/form-data'}}).then(response => {
+    return axios.put(URL + id + "/", data, {headers: {'content-type': 'multipart/form-data'}, withCredentials: true}).then(response => {
         message.success("Employee updated seccussfully!");
         return response.data;
     }).catch(error => {
@@ -34,7 +34,7 @@ export async function putEmployee(data, id) {
 }
 
 export async function deletEmployee(id) {
-    return axios.delete(URL + id + "/").then(response => {
+    return axios.delete(URL + id + "/", {withCredentials: true}).then(response => {
         message.success("Employee deleted seccussfully!");
         return response.data;
     }).catch(error => {

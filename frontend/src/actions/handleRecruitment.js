@@ -5,15 +5,15 @@ const ApplicationUrl = "http://127.0.0.1:8000/recruitment/application/api/";
 const ApplicantUrl = "http://127.0.0.1:8000/recruitment/applicant/api/";
 
 export const getRecruitments = async() => {
-    return await axios.get(Url).then(response => response.data);
+    return await axios.get(Url, {withCredentials: true}).then(response => response.data);
 }
 
 export const getRecruitment = async(id) => {
-    return await axios.get(Url + id + "/").then(response => response.data);
+    return await axios.get(Url + id + "/", {withCredentials: true}).then(response => response.data);
 }
 
 export const postRecruitment = async(data) => {
-    return await axios.post(Url, data).then(response => response.data);
+    return await axios.post(Url, data, {withCredentials: true}).then(response => response.data);
 }
 
 export const getApplications = async() => {

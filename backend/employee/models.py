@@ -1,5 +1,5 @@
 from django.db import models
-from lookup.models import Department, JobPosition, BankAccount
+from lookup.models import Department, JobPosition
 from company.models import Company
 
 def upload_profile_to(int, filename):
@@ -11,14 +11,14 @@ def upload_id_to(int, filename):
 
 class Employee(models.Model):
     name = models.CharField(max_length=200)
-    email = models.EmailField(max_length=200)
+    email = models.EmailField(max_length=200,null=True, blank=True)
 
     GEND = (("Male", "Male"),
             ("Female", "Female"))
     
-    gender = models.CharField(max_length=200, choices=GEND)
-    phone_number = models.CharField(max_length=200)
-    bdate = models.DateField()
+    gender = models.CharField(max_length=200, choices=GEND, null=True, blank=True)
+    phone_number = models.CharField(max_length=200, null=True, blank=True)
+    bdate = models.DateField(null=True, blank=True)
 
     profilePic = models.ImageField(upload_to=upload_profile_to, null=True, blank=True)
     idImg = models.ImageField(upload_to=upload_id_to, null=True, blank=True)

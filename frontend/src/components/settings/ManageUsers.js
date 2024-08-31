@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Avatar, Badge, Button, Dropdown, Flex, Form, Input, message, Select, Space, Table } from 'antd';
-import MyTypography from '../../components/MyTypography';
+import MyTypography from '../MyTypography';
 import { EditOutlined, UserOutlined, DeleteOutlined, MoreOutlined} from "@ant-design/icons";
-import NewButton from '../../components/NewButton';
-import { DescText } from '../../components/DecriptionText';
+import NewButton from '../NewButton';
+import { DescText } from '../DecriptionText';
 import axios from 'axios';
 import dayjs from "dayjs";
 import SearchInput from '../SearchInput';
@@ -13,7 +13,7 @@ const fetchRoles = async() => {
   return await axios.get("http://127.0.0.1:8000/user/api/role/").then(response => response.data);
 }
 
-const ManageUser = () => {
+const ManageUsers = () => {
   const [dataSource, setDataSource] = useState();
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
@@ -145,4 +145,4 @@ const ManageUser = () => {
     </>
   }
 
-  export default ManageUser;
+  export default ManageUsers;
