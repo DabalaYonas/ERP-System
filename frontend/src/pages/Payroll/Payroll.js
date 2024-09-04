@@ -101,7 +101,7 @@ const PayrollTab = () => {
         setDataSource(data);
         setLoading(false);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     }
 
@@ -116,7 +116,7 @@ const PayrollTab = () => {
         const listOfData = [];
 
         newSelectedRowKeys.forEach(key => {
-            const payment_date = payrollDatas.filter(data => data.id === key)[0].payment_month_year;
+          const payment_date = payrollDatas.filter(data => data.id === key)[0].payment_month_year;
           const result = responseData.filter(data => dayjs(data.payment_date).isSame(dayjs(payment_date), 'month'));
           const data = responseData.map(item => ({...item, employee: item.employee.name}));
 
@@ -173,12 +173,13 @@ const PayrollTab = () => {
   }
   
   return <> 
-  <PageTitle title="Employee Payroll" items={[
-    {
-      path: '/payroll',
-      title: 'Payroll',
-    }
-  ]} />
+      <PageTitle title="Employee Payroll" items={[
+        {
+          path: '/payroll',
+          title: 'Payroll',
+        }
+      ]} />
+      
       <Flex className='mb-3' align='center' justify='space-between'>
         <Input.Search placeholder='Search Employee Payroll' style={{ maxWidth: "420px"}} enterButton/>
         <Flex gap={10}>
@@ -228,7 +229,6 @@ const tabsItems = [
 ];
 
 function Payroll() {
-
   return (
     <>
         <Tabs items={tabsItems} />
@@ -236,4 +236,4 @@ function Payroll() {
   )
 }
 
-export default Payroll
+export default Payroll;

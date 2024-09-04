@@ -11,12 +11,14 @@ import dayjs from "dayjs";
 import { attendanceStatus } from '../../components/attendance/AttendanceTable';
 
 const AttendanceChild = () => {
-    const [dataSource, setDataSource] = useState(); 
+    const [dataSource, setDataSource] = useState([]); 
+    const [loading, setLoading] = useState(true); 
     const params = useParams();
     const userId = params ? params.userId : null;  
 
     useEffect(() =>{
       const loadDatas = async() => {
+        setLoading(true);
         try {
           const responseDatas = await axios.get("http://127.0.0.1:8000/attendance/api/", {withCredentials: true}).then(response => response.data);
           const result = responseDatas.filter(data => data.employee.id == userId);     
@@ -28,6 +30,7 @@ const AttendanceChild = () => {
             status: attendanceStatus(dayjs(data.checkIn)),
           }));
   
+          setLoading(false);
           setDataSource(datas);
         } catch (error) {
           console.error(error);
@@ -71,7 +74,12 @@ const AttendanceChild = () => {
       },
     ];
 
-    return <Table className='w-full' columns={columItems} dataSource={dataSource}></Table>
+    return <Table 
+              pagination={dataSource.length > 10} 
+              className='w-full' 
+              loading={loading}
+              columns={columItems} 
+              dataSource={dataSource}></Table>
 };
 
 const ComingSoon = () => (
@@ -119,7 +127,6 @@ function ViewEmployee() {
           setName(data.name);
           setProfilePic(data.profilePic);
           setGender(data.gender);
-          console.log();
           
           data.job_position && setJobPosition(data.job_position.name);
           

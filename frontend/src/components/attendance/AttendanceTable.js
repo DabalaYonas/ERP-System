@@ -89,7 +89,11 @@ function AttendanceTable({ date = dayjs(), rowSelection = false }) {
   }, [dayjs(date).format("YYYY-MM-DD")]);
 
   return <>
-        <Table rowSelection={rowSelection} columns={columItems} dataSource={dataSource}/>
+        <Table 
+          pagination={dataSource.length > 10} 
+          rowSelection={rowSelection} 
+          columns={columItems} 
+          dataSource={dataSource}/>
     </>
 }
 

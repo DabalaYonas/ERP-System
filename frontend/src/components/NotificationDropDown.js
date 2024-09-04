@@ -44,7 +44,7 @@ export default function NotificationDropDown({ children, title, items, subTitle,
   }
 
   return (
-  <div className=' relative'>
+  <div className='relative'>
     
     <div 
       className='cursor-pointer flex select-none' 
@@ -56,7 +56,7 @@ export default function NotificationDropDown({ children, title, items, subTitle,
     
     <div 
       onClick={(e) => e.stopPropagation()}
-      className={`notif-card ${open ? 'show' : 'hide'}`}>
+      className={`custom-scroll notif-card ${open ? 'show' : 'hide'}`}>
 
         {(title || showIcon) && (<Flex align='center' justify='space-between' className='p-4'>
           <MyTypography level={3}>{title}</MyTypography>

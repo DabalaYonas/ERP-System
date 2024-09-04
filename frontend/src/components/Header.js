@@ -40,9 +40,8 @@ const notifItems = [
   },
 ]  
 
-
 export default function CustomHeader({ profilePic, collapsed, setCollapsed, colorBgContainer }) {
-  const { logout } = useContext(AuthContext);
+  const { logout, user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const onClick = async({key}) => {
@@ -73,7 +72,7 @@ export default function CustomHeader({ profilePic, collapsed, setCollapsed, colo
               height: 64,
             }}
           />
-          <Typography.Title level={3} type='secondary' style={{margin: '0px'}}>Hello, Dabala</Typography.Title>
+          <Typography.Title level={3} type='secondary' style={{margin: '0px'}}>Hello, {user.name.split(" ")[0]}</Typography.Title>
         </Flex>
 
         <Flex align='center' style={{marginRight: '50px'}}>

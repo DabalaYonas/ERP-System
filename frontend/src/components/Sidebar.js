@@ -131,7 +131,6 @@ const Sidebar = () => {
         <Content className='custom-scroll' 
           style={{
             overflowY: "auto",
-            scrollbarWidth: 'none',
             padding: "10px 16px"
           }}>
             <Outlet />

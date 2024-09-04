@@ -38,8 +38,6 @@ const ManageRole = () => {
         title: "Role",
         width: 220,
         fixed: 'left',
-        defaultSortOrder: 'ascend',
-        sorter: (a, b) => a.id - b.id,
       },
       { 
         dataIndex: "manage_employee",
@@ -91,57 +89,57 @@ const ManageRole = () => {
     }
 
     return <>
-    <MyTypography level={3}>Role management</MyTypography>
-    <DescText>Manage HavenERP role and their permission.</DescText>
-  
-    <Flex justify='space-between' className='py-3'>
-      <MyTypography level={3}>All permissions</MyTypography>
-      <Space>
-        <Input.Search style={{width: 350}} placeholder='Search' />
-        <NewButton onClick={() => {setOpen(true);}}>Add Role</NewButton>
-      </Space>
-    </Flex>
-  
-      <Table 
-        rowSelection 
-        pagination={columns.length > 10}
-        dataSource={roleDataSource} 
-        columns={columns}></Table>
+      <MyTypography level={3}>Role management</MyTypography>
+      <DescText>Manage HavenERP role and their permission.</DescText>
+    
+      <Flex justify='space-between' className='py-3'>
+        <MyTypography level={3}>All permissions</MyTypography>
+        <Space>
+          <Input.Search style={{width: 350}} placeholder='Search' />
+          <NewButton onClick={() => {setOpen(true);}}>Add Role</NewButton>
+        </Space>
+      </Flex>
+    
+        <Table 
+          rowSelection 
+          pagination={columns.length > 10}
+          dataSource={roleDataSource} 
+          columns={columns}></Table>
 
-      <Modal 
-        onCancel={() => {setOpen(false)}}
-        onOk={handleOK}
-        open={open}
-        title="Add Role and Permission">
-          <Form form={form} size='large'>
-            <Row>
-              <Col span={24}>
-                <Form.Item label="Role" name="name" rules={[{required: true}]}>
-                  <Input placeholder='Role' />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item label="Manage employee" name="manage_employee">
-                  <Switch />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item label="Manage payroll" name="manage_payroll">
-                  <Switch />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item label="Manage attendance" name="manage_attendance">
-                  <Switch />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item label="Manage recruitment" name="manage_recruitment">
-                  <Switch />
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form>
+        <Modal 
+          onCancel={() => {setOpen(false)}}
+          onOk={handleOK}
+          open={open}
+          title="Add Role and Permission">
+            <Form form={form} size='large'>
+              <Row>
+                <Col span={24}>
+                  <Form.Item label="Role" name="name" rules={[{required: true}]}>
+                    <Input placeholder='Role' />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item label="Manage employee" name="manage_employee">
+                    <Switch />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item label="Manage payroll" name="manage_payroll">
+                    <Switch />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item label="Manage attendance" name="manage_attendance">
+                    <Switch />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item label="Manage recruitment" name="manage_recruitment">
+                    <Switch />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
         </Modal>
     </>
   }
