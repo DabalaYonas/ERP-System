@@ -1,9 +1,6 @@
 import React from 'react';
 import { Card } from 'antd';
-import Tab from '../../components/employee/EmployeeTab';
-import PersonalForm from '../../components/employee/PersonalForm';
-import WorkForm from '../../components/employee/WorkForm';
-import DocumentForm from '../../components/employee/DocumentForm';
+import EmployeeTab from '../../components/employee/EmployeeTab';
 import PageTitle from '../../components/PageTitle';
 
 const breadcrumbItems = [
@@ -22,10 +19,7 @@ function AddEmployee() {
     <>
     <PageTitle items={breadcrumbItems} title="New Employee" />
     <Card >
-      <Tab 
-          PersonalChildern={PersonalForm} 
-          WorkChildren={WorkForm} 
-          DocumentChildren={DocumentForm} />
+      <EmployeeTab />
     </Card>
       </>
   )

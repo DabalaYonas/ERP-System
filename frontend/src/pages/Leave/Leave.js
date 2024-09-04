@@ -2,6 +2,8 @@ import { Badge, Button, Calendar, Card, Flex, Progress, Table, Tabs, Tag, Timeli
 import React from 'react'
 import PageTitle from '../../components/PageTitle'
 import StatisticCard from '../../components/StatisticCard'
+import MyTypography from '../../components/MyTypography'
+import MyCard from '../../components/MyCard'
 
 const requestColumn = [{
   dataIndex: "name",
@@ -126,16 +128,16 @@ const LeaveSummary = () => {
         <StatisticCard value={20} title="Sick Leave"/>
         <StatisticCard value={10} title="Other Leave"/>
       </Flex>
-      <Card title="Leave Requests">
+      <MyCard title="Leave Requests">
         <Table pagination={fakeData2.length > 10} columns={requestColumn} dataSource={fakeData}/>
-      </Card>
-      <Card title="Leave Calander">
+      </MyCard>
+      <MyCard title="Leave Calander">
         <Table pagination={fakeData2.length > 10} columns={calendarColumn} dataSource={fakeData2}/>
-      </Card>
+      </MyCard>
       {/* <Calendar /> */}
     </Flex>
     
-    <Card className='flex-shrink-0 w-64' title="Upcoming Holidays">
+    <MyCard title="Upcoming Holidays" className='flex-shrink w-72'>
       <Timeline
           mode='left'
           items={[
@@ -157,7 +159,7 @@ const LeaveSummary = () => {
             },
           ]}
         />
-    </Card>
+    </MyCard>
   </Flex>
   </>
 }

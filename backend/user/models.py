@@ -14,6 +14,9 @@ class Role(models.Model):
 
     def __str__(self) -> str:
         return self.name
+    
+    class Meta:
+        ordering = ["id"]
 
 class User(AbstractUser):
     name = models.CharField(max_length=200)
@@ -33,8 +36,10 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
     def __str__(self) -> str:
-        return self.email
-
+        return f'{self.name} {self.email}'
+    
+    class Meta:
+        ordering = ["date_joined"]
 
 class UserActivity(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

@@ -61,11 +61,11 @@ function GeneratePayroll() {
                         <DatePicker className='w-full' defaultValue={new dayjs()} format={"DD-MM-YYYY"} allowClear={false} disabled/>
                     </Form.Item>
                 </Col>
-                <Col span={8}>
+                {/* <Col span={8}>
                     <Form.Item label="Payment month & year" name="month_year" rules={[{required: true, message: "Payment month is required!"}]}>
                         <DatePicker className='w-full' picker='month' />
                     </Form.Item>
-                </Col>
+                </Col> */}
                 <Col span={24} />
                 <Col span={24}>
                     <Button className='px-10' type='primary' htmlType='submit'>Generate Payroll</Button>
@@ -75,7 +75,7 @@ function GeneratePayroll() {
     </Card>
 
     {generated && <Card className='my-3' title="Employee Details">
-        <PayslipTable infinity paymentDate={paymentDate} noSelection callback={setTableCount}/>
+        <PayslipTable infinity  noSelection callback={setTableCount}/>
         {tableCount > 0 && <Button className='mt-4 px-12' size='large' type='primary' onClick={onSubmit}>Submit</Button>}
     </Card>}
   </>

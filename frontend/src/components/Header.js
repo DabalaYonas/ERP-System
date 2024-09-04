@@ -1,16 +1,58 @@
-import React from 'react'
-import { Layout, Input, Typography, Flex, Button, Avatar, Row, Col, Skeleton } from 'antd';
+import React, { useContext, } from 'react'
+import { Layout, Input, Typography, Flex, Button, Avatar, Row, Col, Dropdown, Badge} from 'antd';
 import {
   UserOutlined,
   BellOutlined,
-  SearchOutlined
+  SearchOutlined,
+  LogoutOutlined,
+  MoonOutlined,
+  SunOutlined,
 } from '@ant-design/icons';
 import { FaBars } from "react-icons/fa";
-import { useSelector } from 'react-redux';
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from '../context/AuthContext';
+import NotificationDropDown from './NotificationDropDown';
 
 const { Header } = Layout;
 
+const items = [
+  {
+  label: <Link to="/settings/account">Profile</Link>,
+  key: '0',
+  icon: <UserOutlined />
+  },
+  {
+    label: "Logout",
+    key: '1',
+    icon: <LogoutOutlined />
+  }
+]
+const notifItems = [
+  {
+    avatar: "/photo_profile.jpg",
+    content: <p className='text-black text-opacity-55'><span className='text-black text-opacity-85 font-semibold'>Dabala Yonas</span> ask for annual leave for 12 days.</p>,
+    time: "1h ago",
+  },
+  {
+    avatar:null,
+    content: <p className='text-black text-opacity-55'><span className='text-black text-opacity-85 font-semibold'>4 new applicant</span> are applied for <span className='text-black text-opacity-85 font-semibold'>developer</span> job.</p>,
+    time: "20m ago",
+  },
+]  
+
+
 export default function CustomHeader({ profilePic, collapsed, setCollapsed, colorBgContainer }) {
+  const { logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const onClick = async({key}) => {
+    switch (key) {
+      case '1':
+        await logout();
+        navigate("/login");
+        break;
+    }
+  }
 
   return (
     <Header
@@ -47,9 +89,27 @@ export default function CustomHeader({ profilePic, collapsed, setCollapsed, colo
             </Row>
           </Flex>
 
-          <Flex align='center' gap='10px' >
-            <BellOutlined className='text-base cursor-pointer bg-slate-200 p-2 rounded text-slate-700' />
-            {profilePic ? <Avatar src={profilePic} /> : <Avatar icon={<UserOutlined />} />}
+          <Flex align='center' gap='middle' >
+            <NotificationDropDown
+              title="Notification (2)"
+              showIcon
+              onIconClick={() => {navigate("/settings/notification")}}
+              subTitle="Today"
+              items={notifItems}>
+              <Badge count={2}>
+                <BellOutlined className='text-base bg-slate-100 p-2 rounded-md text-slate-800' />
+              </Badge>
+            </NotificationDropDown>
+           
+            {1 ? <MoonOutlined className='text-base cursor-pointer bg-slate-100 p-2 rounded-md text-slate-800' /> :
+            <SunOutlined className='text-base cursor-pointer bg-slate-100 p-2 rounded-md text-slate-800' />}
+           
+            <Dropdown 
+              className='cursor-pointer'
+              menu={{items, onClick}}
+              trigger={['click']}>
+              {profilePic ? <Avatar src={profilePic} /> : <Avatar icon={<UserOutlined />} />}
+            </Dropdown>
           </Flex>
           
         </Flex>

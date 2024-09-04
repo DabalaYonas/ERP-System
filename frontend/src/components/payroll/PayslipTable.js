@@ -7,6 +7,31 @@ import { Link } from 'react-router-dom';
 
 const CURRENCY = "ETB";
 
+const handleDelete = async(id) => {
+  try {
+    await axios.delete(`http://127.0.0.1:8000/payroll/payslip/api/${id}/`);   
+    message.success("This employee payslip deleted successfully!");
+  } catch (error) {
+    message.error("Sorry! Can't delete this employee payslip right now!")
+  }
+}
+
+const ActionButton = ({id}) => {
+  return <Flex gap={6}>
+    <Tooltip title="Edit Payslip">
+      <Link to={`payslip/${id}/`} className='cursor-pointer text-primary-500 hover:text-primary-400'><EyeOutlined /></Link>
+    </Tooltip>
+    <Tooltip title="View Payslip">
+      <Link to={`payslip/${id}/edit-payslip`} className='cursor-pointer text-primary-500 hover:text-primary-400'><EditOutlined /></Link>  
+    </Tooltip>
+  <Popconfirm
+    title="Delete Employee" 
+    description="Are you sure to delete this employee?"
+    onConfirm={() => handleDelete(id)}
+    okText="Delete"
+    cancelText="Cancel"><span className='cursor-pointer text-red-500 hover:text-red-400'><Tooltip title="Delete Payslip"><DeleteOutlined /></Tooltip></span></Popconfirm></Flex>
+}
+
 const columns = [
   {
     title: 'Employee Name',
@@ -37,10 +62,43 @@ const columns = [
   },
   
   {
-  key: "action",
-  dataIndex: "action",
-  title: "Actions",
+    key: "action",
+    dataIndex: "action",
+    title: "Actions",
+    render: (value, _) => {
+      return <ActionButton id={value}/>
+    }
   }
+];
+
+const columnsNoAction = [
+  {
+    title: 'Employee Name',
+    dataIndex: 'name',
+    key: 'name',
+  },
+  {
+    title: 'Basic Salary',
+    dataIndex: 'basic',
+    key: 'basic',
+  },
+  {
+    title: 'Gross Salary',
+    dataIndex: 'gross_earning',
+    key: 'gross_earning',
+  },
+
+  {
+    title: 'Total Deduction',
+    dataIndex: 'tot_deduction',
+    key: 'tot_deduction',
+  },
+
+  {
+    title: 'Net Pay',
+    dataIndex: 'net',
+    key: 'net',
+  },
 ];
 
 const formatNumber = (number, currency) => {
@@ -53,34 +111,9 @@ const employeeName = (name, img) => {
   return <Flex align='center' gap={10}>{img ? <Avatar className='flex-shrink-0' src={img}></Avatar> : <Avatar className='flex-shrink-0' icon={<UserOutlined />}></Avatar>} {name}</Flex>
 }
   
-function PayslipTable({ infinity = false, paymentDate, noSelection=false, callback }) {
+function PayslipTable({ infinity = false, paymentDate, noSelection=false, callback, noActions=false }) {
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const handleDelete = async(id) => {
-    try {
-      await axios.delete(`http://127.0.0.1:8000/payroll/payslip/api/${id}/`);   
-      message.success("This employee payslip deleted successfully!");
-    } catch (error) {
-      message.error("Sorry! Can't delete this employee payslip right now!")
-    }
-  }
-
-  const ActionButton = ({id}) => {
-    return <Flex gap={6}>
-      <Tooltip title="Edit Payslip">
-        <Link to={`payslip/${id}/`} className='cursor-pointer text-primary-500 hover:text-primary-400'><EyeOutlined /></Link>
-      </Tooltip>
-      <Tooltip title="View Payslip">
-        <Link to={`payslip/${id}/edit-payslip`} className='cursor-pointer text-primary-500 hover:text-primary-400'><EditOutlined /></Link>  
-      </Tooltip>
-    <Popconfirm
-      title="Delete Employee" 
-      description="Are you sure to delete this employee?"
-      onConfirm={() => handleDelete(id)}
-      okText="Delete"
-      cancelText="Cancel"><span className='cursor-pointer text-red-500 hover:text-red-400'><Tooltip title="Delete Payslip"><DeleteOutlined /></Tooltip></span></Popconfirm></Flex>
-  }
 
   useEffect(() => {
     const loadPayslipData = async() => {
@@ -94,7 +127,8 @@ function PayslipTable({ infinity = false, paymentDate, noSelection=false, callba
               gross_earning: formatNumber(value.gross_earning, CURRENCY),
               tot_deduction: formatNumber(value.total_deduction, CURRENCY),
               net: formatNumber(value.net_salary, CURRENCY),
-              action: <ActionButton id={value.id} />,}
+              action: value.id,
+            }
         }
         
         const result = response.data.filter(data => dayjs(data.payment_date).isSame(paymentDate, 'month'));
@@ -122,7 +156,7 @@ function PayslipTable({ infinity = false, paymentDate, noSelection=false, callba
           loading={loading} 
           pagination={!infinity} 
           rowSelection={!noSelection} 
-          columns={columns} 
+          columns={noActions ? columnsNoAction : columns} 
           dataSource={dataSource}/>
     </>
   )

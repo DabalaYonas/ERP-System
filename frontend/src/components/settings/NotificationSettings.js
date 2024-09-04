@@ -1,9 +1,9 @@
 import React from 'react';
 import {Col, List, Row, Space, Switch } from 'antd';
-import MyTypography from '../../components/MyTypography';
-import { DescText } from '../../components/DecriptionText';
+import MyTypography from '../MyTypography';
+import { DescText } from '../DecriptionText';
 
-const Notification = () => {
+const NotificationSettings = () => {
     return <>
     <Space 
       direction='vertical'
@@ -59,4 +59,4 @@ const Notification = () => {
     </>
   }
 
-  export default Notification;
+  export default NotificationSettings;

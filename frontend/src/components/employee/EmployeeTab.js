@@ -5,32 +5,35 @@ import dayjs from "dayjs";
 import { getEmployee, postEmployees, putEmployee } from '../../services/handleEmployee';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import PersonalForm from './PersonalForm';
+import WorkForm from './WorkForm';
+import DocumentForm from './DocumentForm';
 
 
-const profileTabItems = (PersonalChildern, WorkChildren, DocumentChildren, setActiveKey) => {
+const profileTabItems = (setActiveKey) => {
   
   return [
     {   key: 'personal',
         label: 'Personal Informations',
         icon: <UserOutlined />,
-        children: <PersonalChildern setActiveKey={setActiveKey}/>,
+        children: <PersonalForm setActiveKey={setActiveKey}/>,
     },
     {   key: 'work',
         label: 'Work Informations',
         icon: <FileTextOutlined />,
-        children: <WorkChildren setActiveKey={setActiveKey}/>,
+        children: <WorkForm setActiveKey={setActiveKey}/>,
     },
     {   key: 'document',
         label: 'Documents',
         icon: <FolderOpenOutlined />,
-        children: <DocumentChildren />
+        children: <DocumentForm />
     }
   ]};
 
-function Tab({disabled = false, PersonalChildern, WorkChildren, DocumentChildren, hasInitial = false}) {
+function EmployeeTab({disabled = false, initialValue, hasInitial = false}) {
   const [activeKey, setActiveKey] = useState();
   const [form] = Form.useForm();
-  const [initialValues, setInitialValues] = useState(null);
+  const [initialValues, setInitialValues] = useState(initialValue);
   const params = useParams();
   const userId = params ? params.userId : null;  
   const navigate = useNavigate();
@@ -91,7 +94,8 @@ function Tab({disabled = false, PersonalChildern, WorkChildren, DocumentChildren
         activeKey={activeKey}
         onChange={(key) => {setActiveKey(key)}}
         defaultActiveKey="personal"
-        items={profileTabItems(PersonalChildern, WorkChildren, DocumentChildren, setActiveKey)}/>
+        items={profileTabItems(setActiveKey)}/>
+
       </Form>
       
 {/* 
@@ -126,4 +130,4 @@ function Tab({disabled = false, PersonalChildern, WorkChildren, DocumentChildren
   )
 }
 
-export default Tab
+export default EmployeeTab

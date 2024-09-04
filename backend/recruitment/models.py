@@ -18,12 +18,18 @@ class Recruitment(models.Model):
 
         return super().save(*args, **kwargs)
     
+    def __str__(self) -> str:
+        return f"{self.job_position_name}"
+    
 class Applicant(models.Model):
     name = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=200)
     email = models.EmailField(max_length=200, null=True, blank=True)
     degree = models.ForeignKey(to=Degree, on_delete=models.SET_NULL, related_name='appl_degree', null=True, blank=True)
     linkidin_profile = models.CharField(max_length=200, null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f"{self.id}. {self.name}"
 
 
 class Application(models.Model):
@@ -33,4 +39,8 @@ class Application(models.Model):
     expected_salary = models.FloatField(null=True, blank=True)
     proposed_salary = models.FloatField(null=True, blank=True)
     stage_id = models.ForeignKey(to=Stage, on_delete=models.SET_NULL, related_name='app_stage', null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f"{self.recruitment} {self.applicant}"
+    
 

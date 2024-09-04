@@ -57,14 +57,16 @@ const columns = [
       const id = value2.id;
       
       return value && <Flex>
-        <Link to={`/employees/${id}`}><EyeOutlined className="mr-2 text-base cursor-pointer" /></Link>, 
+        <Link to={`/employees/${id}`}><EyeOutlined className="mr-2 text-base cursor-pointer" /></Link>
 
         <Popconfirm 
             title="Delete Employee" 
             description="Are you sure to delete this employee?"
             onConfirm={() => handleDelete(id)}
             okText="Delete"
-            cancelText="Cancel"><DeleteOutlined className="mr-2 text-base cursor-pointer transition hover:text-red-500"/></Popconfirm>
+            cancelText="Cancel">
+              <DeleteOutlined className="mr-2 text-base cursor-pointer transition hover:text-red-500"/>
+            </Popconfirm>
         </Flex>
     }
   },

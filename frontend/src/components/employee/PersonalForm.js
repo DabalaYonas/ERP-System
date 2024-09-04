@@ -53,7 +53,7 @@ function PersonalForm({ setActiveKey }) {
       </Col>
     </Row>
 
-    <Flex className='py-3' justify='end'>
+    <Flex className='py-1' justify='end'>
       <Space>
         <Button type='default' onClick={() => {navigate("/employees")}}>Cancel</Button>
         <Button type='primary' onClick={() => {setActiveKey("work");}}>Next</Button>

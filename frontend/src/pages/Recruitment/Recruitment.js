@@ -104,6 +104,7 @@ function Recruitment() {
       try {
         postRecruitment(formData);
         message.success("Succesfully saved this Job Position!");
+        window.location.reload();
         setIsOpen(false);
       } catch (error) {
         message.error("Can't save this Job Positions");

@@ -1,4 +1,4 @@
-import { Badge, Card, Dropdown, Flex, message, Skeleton, Tag, Tooltip } from 'antd';
+import { Badge, Card, Dropdown, Flex, message, Modal, Popconfirm, Skeleton, Tag, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -8,48 +8,63 @@ import NewButton from '../../components/NewButton';
 import { getStages } from '../../services/handleLookupDatas';
 import PageTitle from '../../components/PageTitle';
 import axios from 'axios';
+import { DescText } from '../../components/DecriptionText';
 
 const COLORS = ["magenta", "red", "green", "blue", "purple", "lime", "gold", "volcano", "orange", "cyan"];
 
 const ListItem = ({item, index}) => {  
+  const [open, setOpen] = useState(false);
   const items = [
     {
-      label: 'Edit Application',
+      label: "Refuse",
       key: '1',
-      icon: <EditOutlined />,
     },
     {
-      label: 'View Application',
+      label: <Popconfirm
+                title="Delete Application" 
+                placement="bottom"
+                arrow={false}
+                description="Are you sure to delete this application?"
+                onConfirm={() => handleDelete()}
+                okText="Delete"
+                cancelText="Cancel">
+
+             Delete
+            
+        </Popconfirm>,
       key: '2',
-      icon: <UserOutlined />,
-    },
-    {
-      label: 'Delete Application',
-      key: '3',
-      icon: <DeleteOutlined />,
-      danger: true,
     },
   ]  
 
+  const statusItem = [
+    {
+      label: <Badge status="success" text="In Progress" />,
+      key: '1',
+    },
+    {
+      label: <Badge status="default" text="Ready for Next Stage" />,
+      key: '2',
+    },
+    {
+      label: <Badge status="error" size="default" text="Blocked" />,
+      key: '3',
+    },
+  ]
+
   const handleDelete = async() => {
     await axios.delete(`http://127.0.0.1:8000/recruitment/application/api/${item.id}/`).then(response => {
-      // message.success("Deleted application successfully!");
       window.location.reload();
     }).catch(error => {console.error(error);})
   }
 
   const onClick = ({ key }) => {
-    switch(key) {
-      case '1':
-        return
-      case '2':
-        return
-      case '3':
-        handleDelete(key);
-    }    
+    
   }
-  return <Draggable key={item.id} draggableId={item.id} index={index}>
+
+  return <>
+  <Draggable key={item.id} draggableId={item.id} index={index}>
     {(provided) => (
+      // <Badge.Ribbon text="HIRED" color='green'>
       <Card
         ref={provided.innerRef}
         {...provided.draggableProps}
@@ -62,24 +77,35 @@ const ListItem = ({item, index}) => {
         }} 
         title={<Flex justify='space-between'>
             <Tag color={COLORS[item.id % COLORS.length]}>{item.jobPosition}</Tag> 
-            <Dropdown menu={{items, onClick}} trigger={["click"]}><MoreOutlined /></Dropdown>
+            <Dropdown className=' cursor-pointer' menu={{items}} trigger={["click"]}><MoreOutlined /></Dropdown>
           </Flex>}>
           
         <Flex justify='space-between'>
           <Link to={item.id} className='text-base font-medium'>{item.name}</Link>
-          <Tooltip className='cursor-pointer' title={item.status} color={item.status === "Success" ? "green" : item.status === "Error" ? "red" : "gray"}>
-            <Badge status={item.status.toLowerCase()} />
-          </Tooltip>
+            <Dropdown className='cursor-pointer' menu={{items: statusItem}} trigger={["click"]}>
+              <Badge size="default" status={item.status.toLowerCase()} />
+            </Dropdown>
         </Flex>
       </Card>
+      // </Badge.Ribbon>
     )}
   </Draggable>
+
+  <Modal
+    title="Delete Application"
+    okText="Delete"
+    onCancel={() => {setOpen(false)}}
+    open={open}>
+      <DescText>Are you sure you want to delete this application?</DescText>
+  </Modal>
+  
+  </>
 }
 
-const List = ({column, columnId}) => {
-  return <div className='my-2 p-3 cursor-default'>
+const List = ({column, columnId}) => {  
+  return <div className='my-2 p-3 cursor-default' key={columnId} >
       <h2 className='font-medium text-lg border-b-8 pb-2'>{column.name}</h2>
-      <Droppable key={columnId} droppableId={columnId}>
+      <Droppable droppableId={columnId}>
       {(provided) => (
         <div
           {...provided.droppableProps}
@@ -88,9 +114,11 @@ const List = ({column, columnId}) => {
             width: 280,
             minHeight: 500,
           }}>
-          {column.items.map((item, index) => (
-            <ListItem key={index} item={item} index={index} />
-          ))}
+          {column.items.map((item, index) => {            
+            return columnId == 6 ? <Badge.Ribbon text="HIRED" color='green'>
+              <ListItem key={index} item={item} index={index} />
+            </Badge.Ribbon> : <ListItem key={index} item={item} index={index} />
+})}
           {provided.placeholder}
         </div>
       )}
@@ -155,7 +183,7 @@ function Applications() {
   };
 
   useEffect(() => { 
-    const loadStages = async() => {
+    const fetchStages = async() => {
       setLoading(true);
       try {
         const stageDatas = await getStages();
@@ -185,8 +213,9 @@ function Applications() {
         console.log(error);
       }
     }
+    
 
-    loadStages();
+    fetchStages();
   }, []);
 
   if (loading) {

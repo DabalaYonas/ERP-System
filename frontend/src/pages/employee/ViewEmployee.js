@@ -5,7 +5,7 @@ import { Tabs } from 'antd';
 import { useParams } from 'react-router-dom';
 import PersonalForm from '../../components/employee/PersonalForm';
 import WorkForm from '../../components/employee/WorkForm';
-import Tab from '../../components/employee/EmployeeTab';
+import EmployeeTab from '../../components/employee/EmployeeTab';
 import DocumentForm from '../../components/employee/DocumentForm';
 import { getEmployee } from '../../services/handleEmployee';
 import PageTitle from '../../components/PageTitle';
@@ -82,10 +82,7 @@ const sideTabItems = (mDisabled) =>  {
   {   key: 'profile',
       label: 'Profile',
       icon: <UserOutlined />,
-      children: <Tab hasInitial={true} disabled={mDisabled} 
-        PersonalChildern={PersonalForm} 
-        WorkChildren={WorkForm} 
-        DocumentChildren={DocumentForm} />
+      children: <EmployeeTab hasInitial={true} disabled={mDisabled} />
   },
   {   key: 'attendance',
       label: 'Attendance',
@@ -110,7 +107,7 @@ function ViewEmployee() {
     const [profilePic, setProfilePic] = useState(null);
     const [name, setName] = useState(null);
     const [gender, setGender] = useState(null);
-    const [jopPosition, setJopPosition] = useState(null);
+    const [jobPosition, setJobPosition] = useState(null);
     const params = useParams();
     const userId = params ? params.userId : null;  
 
@@ -121,8 +118,9 @@ function ViewEmployee() {
           setName(data.name);
           setProfilePic(data.profilePic);
           setGender(data.gender);
-
-          data.jop_position && setJopPosition(data.jop_position.name);
+          console.log();
+          
+          data.job_position && setJobPosition(data.job_position.name);
           
         });
       }
@@ -153,7 +151,7 @@ function ViewEmployee() {
                   <Image src={profilePic ? profilePic : (gender == "Male" ? "/male-placeholder.jpg" : "/female-placeholder.jpg")} width={100} height={100} className='rounded-md object-cover object-center'></Image>
                   <Flex vertical gap={2}>
                     <h2 className='text-2xl font-semibold'> {name}</h2>
-                    {jopPosition && <p><PaperClipOutlined /> {jopPosition}</p>}
+                    {jobPosition && <p><PaperClipOutlined /> {jobPosition}</p>}
                     <p><MailOutlined /> {email}</p>
                   </Flex>
               </Flex>

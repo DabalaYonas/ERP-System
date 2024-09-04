@@ -55,13 +55,12 @@ const items = [
   },
 ];
 
-const Sidebar = ({ children }) => {
+const Sidebar = () => {
 
   const [collapsed, setCollapsed] = useState(false);
   const [current, setCurrent] = useState('personal');
 
   const location = useLocation();
-  const hideSidebarPath = ['/login', '/signup', '*'];
   const navigate = useNavigate();
   const { logout, user, company } = useContext(AuthContext);
 
@@ -87,11 +86,6 @@ const Sidebar = ({ children }) => {
     const currentPath = location.pathname.slice(1).split("/")[0];
     setCurrent(currentPath);
   }, [location]);
-
-  
-  if(hideSidebarPath.includes(location.pathname)) {
-    return <>{children}</>
-  }
 
   if (!user || !company) {
     return <Skeleton />
@@ -136,12 +130,10 @@ const Sidebar = ({ children }) => {
 
         <Content className='custom-scroll' 
           style={{
-            margin: '10px 16px',
             overflowY: "auto",
-            scrollbarWidth: 'none'
+            scrollbarWidth: 'none',
+            padding: "10px 16px"
           }}>
-
-            {/* {children} */}
             <Outlet />
         </Content>
       </Layout>

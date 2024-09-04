@@ -66,6 +66,15 @@ MIDDLEWARE = [
     # 'user.middleware.UpdateLastActivityMiddleware',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'utils.authentication.CustomTokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
+
 ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [

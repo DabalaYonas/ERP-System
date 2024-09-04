@@ -78,8 +78,6 @@ function Attendance() {
         {/* <StatisticCard title="Balance" value={-53} suffix="hr" percent={32} decline={true} /> */}
       </Flex>
 
-    {/* <Card> */}
-
         <Divider />
         
         <Flex className='mb-2' justify='space-between'>
@@ -99,7 +97,6 @@ function Attendance() {
         </Flex>
         
         <AttendanceTable date={dateValue} />
-    {/* </Card> */}
         
     <Modal 
         open={isModalOpen} 

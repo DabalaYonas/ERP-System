@@ -29,12 +29,10 @@ const CompanySetting = () => {
       });
       await axios.patch(`${COMPANY_URL + company.id}/`, formData).then(response => {
         message.success("Company informations are updated!");   
-        window.location.reload(); 
-        console.log(values);
-        
+        window.location.reload();        
       }).catch(error => {
             message.error("Can't update company informations!");
-            console.log(error);
+            console.error(error);
         });  
     }
     

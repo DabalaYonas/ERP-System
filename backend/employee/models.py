@@ -1,6 +1,9 @@
+from typing import Iterable
 from django.db import models
 from lookup.models import Department, JobPosition
 from company.models import Company
+from django.utils import timezone
+import math
 
 def upload_profile_to(int, filename):
     return ("images/profilePic/" + int.name + "_" + filename)
@@ -28,6 +31,14 @@ class Employee(models.Model):
     bank_acc = models.CharField(null=True, blank=True, unique=True)
     company = models.ForeignKey(to=Company, on_delete=models.CASCADE, null=True, blank=True)
 
+    date_joined = models.DateTimeField(auto_now_add=True, editable=False)
+    active = models.BooleanField(default=True)
+
+    annual_leave_balance = models.IntegerField(default=0)
+
     def __str__(self) -> str:
         return self.name
+    
+    class Meta:
+        ordering =["date_joined"]
 

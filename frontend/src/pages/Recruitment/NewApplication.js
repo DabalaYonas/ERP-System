@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Col, Divider, Flex, Form, Input, InputNumber, Layout, message, Row, Skeleton, Steps, Typography } from 'antd';
+import { Badge, Button, Card, Col, Divider, Flex, Form, Input, InputNumber, Layout, message, Row, Skeleton, Steps, Typography } from 'antd';
 import { PlusCircleOutlined } from "@ant-design/icons";
 import SearchInput from '../../components/SearchInput';
 import { getJopPositions } from '../../services/handleJopPosition';
@@ -9,17 +9,19 @@ import { getApplication, getRecruitment, postApplicant, postApplication, putAppl
 import { useNavigate, useParams } from 'react-router-dom';
 import Error404 from '../Error404';
 import PageTitle from '../../components/PageTitle';
-
-const InitialStage = [];
+import MyTypography from '../../components/MyTypography';
+import axios from 'axios';
+import EmployeeTab from '../../components/employee/EmployeeTab';
 
 function NewApplication() {
-  const [current, setCurrent] = useState(0);
-  const [stages, setStages] = useState(InitialStage);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [stages, setStages] = useState();
   const [application, setApplication] = useState(null);
   const [initialValues, setInitialValues] = useState(null);
   const [loading, setLoading] = useState(true);
   const [appParams, setAppParams] = useState(null);
   const [recrtParams, setRecrtParams] = useState(null);
+  const [submitValues, setSubmitValues] = useState(null);
   const [form] = Form.useForm();
   const params = useParams();
   const recruitmentID = params["recruitmentID"];
@@ -55,7 +57,7 @@ function NewApplication() {
             title: value.name
           }));
           
-          setCurrent(application.stage_id - 1);
+          setCurrentStep(application.stage_id - 1);
           
           setStages(result);
           setApplication(application);
@@ -107,7 +109,7 @@ function NewApplication() {
         formData.append("job_position_id", values.job_position_id);
         values.expected_salary && formData.append("expected_salary", values.expected_salary);
         values.proposed_salary && formData.append("proposed_salary", values.proposed_salary);
-        formData.append("stage_id", stages[current].id);
+        formData.append("stage_id", stages[currentStep].id);
 
         isNewApplicationUrl() ? postApplication(formData) : putApplication(applicationID, formData);
       }
@@ -134,6 +136,94 @@ function NewApplication() {
     return <Error404 />
   }
 
+  const FormCard = () => (
+    <Card>
+      <Form className='mt-3' initialValues={initialValues} form={form} onFinish={onFinish} layout='vertical' size='large'>
+        <Row gutter={22}>
+          <Col span={12}>
+            <Form.Item label="Applicant's Name" name="name" rules={[{required: true, message: "Applicant name is required!"}]}>
+              <Input placeholder="Applicant's Name"/>
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item label="Phone Number" name="phone_number" rules={[{required: true, message: "Applicant phone number is required!"}]}>
+              <Input placeholder="Phone Number"/>
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item label="Email" name="email">
+              <Input placeholder="Email"/>
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item label="Degree" name="degree">
+              <SearchInput 
+                  serverData={getDegrees} 
+                  canCreate={true} 
+                  placeholder="Degree"
+                  create={(value) => {postDegree({name: value})}}/>
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item label="Linkedin" name="linkidin_profile">
+              <Input placeholder="Linkedin Profile"/>
+            </Form.Item>
+          </Col>
+          <Col span={24} />
+          <Col span={12}>
+            <Divider orientation='left'>Job</Divider>
+            <Form.Item label="Department" name="department_id">
+              <SearchInput placeholder="Applied Job" serverData={getDepartments}/>
+            </Form.Item>
+            <Form.Item label="Applied Job" name="job_position_id" rules={[{required: true, message: "Job Position is required!"}]}>
+              <SearchInput disabled placeholder="Applied Job" serverData={getJopPositions}/>
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Divider orientation='left'>Contract</Divider>
+            <Form.Item label="Expected Salary" name="expected_salary">
+              <InputNumber className='w-full' placeholder="Expected Salary" suffix="Br"/>
+            </Form.Item>
+            <Form.Item label="Proposed Salary" name="proposed_salary">
+              <InputNumber className='w-full' placeholder="Proposed Salary" suffix="Br"/>
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
+    </Card>
+    )
+
+  const onRefuse = async() => {
+    try {
+      await axios.delete(`http://127.0.0.1:8000/recruitment/application/api/${applicationID}/`, {withCredentials: true});
+      navigate(-1);
+    } catch (error) {
+      message.success("Can't refused this employee");
+    }
+  }
+
+  const onCreate = () => {
+    form.validateFields().then(values => {
+      setSubmitValues(values);
+    }).catch(error => {
+      console.error(error);
+    });
+  }
+  
+  if (submitValues) {
+    return <>
+      <PageTitle backable/>
+    <Card>
+        <EmployeeTab initialValue={submitValues} />
+      </Card>
+      </>
+  }
+
   return (
     <>
       <PageTitle title={isNewApplicationUrl() ? "New Application" : "Application Detail"} items={[
@@ -153,87 +243,32 @@ function NewApplication() {
     
     <Flex align='center' gap={20} className='py-2'>
       <Button type='primary' size='middle' icon={<PlusCircleOutlined />} onClick={onClickNewApplication}>New Application</Button>
-      <Typography.Title level={5}>{application ? application.recruitment.job_position_name : "New Application"}</Typography.Title>
+      <MyTypography level={4}>{application ? application.recruitment.job_position_name : "New Application"}</MyTypography>
     </Flex>
     
     <Flex align='center' gap={50} className='custom-scroll py-2 overflow-y-auto'>
-      <Button danger>Refuse</Button>
-   
+      <Flex gap="small">
+      {currentStep == 5 ? <Button onClick={onCreate}>Create Employee</Button> :
+        <Button onClick={onRefuse} danger>Refuse</Button>}
+      </Flex>
+
       <Steps 
         type='navigation'
         size='small'
         items={stages}
-        onChange={(value) => {setCurrent(value)}}
-        current={current}/>
+        onChange={(value) => {setCurrentStep(value)}}
+        current={currentStep}/>
 
     </Flex>
 
-    <Layout.Content>
-      <Card>
-        <Form initialValues={initialValues} form={form} onFinish={onFinish} layout='vertical' size='large'>
-          <Row gutter={22}>
-            <Col span={12}>
-              <Form.Item label="Applicant's Name" name="name" rules={[{required: true, message: "Applicant name is required!"}]}>
-                <Input placeholder="Applicant's Name"/>
-              </Form.Item>
-            </Col>
+    {currentStep == 5 ? <Badge.Ribbon className='px-8 py-1 font-medium text-xl lett tracking-normal' color='green' text="HIRED">
+      <FormCard />
+    </Badge.Ribbon> : <FormCard />}
 
-            <Col span={12}>
-              <Form.Item label="Phone Number" name="phone_number" rules={[{required: true, message: "Applicant phone number is required!"}]}>
-                <Input placeholder="Phone Number"/>
-              </Form.Item>
-            </Col>
-
-            <Col span={12}>
-              <Form.Item label="Email" name="email">
-                <Input placeholder="Email"/>
-              </Form.Item>
-            </Col>
-
-            <Col span={12}>
-              <Form.Item label="Degree" name="degree">
-                <SearchInput 
-                    serverData={getDegrees} 
-                    canCreate={true} 
-                    placeholder="Degree"
-                    create={(value) => {postDegree({name: value})}}/>
-              </Form.Item>
-            </Col>
-
-            <Col span={12}>
-              <Form.Item label="Linkedin" name="linkidin_profile">
-                <Input placeholder="Linkedin Profile"/>
-              </Form.Item>
-            </Col>
-            <Col span={24} />
-            <Col span={12}>
-              <Divider orientation='left'>Job</Divider>
-              <Form.Item label="Department" name="department_id">
-                <SearchInput placeholder="Applied Job" serverData={getDepartments}/>
-              </Form.Item>
-              <Form.Item label="Applied Job" name="job_position_id" rules={[{required: true, message: "Job Position is required!"}]}>
-                <SearchInput disabled placeholder="Applied Job" serverData={getJopPositions}/>
-              </Form.Item>
-            </Col>
-
-            <Col span={12}>
-              <Divider orientation='left'>Contract</Divider>
-              <Form.Item label="Expected Salary" name="expected_salary">
-                <InputNumber className='w-full' placeholder="Expected Salary" suffix="Br"/>
-              </Form.Item>
-              <Form.Item label="Proposed Salary" name="proposed_salary">
-                <InputNumber className='w-full' placeholder="Proposed Salary" suffix="Br"/>
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-      </Card>
-      <Flex gap={10} className='py-3' justify='end'>
+      <Flex className='mt-2' gap={10} justify='end'>
         <Button onClick={() => {navigate(-1)}}>Cancel</Button>
         <Button type='primary' onClick={() => {form.submit(); navigate(-1);}}>Save Close</Button>
       </Flex>
-
-    </Layout.Content>
     </>
   )
 }

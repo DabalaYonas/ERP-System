@@ -31,10 +31,10 @@ const IDCard = () => {
   }, [userId]);
 
   const handleDownloadPDF = () => {
-    html2canvas(componentRef.current).then((canvas) => {
+    html2canvas(document.getElementById('id-card'), {scale: 5}).then((canvas) => {
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF();
-      const imgWidth = 140;
+      const imgWidth = 323.52/3;
       // const pageHeight = 297;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       let position = 0;
@@ -60,7 +60,7 @@ const IDCard = () => {
 	<div className="id-card-tag-strip"></div>
 	<div className="id-card-hook"></div>
 
-	<div ref={componentRef} className="id-card-holder">
+	<div id='id-card' className="id-card-holder">
   <div  style={{ width: "3.1875in", height: "5.0625in"}} className='bg-white cursor-default bg-opacity-85 rounded shadow overflow-clip relative'>
     <Flex gap={8} align='center' className='py-5' vertical>
       <img alt='Company Logo' src='/logo_no_txt.png' style={{ width: 70 }} />
@@ -71,8 +71,8 @@ const IDCard = () => {
         <h2 className='text-xl font-semibold text-white text-opacity-95' level={3}>{employee.name}</h2>
         <p className='font-medium text-white text-opacity-90'>{employee.job_position.name && employee.job_position.name}</p>
       </div>
-
-      <Flex gap={6} className='mt-2 z-10'>
+      <div className='card-rectangle absolute w-full bottom-0'></div>
+      <Flex gap={6} style={{ zIndex: 10, marginTop: 8}} className='mt-2 z-10'>
         <ul>
           <List>Staff Id</List>
           <List>Phone Number</List>
@@ -88,7 +88,6 @@ const IDCard = () => {
         </ul>
       </Flex>
 
-      <div className='card-rectangle absolute w-full bottom-0'></div>
 
       <Barcode value={`NGT-${employee.department.id}-${userId}`} width={1.4} height={35} lineColor='#fff' background='#00000000'/>
     </Flex>

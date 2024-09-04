@@ -1,11 +1,11 @@
-import { useSelector } from "react-redux";
 import PageTitle from '../../components/PageTitle';
 import StatisticCard from '../../components/StatisticCard';
-import { Affix, Calendar, Card, Col, Divider, Flex, message, Row, Table, Tag, theme, Timeline } from "antd";
+import { Calendar, Divider, Flex, Tag, theme, Timeline } from "antd";
 import AttendanceTable from "../../components/attendance/AttendanceTable";
-import { UsergroupAddOutlined, FileDoneOutlined, DollarCircleOutlined, FileSyncOutlined, CalendarOutlined } from "@ant-design/icons";
+import { UsergroupAddOutlined, FileDoneOutlined, DollarCircleOutlined, CalendarOutlined } from "@ant-design/icons";
 // import { Area } from "@ant-design/charts";
 import MyTypography from "../../components/MyTypography";
+import MyCard from "../../components/MyCard";
 
 const breadcrumbItems = [
     {
@@ -14,8 +14,6 @@ const breadcrumbItems = [
     }
   ];
 function Dashboard() {
-    const { token } = theme.useToken();
-    // const user = useSelector(state => state.user);
     
     const data = [ 
       { year : '1991' , value : 3 } ,   
@@ -30,7 +28,7 @@ function Dashboard() {
     ] ;
   
     const config = { 
-      data ,
+      data,
       height : 400 , 
       xField : 'year' , 
       yField : 'value' , 
@@ -48,11 +46,6 @@ function Dashboard() {
       },
     } ;
 
-    const cardStyle = {borderRadius: token.borderRadiusLG, 
-      backgroundColor: "white",
-      padding: "0px 16px",
-    }
-
     return <>
         <PageTitle title="Dashboard" items={breadcrumbItems} />
         <Flex gap="middle" className="pb-4">
@@ -64,19 +57,17 @@ function Dashboard() {
               {/* <StatisticCard title="Total Applicant" icon={<FileSyncOutlined />} value={20} percent={20.0} /> */}
             </Flex>
 
-            <div style={cardStyle}>
-                <MyTypography level={3} className="py-3">Payment History</MyTypography>
-              {/* <Area {...config} /> */}
-            </div>
+              <MyCard title="Payment History">
+                {/* <Area {...config}/> */}
+              </MyCard>
 
-            <div style={cardStyle}>
-              <MyTypography level={3} className="py-3">Attendance Overview</MyTypography>
-              <AttendanceTable />
-            </div>
+              <MyCard title="Attendance Overview">
+                <AttendanceTable />
+              </MyCard>
           </Flex>
 
           <Flex gap='middle' vertical className=" h-lvh">
-            <div style={cardStyle}>
+              <MyCard>
               <Flex justify="space-between" align="center" className="pt-4 pb-3">
                 <MyTypography level={3}>My Schedule</MyTypography>
                 <Tag className="text-lg" color="blue"><CalendarOutlined /></Tag>
@@ -107,7 +98,7 @@ function Dashboard() {
                   },
                 ]}
               />
-              </div>
+              </MyCard>
           </Flex>
         </Flex>
     </>

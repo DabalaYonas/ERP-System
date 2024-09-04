@@ -1,6 +1,6 @@
-import { Button, Flex, Input, message, Modal, Skeleton, Table, Tabs, Tag } from 'antd';
+import { Button, Flex, Input, message, Modal, Space, Table, Tabs, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { EyeOutlined } from "@ant-design/icons";
+import { FileTextOutlined } from "@ant-design/icons";
 import PageTitle from '../../components/PageTitle';
 import Payslip from './Payslip';
 import { Link } from 'react-router-dom';
@@ -8,6 +8,8 @@ import axios from 'axios';
 import dayjs  from 'dayjs';
 import ExportToExcel from '../../components/ExportToExcel';
 import SuccessButton from '../../components/Button';
+import PayslipTable from '../../components/payroll/PayslipTable';
+import MyTypography from '../../components/MyTypography';
 
 const columns = [
   {
@@ -42,12 +44,36 @@ const columns = [
     </Tag>
   }
   },
-  {
-    title: 'Action',
-    dataIndex: 'action',
-    key: 'action',
-  },
 ];
+
+const capitalizeSenten = (sentence) => {
+  return sentence.substr(0, 1).toUpperCase() + sentence.slice(1);
+}
+
+const abbreviat2Word = (word) => {
+  const words = [
+    {pos: "position"},
+    {allow: "allowance"},
+    {transp: "transport"},
+    {tax: "taxable"},
+    {tele: "Telephone"},
+  ]
+
+  const keys = word.split(" ");
+  const newWord = [];
+
+  keys.forEach(key => {
+    for(let dict of words) {
+      if (dict[key]) {
+        newWord.push(dict[key]);
+        return
+      }
+    }    
+    newWord.push(key);
+  });
+
+  return newWord.join(" ");
+}
 
 const PAYROLL_URL = "http://127.0.0.1:8000/payroll/api/";
 
@@ -72,7 +98,6 @@ const PayrollTab = () => {
           month: dayjs(value.payment_month_year, "YYYY-MM-DD").format("MMMM"),
           year: dayjs(value.payment_month_year, "YYYY-MM-DD").format("YYYY"),
           status: value.status,
-          action: <Link to={`${value.id}/`}><EyeOutlined className='text-base cursor-pointer'/></Link>,
         }));
 
         setDataSource(data);
@@ -93,19 +118,26 @@ const PayrollTab = () => {
     newSelectedRowKeys.forEach(key => {
       const payment_date = payrollDatas.filter(data => data.id === key)[0].payment_month_year;
       const result = responseData.filter(data => dayjs(data.payment_date).isSame(dayjs(payment_date), 'month'));
-      const data = result.map(item => ({...item, employee: item.employee.name}));
-      // data.forEach(element => {
-      //   console.log(element);
+      const data = responseData.map(item => ({...item, employee: item.employee.name}));
+
+      data.forEach(element => {
+        delete element["id"];
+        delete element["payment_date"];
+
+        element = Object.fromEntries(
+          Object.entries(element).map(
+            ([key, value]) => [
+              capitalizeSenten(abbreviat2Word(key.replaceAll("_", " "))),
+              value]));
+
+        listOfData.push(element);   
         
-      //   listOfData.push(element);
-      // });            
-      const capitalizeSenten = (sentence) => {
-        return sentence.substr(0, 1).toUpperCase() + sentence.slice(1);
-      }
-      const listOfData1 = Object.fromEntries(Object.entries(data[0]).map(([key, value]) => [capitalizeSenten(key.replaceAll("_", " ")), value]));
-      listOfData.push(listOfData1);      
+      });
+
+      console.log(listOfData);
+      
+         
     });
-    
     
     setExportData(listOfData);
   }
@@ -123,6 +155,13 @@ const PayrollTab = () => {
     });
    });
   }
+
+  const expandedRowRender = () => {
+    return <Space direction='vertical' className='w-full'>
+      <MyTypography level={3}>Employee Details</MyTypography>
+      <PayslipTable infinity noSelection noActions />
+      </Space>
+  }
   
   return <> 
   <PageTitle title="Employee Payroll" items={[
@@ -131,18 +170,23 @@ const PayrollTab = () => {
       title: 'Payroll',
     }
   ]} />
-      {/* <h3 className='text-2xl font-semibold mb-3 black-text'>Employee Payroll History</h3> */}
       <Flex className='mb-3' align='center' justify='space-between'>
         <Input.Search placeholder='Search Employee Payroll' style={{ maxWidth: "420px"}} enterButton/>
         <Flex gap={10}>
-          {/* <Button type='primary' icon={<ImportOutlined />} size='middle'>Import Excel</Button> */}
+          <Button type='primary' icon={<FileTextOutlined />} disabled={selectedRowKeys.length <= 0}>Generate Agreement</Button>
           <SuccessButton onClick={() => {setModalOpen(true)}} className='bg-green-500 text-white' disabled={selectedRowKeys.length <= 0}>Mark as Paid</SuccessButton>
           <ExportToExcel tableData={exportData} fileName="Payroll Sheet" disabled={selectedRowKeys.length <= 0}/>
           <Link to="generate"><Button type='primary' size='middle'>Generate Payroll</Button></Link>
         </Flex>
       </Flex>
 
-      <Table loading={loading} rowSelection={rowSelection} columns={columns} dataSource={dataSource}/>
+      <Table 
+          loading={loading} 
+          rowSelection={rowSelection} 
+          columns={columns} 
+          expandable={{expandedRowRender}}
+          dataSource={dataSource}/>
+
       <Modal 
         open={modalOpen}
         title="Are you sure?"

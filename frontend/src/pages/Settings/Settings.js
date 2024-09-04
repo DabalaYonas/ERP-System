@@ -5,43 +5,48 @@ import CompanySetting from '../../components/settings/CompanySetting';
 import UserSetting from '../../components/settings/UserSetting';
 import ManageRole from '../../components/settings/ManageRole';
 import GeneralSetting from '../../components/settings/GeneralSetting';
-import Notification from '../../components/settings/Notifications';
+import NotificationSettings from '../../components/settings/NotificationSettings';
 import ManageUsers from '../../components/settings/ManageUsers';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const tabItems = [
   {
-    key: 1,
+    key: "general",
     label: "General",
     children: <GeneralSetting />
   },
   {
-    key: 2,
+    key: "account",
     label: "Account",
     children: <UserSetting />
   },
   {
-    key: 3,
+    key: "company",
     label: "Company",
     children: <CompanySetting />
   },
   {
-    key: 4,
+    key: "manage-user",
     label: "Manage Users",
     children: <ManageUsers />
   },
   {
-    key: 5,
+    key: "manage-role",
     label: "Manage Role",
     children: <ManageRole />
   },
   {
-    key: 6,
+    key: "notification",
     label: "Notification",
-    children: <Notification />
+    children: <NotificationSettings />
   },
 ]
 
 export default function Settings() {
+  const params = useParams();
+  const activeKey = params && params["activeKey"];  
+  const navigate = useNavigate();
+  
   return (
     <>
       <PageTitle title="Settings"
@@ -53,7 +58,14 @@ export default function Settings() {
       }
     ]} />
     <Card>
-      <Tabs size='large' centered items={tabItems} />
+      <Tabs 
+        defaultActiveKey={activeKey} 
+        onChange={(key) => {
+          navigate(`/settings/${key}`);
+        }}
+        size='large' 
+        centered 
+        items={tabItems} />
     </Card>
     </>
   )

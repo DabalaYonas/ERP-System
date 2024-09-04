@@ -186,3 +186,55 @@
     border-bottom: 90px solid #9e9e9e;
     border-left: 320px solid transparent;
   }
+
+
+  .notif {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    background-color: #172437;
+    user-select: none;
+  }
+
+  .notif-card {
+    border-radius: 8px;
+    outline: none;
+    background-color: white;
+    position: absolute;
+    width: 420px;
+    top: 55px;
+    right: -15px;
+    box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08),0 3px 6px -4px rgba(0, 0, 0, 0.12),0 9px 28px 8px rgba(0, 0, 0, 0.05);
+    background-clip: padding-box;
+    user-select: none;
+    z-index: 30;
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-20px);
+    max-height: 0;
+  }
+
+  .notif-card::after {
+    content: '';
+    position: absolute;
+    border: 12px solid;
+    top: -23px;
+    right: 15px;
+    border-color: transparent transparent #fff transparent;
+    z-index: 20;
+  }
+
+
+  .notif-card.show {
+    opacity: 1;
+    max-height: 300px;
+    transform: translateY(0);
+    /* overflow: visible; */
+  }
+  
+  .notif-card.hide {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-20px);
+  }

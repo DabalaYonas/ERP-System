@@ -27,21 +27,21 @@ import axios from 'axios';
 
 function App() {  
   
-  useEffect(() => {
-  const updateOnlineStatus = () => {
-    console.log("Is Online", navigator.onLine);
+//   useEffect(() => {
+//   const updateOnlineStatus = () => {
+//     console.log("Is Online", navigator.onLine);
     
-    axios.patch('http://127.0.0.1:8000/user/api/', { is_online: !navigator.onLine }, {headers : {"Content-Type": "application/json"}, withCredentials: true});
-  };
+//     axios.patch('http://127.0.0.1:8000/user/api/', { is_online: !navigator.onLine }, {headers : {"Content-Type": "application/json"}, withCredentials: true});
+//   };
 
-  window.addEventListener('online', updateOnlineStatus);
-  window.addEventListener('offline', updateOnlineStatus);
+//   window.addEventListener('online', updateOnlineStatus);
+//   window.addEventListener('offline', updateOnlineStatus);
 
-  return () => {
-    window.removeEventListener('online', updateOnlineStatus);
-    window.removeEventListener('offline', updateOnlineStatus);
-  };
-}, []);
+//   return () => {
+//     window.removeEventListener('online', updateOnlineStatus);
+//     window.removeEventListener('offline', updateOnlineStatus);
+//   };
+// }, []);
   
   return (
     <ConfigProvider 
@@ -71,6 +71,7 @@ function App() {
           <Route path='/recruitment/:recruitmentID/' element={<LoginRequired><Applications /></LoginRequired>} />
           <Route path='/recruitment/:recruitmentID/:applicationID' element={<LoginRequired><NewApplication /></LoginRequired>} />
           <Route path='/settings' element={<LoginRequired><Settings /></LoginRequired>} />
+          <Route path='/settings/:activeKey' element={<LoginRequired><Settings /></LoginRequired>} />
         </Route>
         <Route>
           <Route path='*' element={<Error404 />} />
