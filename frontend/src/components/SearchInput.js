@@ -35,6 +35,7 @@ const fetchData = (serverData, callback) => {
           }));
 
         callback(data);
+    }).catch(error => {console.error(error);
     });
 }
 

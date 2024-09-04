@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react'
 import SearchInput from '../../components/SearchInput';
 import { getEmployee, getEmployees } from '../../services/handleEmployee';
 import PageTitle from '../../components/PageTitle';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import dayjs from "dayjs";
+import { getPayslip, postPayslip, putPayslip } from '../../services/handlePayroll';
 
 const CURRENCY_SYMBOL = "Br";
 
@@ -18,12 +18,19 @@ function NewPayslip() {
     useEffect(() => {
         const loadInitialValue = async() => {
             if (payslipId) {
-                const data = await axios.get(`http://127.0.0.1:8000/payroll/payslip/api/${payslipId}/`).then(response => response.data);
-                data.name = data.employee.id;
-                data.accountNo = data.employee.bank_acc && data.employee.bank_acc.accountNo;
-                data.payment_date = dayjs(data.payment_date);
-                setLoading(false);
-                setInitialValues(data);
+                try {
+                    const response = await getPayslip(payslipId);
+                    const data = response.data;
+                    data.name = data.employee.id;
+                    data.accountNo = data.employee.bank_acc && data.employee.bank_acc.accountNo;
+                    data.payment_date = dayjs(data.payment_date);
+                    setLoading(false);
+                    setInitialValues(data);
+                    
+                } catch (error) {
+                    console.error(error);
+                    
+                }
             } else {
                 setLoading(false);
             }
@@ -135,10 +142,10 @@ function NewPayslip() {
 
        try {
         if (payslipId) {
-            await axios.put(`http://127.0.0.1:8000/payroll/payslip/api/${payslipId}/`, formData);
+            await putPayslip(formData, payslipId);
             message.success("Payslip saved successfully!");
         } else {
-            await axios.post("http://127.0.0.1:8000/payroll/payslip/api/", formData);
+            postPayslip(formData);
             message.success("Payslip created successfully!");
             form.resetFields();
         }

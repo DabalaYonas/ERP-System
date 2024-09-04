@@ -10,7 +10,8 @@ import SearchInput from '../SearchInput';
 import { AuthContext } from '../../context/AuthContext';
 
 const fetchRoles = async() => {
-  return await axios.get("http://127.0.0.1:8000/user/api/role/").then(response => response.data);
+  return await axios.get("http://127.0.0.1:8000/user/api/role/", {withCredentials: true}).then(response => response.data).catch(error => {console.error(error);
+  });
 }
 
 const ManageUsers = () => {

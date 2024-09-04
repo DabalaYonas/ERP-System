@@ -17,37 +17,37 @@ export const postRecruitment = async(data) => {
 }
 
 export const getApplications = async() => {
-    return await axios.get(ApplicationUrl).then(response => response.data);
+    return await axios.get(ApplicationUrl, {withCredentials: true}).then(response => response.data);
 }
 
 export const getApplication = async(id) => {
     try {
-        return await axios.get(ApplicationUrl + id + "/").then(response => response.data);
+        return await axios.get(ApplicationUrl + id + "/", {withCredentials: true}).then(response => response.data);
     } catch (error) {
         return false;
     }
 }
 
 export const postApplication = async(data) => {
-    return await axios.post(ApplicationUrl, data).then(response => response.data);
+    return await axios.post(ApplicationUrl, data, {withCredentials: true}).then(response => response.data);
 }
 
 export const putApplication = async(id, data) => {
-    return await axios.put(ApplicationUrl + id + "/", data).then(response => response.data);
+    return await axios.put(ApplicationUrl + id + "/", data, {withCredentials: true}).then(response => response.data);
 }
 
 export const patchApplication = async(id, data) => {
-    return await axios.patch(ApplicationUrl + id + "/", data).then(response => response.data);
+    return await axios.patch(ApplicationUrl + id + "/", data, {withCredentials: true}).then(response => response.data);
 }
 
 export const getApplicants = async() => {
-    return await axios.get(ApplicantUrl).then(response => response.data);
+    return await axios.get(ApplicantUrl, {withCredentials: true}).then(response => response.data);
 }
 
 export const postApplicant = async(data) => {
-    return await axios.post(ApplicantUrl, data).then(response => response.data);
+    return await axios.post(ApplicantUrl, data, {withCredentials: true}).then(response => response.data);
 }
 
 export const putApplicant = async(id, data) => {
-    return await axios.put(ApplicantUrl + id + "/", data).then(response => response.data);
+    return await axios.put(ApplicantUrl + id + "/", data, {withCredentials: true}).then(response => response.data);
 }

@@ -63,7 +63,6 @@ function EmployeeTab({disabled = false, initialValue, hasInitial = false}) {
     
     value.profilePic && formData.append("profilePic", value.profilePic, value.profilePic.name); 
     
-
     value.department_id && formData.append("department_id", value.department_id);
     value.job_position_id && formData.append("job_position_id", value.job_position_id);
     // const response = value.bank_acc_id ? await axios.post("http://127.0.0.1:8000/lookup/api/bank-account/", {accountNo: value.bank_acc_id}).then(response => response.data) : null;

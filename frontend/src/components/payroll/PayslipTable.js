@@ -118,7 +118,7 @@ function PayslipTable({ infinity = false, paymentDate, noSelection=false, callba
   useEffect(() => {
     const loadPayslipData = async() => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/payroll/payslip/api/");      
+        const response = await axios.get("http://127.0.0.1:8000/payroll/payslip/api/", {withCredentials: true});      
 
         const valueToDict = (value) => {
           return {key: value.id,

@@ -4,8 +4,8 @@ import MyTypography from '../../components/MyTypography';
 import { ToWords } from 'to-words';
 import PageTitle from '../../components/PageTitle';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
 import dayjs  from 'dayjs';
+import { getPayslip } from '../../services/handlePayroll';
 
 const colums = [
   {
@@ -113,15 +113,13 @@ function ViewPayslip() {
     useEffect(() => {
       const loadPayslipData = async() => {
         try {
-          const response = await axios.get(`http://127.0.0.1:8000/payroll/payslip/api/${payslipId}/`);
+          const response = await getPayslip(payslipId);
           setPayslipData(response.data);
           setLoading(false);
           const salaryData = [];
           const deductionData = [];
           let i = 0;
-          for( const [key, value] of Object.entries(response.data)) {
-            // console.log(key, value);
-            
+          for( const [key, value] of Object.entries(response.data)) {            
             if (i < 11 && i > 2) {
             salaryData.push({
               key: i, 
@@ -143,7 +141,7 @@ function ViewPayslip() {
           setDeduction(deductionData);
             
         } catch (error) {
-          console.log(error);
+          console.error(error);
         }
       }
 

@@ -4,12 +4,12 @@ import { FileTextOutlined } from "@ant-design/icons";
 import PageTitle from '../../components/PageTitle';
 import Payslip from './Payslip';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import dayjs  from 'dayjs';
 import ExportToExcel from '../../components/ExportToExcel';
 import SuccessButton from '../../components/Button';
 import PayslipTable from '../../components/payroll/PayslipTable';
 import MyTypography from '../../components/MyTypography';
+import { getPayrolls, getPayslips, patchPayroll } from '../../services/handlePayroll';
 
 const columns = [
   {
@@ -75,8 +75,6 @@ const abbreviat2Word = (word) => {
   return newWord.join(" ");
 }
 
-const PAYROLL_URL = "http://127.0.0.1:8000/payroll/api/";
-
 const PayrollTab = () => {
   const [dataSource, setDataSource] = useState();
   const [payrollDatas, setPayrollDatas] = useState();
@@ -88,7 +86,7 @@ const PayrollTab = () => {
   useEffect(() => {
     const loadPayrollDatas = async() => {
       try {
-        const response = await axios.get(PAYROLL_URL);
+        const response = await getPayrolls();
         setPayrollDatas(response.data);
         
         const data = response.data.map(value => ({
@@ -112,34 +110,37 @@ const PayrollTab = () => {
 
   const onSelectChange = async(newSelectedRowKeys) => {
     setSelectedRowKeys(newSelectedRowKeys);
-    const responseData = (await axios.get("http://127.0.0.1:8000/payroll/payslip/api/")).data;
-    const listOfData = [];
-
-    newSelectedRowKeys.forEach(key => {
-      const payment_date = payrollDatas.filter(data => data.id === key)[0].payment_month_year;
-      const result = responseData.filter(data => dayjs(data.payment_date).isSame(dayjs(payment_date), 'month'));
-      const data = responseData.map(item => ({...item, employee: item.employee.name}));
-
-      data.forEach(element => {
-        delete element["id"];
-        delete element["payment_date"];
-
-        element = Object.fromEntries(
-          Object.entries(element).map(
-            ([key, value]) => [
-              capitalizeSenten(abbreviat2Word(key.replaceAll("_", " "))),
-              value]));
-
-        listOfData.push(element);   
-        
-      });
-
-      console.log(listOfData);
-      
-         
-    });
     
-    setExportData(listOfData);
+      try {
+        const responseData = await getPayslips().then(response => response.data);
+        const listOfData = [];
+
+        newSelectedRowKeys.forEach(key => {
+            const payment_date = payrollDatas.filter(data => data.id === key)[0].payment_month_year;
+          const result = responseData.filter(data => dayjs(data.payment_date).isSame(dayjs(payment_date), 'month'));
+          const data = responseData.map(item => ({...item, employee: item.employee.name}));
+
+          data.forEach(element => {
+            delete element["id"];
+            delete element["payment_date"];
+
+            element = Object.fromEntries(
+              Object.entries(element).map(
+                ([key, value]) => [
+                  capitalizeSenten(abbreviat2Word(key.replaceAll("_", " "))),
+                  value]));
+
+            listOfData.push(element);   
+            
+          });
+        });
+        
+    
+        setExportData(listOfData);
+
+      } catch (error) {
+          console.error(error);
+      }
   }
 
   const rowSelection = {
@@ -147,13 +148,21 @@ const PayrollTab = () => {
     onChange: onSelectChange,
   };
 
+  const markAsPaid = async (id) => {
+      try {
+        await patchPayroll({status: "paid"}, id);
+        message.success("Payroll is marked as paid");
+        setModalOpen(false);
+        
+      } catch (error) {
+        message.error("Can't mark this payroll as paid");
+      }
+    }
+
   const handleAsPaid = () => {
-   selectedRowKeys.forEach(element => {
-    axios.patch(`${PAYROLL_URL}${element}/`, {status: "paid"}).then(data => {
-      message.success("Payroll is marked as paid");
-      setModalOpen(false);
+    selectedRowKeys.forEach(id => {
+    markAsPaid(id);
     });
-   });
   }
 
   const expandedRowRender = () => {

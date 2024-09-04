@@ -12,15 +12,14 @@ const ManageRole = () => {
     const ROLE_URL = "http://127.0.0.1:8000/user/api/role/";
   
     const loadDataSource = async() => {
-      await axios.get(ROLE_URL).then(response => {
+      await axios.get(ROLE_URL, {withCredentials: true}).then(response => {
         const data = response.data.map(values => ({
           key: values.id,
           ...values,
         }))
         setRoleDataSource(data)
       }).catch(error => {
-        console.log(error);
-        
+        console.error(error);
       })
     }
   
@@ -29,7 +28,7 @@ const ManageRole = () => {
     }, []);
   
     const onSwitchChange = async (id, data) => {
-      await axios.patch(`${ROLE_URL}${id}/`, data).catch(error => {console.log(error);});
+      await axios.patch(`${ROLE_URL}${id}/`, data, {withCredentials: true}).catch(error => {console.error(error);});
       loadDataSource();
     }
   

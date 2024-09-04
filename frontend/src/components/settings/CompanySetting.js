@@ -8,7 +8,7 @@ import { DescText } from '../DecriptionText';
 import { AuthContext } from '../../context/AuthContext';
 
 const getCurrency = async() => {
-  return await axios.get("http://127.0.0.1:8000/lookup/api/currency/").then(response => response.data);
+  return await axios.get("http://127.0.0.1:8000/lookup/api/currency/", {withCredentials: true}).then(response => response.data);
 }
 
 const CompanySetting = () => {

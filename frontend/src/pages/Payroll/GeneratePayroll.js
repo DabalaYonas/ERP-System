@@ -3,7 +3,7 @@ import PageTitle from '../../components/PageTitle';
 import { Button, Card, Col, DatePicker, Form, Input, message, Row } from 'antd';
 import dayjs  from 'dayjs';
 import PayslipTable from '../../components/payroll/PayslipTable';
-import axios from 'axios';
+import { postPayroll } from '../../services/handlePayroll';
 
 const items = [
     {
@@ -34,10 +34,10 @@ function GeneratePayroll() {
             formData.append("name", form.getFieldValue("name"));
             formData.append("payment_month_year", form.getFieldValue("month_year").format("YYYY-MM-DD"));
     
-            await axios.post("http://127.0.0.1:8000/payroll/api/", formData);
+            await postPayroll(formData);
             message.success("Successfully generate payroll!");
         } catch (error) {
-            console.log(error);
+            console.error(error);
             message.error("Can't generate this payroll!");
         }
     }
@@ -61,11 +61,11 @@ function GeneratePayroll() {
                         <DatePicker className='w-full' defaultValue={new dayjs()} format={"DD-MM-YYYY"} allowClear={false} disabled/>
                     </Form.Item>
                 </Col>
-                {/* <Col span={8}>
+                <Col span={8}>
                     <Form.Item label="Payment month & year" name="month_year" rules={[{required: true, message: "Payment month is required!"}]}>
                         <DatePicker className='w-full' picker='month' />
                     </Form.Item>
-                </Col> */}
+                </Col>
                 <Col span={24} />
                 <Col span={24}>
                     <Button className='px-10' type='primary' htmlType='submit'>Generate Payroll</Button>

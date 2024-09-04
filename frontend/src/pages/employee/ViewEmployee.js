@@ -3,10 +3,7 @@ import { PaperClipOutlined, MailOutlined, EditOutlined, UserOutlined, FileDoneOu
 import React, { useEffect, useState } from 'react';
 import { Tabs } from 'antd';
 import { useParams } from 'react-router-dom';
-import PersonalForm from '../../components/employee/PersonalForm';
-import WorkForm from '../../components/employee/WorkForm';
 import EmployeeTab from '../../components/employee/EmployeeTab';
-import DocumentForm from '../../components/employee/DocumentForm';
 import { getEmployee } from '../../services/handleEmployee';
 import PageTitle from '../../components/PageTitle';
 import axios from 'axios';
@@ -20,17 +17,21 @@ const AttendanceChild = () => {
 
     useEffect(() =>{
       const loadDatas = async() => {
-        const responseDatas = await axios.get("http://127.0.0.1:8000/attendance/api/").then(response => response.data).catch(error => console.error(error));
-        const result = responseDatas.filter(data => data.employee.id == userId);     
-        const datas = result.map(data => ({
-          date: dayjs(data.checkIn).format("MMM DD, YYYY"),
-          checkin: dayjs(data.checkIn).format("hh:mm A"),
-          checkout: dayjs(data.checkOut).format("hh:mm A"),
-          workinghour: dayjs(data.checkIn).subtract(dayjs(data.checkOut)).format("hh:mm A"),
-          status: attendanceStatus(dayjs(data.checkIn)),
-        }));
-
-        setDataSource(datas);
+        try {
+          const responseDatas = await axios.get("http://127.0.0.1:8000/attendance/api/", {withCredentials: true}).then(response => response.data);
+          const result = responseDatas.filter(data => data.employee.id == userId);     
+          const datas = result.map(data => ({
+            date: dayjs(data.checkIn).format("MMM DD, YYYY"),
+            checkin: dayjs(data.checkIn).format("hh:mm A"),
+            checkout: dayjs(data.checkOut).format("hh:mm A"),
+            workinghour: dayjs(data.checkIn).subtract(dayjs(data.checkOut)).format("hh:mm A"),
+            status: attendanceStatus(dayjs(data.checkIn)),
+          }));
+  
+          setDataSource(datas);
+        } catch (error) {
+          console.error(error);
+        }
       }
 
       loadDatas();
