@@ -25,7 +25,7 @@ function Login() {
         await login(inputs.email, inputs.password);
         navigate("/");
       } catch (error) {
-        const msg = error.response.data.detail;
+        const msg = error.message === "Network Error" ? error.message : error.response.data.detail;
         message.error(msg);
         console.error(msg);
       }

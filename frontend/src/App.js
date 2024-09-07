@@ -24,6 +24,7 @@ import ViewPayslip from './pages/Payroll/ViewPayslip';
 import IDCard from './components/IDCard';
 import { useEffect } from 'react';
 import axios from 'axios';
+import PayrollPapers from './pages/Payroll/PayrollPapers';
 
 function App() {  
   
@@ -60,11 +61,12 @@ function App() {
           <Route path='/employees/:userId/id_card' element={<LoginRequired><IDCard /></LoginRequired>} />
           <Route path='/employees/add-employee' element={<LoginRequired><AddEmployee /></LoginRequired>} />
           <Route path='/payroll' element={<LoginRequired><Payroll /></LoginRequired>} />
-          <Route path='/payroll/:payrollId' element={<LoginRequired><ViewPayroll /></LoginRequired>} />
+          {/* <Route path='/payroll/:payrollId' element={<LoginRequired><ViewPayroll /></LoginRequired>} /> */}
           <Route path='/payroll/payslip/:payslipId' element={<LoginRequired><ViewPayslip /></LoginRequired>} />
           <Route path='/payroll/payslip/:payslipId/edit-payslip/' element={<LoginRequired><NewPayslip /></LoginRequired>} />
           <Route path='/payroll/new-payslip' element={<LoginRequired><NewPayslip /></LoginRequired>} />
           <Route path='/payroll/generate' element={<LoginRequired><GeneratePayroll /></LoginRequired>} />
+          <Route path='/payroll/papers' element={<LoginRequired><PayrollPapers /></LoginRequired>} />
           <Route path='/attendance' element={<LoginRequired><Attendance /></LoginRequired>} />
           <Route path='/leave' element={<LoginRequired><Leave /></LoginRequired>} />
           <Route path='/recruitment' element={<LoginRequired><Recruitment /></LoginRequired>} />

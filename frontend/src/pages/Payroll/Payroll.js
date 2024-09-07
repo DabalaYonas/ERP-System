@@ -183,7 +183,7 @@ const PayrollTab = () => {
       <Flex className='mb-3' align='center' justify='space-between'>
         <Input.Search placeholder='Search Employee Payroll' style={{ maxWidth: "420px"}} enterButton/>
         <Flex gap={10}>
-          <Button type='primary' icon={<FileTextOutlined />} disabled={selectedRowKeys.length <= 0}>Generate Agreement</Button>
+          <Button type='primary' href='payroll/papers/' icon={<FileTextOutlined />} disabled={selectedRowKeys.length <= 0}>Generate Agreement</Button>
           <SuccessButton onClick={() => {setModalOpen(true)}} className='bg-green-500 text-white' disabled={selectedRowKeys.length <= 0}>Mark as Paid</SuccessButton>
           <ExportToExcel tableData={exportData} fileName="Payroll Sheet" disabled={selectedRowKeys.length <= 0}/>
           <Link to="generate"><Button type='primary' size='middle'>Generate Payroll</Button></Link>
