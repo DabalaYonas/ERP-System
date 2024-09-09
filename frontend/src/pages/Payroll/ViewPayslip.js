@@ -80,8 +80,8 @@ function ViewPayslip() {
         plural: 'Birrs',
         symbol: 'Br',
         fractionalUnit: {
-          name: 'Paisa',
-          plural: 'Paise',
+          name: 'Santim',
+          plural: 'Santim',
           symbol: '',
         },
       },

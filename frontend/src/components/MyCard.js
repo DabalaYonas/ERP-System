@@ -2,7 +2,7 @@ import React from 'react'
 import MyTypography from './MyTypography'
 import { theme } from 'antd';
 
-export default function MyCard({ title, children }) {
+export default function MyCard({ title, children, className }) {
   const { token } = theme.useToken();
 
     const cardStyle = {
@@ -12,7 +12,7 @@ export default function MyCard({ title, children }) {
     }
 
   return (
-    <div style={cardStyle}>
+    <div className={className} style={cardStyle}>
         {title && <MyTypography level={4} className="mb-3">{title}</MyTypography>}
         {children}
     </div>

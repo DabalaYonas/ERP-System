@@ -1,9 +1,11 @@
-import { Badge, Button, Calendar, Card, Flex, Progress, Table, Tabs, Tag, Timeline } from 'antd'
-import React from 'react'
+import { Button, Calendar, Flex, List, Progress, Table, Tabs, Tag, Timeline } from 'antd'
+import React, { useEffect, useState } from 'react'
 import PageTitle from '../../components/PageTitle'
 import StatisticCard from '../../components/StatisticCard'
 import MyTypography from '../../components/MyTypography'
 import MyCard from '../../components/MyCard'
+import { getHolidays } from '../../services/handleLeaves'
+import dayjs from "dayjs";
 
 const requestColumn = [{
   dataIndex: "name",
@@ -103,6 +105,27 @@ const fakeData2 = [
 ]
 
 const LeaveSummary = () => {
+  const [holidayItems, setHolidayItems] = useState([]);
+  const [loading, setLoading] = useState(null);
+
+  useEffect(() => {
+    const fetchHolidays = async () => {
+      try {
+        const response = await getHolidays();
+        const datas = response.map(item => ({
+          name: item.name,
+          date: dayjs(item.date).format("MMM DD"),
+          day: dayjs(item.date).format("dddd"),
+        }));
+        setHolidayItems(datas);        
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchHolidays();
+
+  }, []);
 
   return <>
   <PageTitle title="Employee Leave" items={[
@@ -112,18 +135,9 @@ const LeaveSummary = () => {
     }
   ]} />
 
-  <Flex gap="middle" align='flex-start' className='mb-4'>
-    <Flex gap="middle" className='flex-grow' vertical>
+  <Flex gap="middle" align='flex-start'>
+    <Flex gap="middle" className='flex-grow'  vertical>
       <Flex gap="middle">
-        {/* <Card><Progress 
-          type="dashboard"
-          percent={100}
-          steps={{
-            count: 3,
-            gap: 5,
-          }}
-          trailColor="rgba(0, 0, 0, 0.06)"
-          strokeWidth={20} /></Card> */}
         <StatisticCard value={100} title="Anual Leave"/>
         <StatisticCard value={20} title="Sick Leave"/>
         <StatisticCard value={10} title="Other Leave"/>
@@ -137,28 +151,22 @@ const LeaveSummary = () => {
       {/* <Calendar /> */}
     </Flex>
     
-    <MyCard title="Upcoming Holidays" className='flex-shrink w-72'>
-      <Timeline
-          mode='left'
-          items={[
-            {
-              label: '2017-01-01',
-              children: 'Fasika',
-            },
-            {
-              label: '2017-01-12',
-              children: 'Irrecha',
-            },
-            {
-              label: '2017-01-17',
-              children: 'Meskel',
-            },
-            {
-              label: '2017-03-05',
-              children: 'Gana',
-            },
-          ]}
-        />
+    <MyCard title="Holidays" className='w-80'>
+        <List
+          className='px-2'
+          dataSource={holidayItems}
+          renderItem={(item) => (
+            <List.Item>
+                <List.Item.Meta
+                  avatar={<div className='w-12 h-12 p-1 text-sm flex justify-center items-center bg-gradient-to-t to-pink-400 from-primary-400 font-semibold text-white rounded-lg text-center'>{item.date}</div>}
+                  description={item.day}
+                  title={<h3 className='font-semibold text-sm text-black text-opacity-85'>{item.name}</h3>}>
+
+                </List.Item.Meta>
+            </List.Item>
+          )}>
+
+        </List>
     </MyCard>
   </Flex>
   </>
