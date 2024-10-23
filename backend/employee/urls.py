@@ -8,5 +8,6 @@ router.register('', views.EmployeeView, 'Employees')
 # router.register('<int:pk>/', views.EmployeeView, 'Employee-detail')
 
 urlpatterns = [
+    path('api/employee-count/', views.employee_count, name="employee-count"),
     path('api/', include(router.urls)),
 ]

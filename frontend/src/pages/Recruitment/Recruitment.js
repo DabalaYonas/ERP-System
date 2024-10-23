@@ -59,15 +59,16 @@ export const MyTitle = ({children}) => {
   return <h2 className='text-xl font-medium'>{children}</h2>
 }
 
-export const MyCard = ({ value, index, navigate }) => {
+export const JobCard = ({ value, index, navigate }) => {
   return (<Card className='cursor-default'>
     <Flex align='center' gap={10} justify='start'>
       <BoxIcon color={boxItems[index % boxItems.length].color}>{boxItems[index % boxItems.length].icon}</BoxIcon>
       <MyTitle>{value.title}</MyTitle>
     </Flex>
     
-    <Flex justify='start' className='mt-4'>
+    <Flex align='center' gap={10} justify='space-between' className='mt-4'>
       <Button size='large' onClick={() => {navigate(`/recruitment/${value.id}/`)}}>{value.app_count} New Applications</Button>
+      {/* <p className='text-center'>5 Target</p> */}
     </Flex>
   </Card>);
 }
@@ -136,7 +137,7 @@ function Recruitment() {
   <Row gutter={[25, 15]} style={{ marginRight: "0px"}}>
     {recruitmentData.map((value, index) => {   
       return <Col key={index} span={6} xl={6} md={12} xs={24}>
-        <MyCard 
+        <JobCard 
           key={index}
           value={value}
           navigate={navigate}

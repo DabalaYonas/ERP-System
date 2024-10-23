@@ -1,9 +1,6 @@
-from typing import Iterable
 from django.db import models
 from lookup.models import Department, JobPosition
 from company.models import Company
-from django.utils import timezone
-import math
 
 def upload_profile_to(int, filename):
     return ("images/profilePic/" + int.name + "_" + filename)
@@ -36,9 +33,43 @@ class Employee(models.Model):
 
     annual_leave_balance = models.IntegerField(default=0)
 
+    basic_salary = models.FloatField()
+    #allowance
+    non_tax_transp_allow = models.FloatField(default=0)
+    transp_allow = models.FloatField(default=0)
+    tele_allow = models.FloatField(default=0)
+    pos_allow = models.FloatField(default=0)  
+    
+    # Deductions
+    staff_loan = models.FloatField(default=0)
+    cost_sharing = models.FloatField(default=0)
+    other_deductions = models.FloatField(default=0)
+    
+
     def __str__(self) -> str:
         return self.name
     
     class Meta:
         ordering =["date_joined"]
+
+# class SalaryStructure(models.Model):
+#     employee = models.OneToOneField(Employee, on_delete=models.CASCADE, related_name='salary_structure')
+#     basic_salary = models.FloatField()
+
+#     #allowance
+#     non_tax_transp_allow = models.FloatField(default=0)
+#     transp_allow = models.FloatField(default=0)
+#     tele_allow = models.FloatField(default=0)
+#     pos_allow = models.FloatField(default=0)  
+    
+#     # Deductions
+#     income_tax = models.FloatField(default=0)
+#     staff_loan = models.FloatField(default=0)
+#     cost_sharing = models.FloatField(default=0)
+#     pension_7 = models.FloatField(default=0)
+#     pension_11 = models.FloatField(default=0)
+#     other_deductions = models.FloatField(default=0)
+    
+#     def __str__(self):
+#         return f"{self.employee.name}'s Salary Structure"
 

@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const register = async (name, email, password, companyName) => {
-        const response = await axios.post("http://127.0.0.1:8000/company/api/", {name: companyName, currency_id: ""});
+        const response = await axios.post("http://127.0.0.1:8000/company/api/", {name: companyName, currency_id: ""}, {withCredentials: true});
         if (response) {
             await axios.post('http://127.0.0.1:8000/user/register/api/', {name, email, password, company_id: response.data.id, role_id: ""}, 
                 {headers: {'Content-Type': 'application/json'}, withCredentials: true}).catch(error => {console.error(error);});
@@ -53,8 +53,6 @@ export const AuthProvider = ({ children }) => {
                 setUser(currentUser);
                 setCompany(currentCompany);
               }
-            } else {
-              
             }
           }
       

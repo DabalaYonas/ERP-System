@@ -6,7 +6,7 @@ from employee.models import Employee
 class AttendanceSerializer(serializers.ModelSerializer):
     employee = EmployeeSerializer(read_only=True)
 
-    employeeId = serializers.PrimaryKeyRelatedField(
+    employee_id = serializers.PrimaryKeyRelatedField(
         queryset=Employee.objects.all(), write_only=True, source='employee'
     )
 

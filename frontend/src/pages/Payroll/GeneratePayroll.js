@@ -18,7 +18,7 @@ const items = [
 
 function GeneratePayroll() {
     const [paymentDate, setPaymentDate] = useState(true);
-    const [tableCount, setTableCount] = useState(0);
+    const [tableCount, setTableCount] = useState(null);
     const [generated, setGenerated] = useState(false);
     const [form] = Form.useForm();
 
@@ -75,8 +75,8 @@ function GeneratePayroll() {
     </Card>
 
     {generated && <Card className='my-3' title="Employee Details">
-        <PayslipTable infinity  noSelection callback={setTableCount}/>
-        {tableCount > 0 && <Button className='mt-4 px-12' size='large' type='primary' onClick={onSubmit}>Submit</Button>}
+        <PayslipTable infinity noActions callback={setTableCount}/>
+        {tableCount && <Button className='mt-4 px-12' size='large' type='primary' onClick={onSubmit}>Submit</Button>}
     </Card>}
   </>
 }

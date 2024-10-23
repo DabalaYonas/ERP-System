@@ -1,6 +1,6 @@
-import { Form, Skeleton, Tabs } from 'antd'
+import { Button, Flex, Form, Skeleton, Space, Tabs } from 'antd'
 import React, { useEffect, useState } from 'react';
-import { UserOutlined, FileTextOutlined, FolderOpenOutlined } from "@ant-design/icons";
+import { UserOutlined, FileTextOutlined, FolderOpenOutlined, DollarCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { getEmployee, postEmployees, putEmployee } from '../../services/handleEmployee';
 import { useParams } from 'react-router-dom';
@@ -8,30 +8,37 @@ import { useNavigate } from 'react-router-dom';
 import PersonalForm from './PersonalForm';
 import WorkForm from './WorkForm';
 import DocumentForm from './DocumentForm';
+import SalaryForm from './SalaryForm';
 
 
 const profileTabItems = (setActiveKey) => {
   
   return [
-    {   key: 'personal',
+    {   key: 1,
         label: 'Personal Informations',
         icon: <UserOutlined />,
         children: <PersonalForm setActiveKey={setActiveKey}/>,
     },
-    {   key: 'work',
+    {   key: 2,
         label: 'Work Informations',
         icon: <FileTextOutlined />,
         children: <WorkForm setActiveKey={setActiveKey}/>,
     },
-    {   key: 'document',
+    {   key: 3,
         label: 'Documents',
         icon: <FolderOpenOutlined />,
         children: <DocumentForm />
+    },
+    {   key: 4,
+        label: 'Salary Informations',
+        icon: <DollarCircleOutlined />,
+        children: <SalaryForm />
     }
   ]};
 
 function EmployeeTab({disabled = false, initialValue, hasInitial = false}) {
-  const [activeKey, setActiveKey] = useState();
+  const [activeKey, setActiveKey] = useState(1);
+  const [btnTxt, setBtnTxt] = useState("Next");
   const [form] = Form.useForm();
   const [initialValues, setInitialValues] = useState(initialValue);
   const params = useParams();
@@ -69,6 +76,15 @@ function EmployeeTab({disabled = false, initialValue, hasInitial = false}) {
     // response ? formData.append("bank_acc_id", response.id) : formData.append("bank_acc_id", "");
     value.bank_acc && formData.append("bank_acc", value.bank_acc);
 
+    formData.append("basic_salary", value.basic_salary);
+    value.non_tax_transp_allow && formData.append("non_tax_transp_allow", value.non_tax_transp_allow);
+    value.transp_allow && formData.append("transp_allow", value.transp_allow);
+    value.tele_allow && formData.append("tele_allow", value.tele_allow);
+    value.pos_allow && formData.append("pos_allow", value.pos_allow);
+    value.staff_loan && formData.append("staff_loan", value.staff_loan);
+    value.cost_sharing && formData.append("cost_sharing", value.cost_sharing);
+    value.other_deductions && formData.append("other_deductions", value.other_deductions);
+
     const response = userId ? await putEmployee(formData, userId) : await postEmployees(formData); 
     if (response) {
       navigate(-1);
@@ -77,6 +93,15 @@ function EmployeeTab({disabled = false, initialValue, hasInitial = false}) {
   
   if (!initialValues && hasInitial) {
     return <Skeleton active></Skeleton>;
+  }
+
+  const handleSave = () => {
+    const newActiveKey = Math.min(4, activeKey+1);
+    setActiveKey(newActiveKey);
+    setBtnTxt(newActiveKey < profileTabItems().length ? "Next" : "Save");
+    if (activeKey == profileTabItems().length) {
+      form.submit();
+    }
   }
 
   return (
@@ -91,9 +116,19 @@ function EmployeeTab({disabled = false, initialValue, hasInitial = false}) {
           
       <Tabs
         activeKey={activeKey}
-        onChange={(key) => {setActiveKey(key)}}
+        onChange={(key) => {
+          setActiveKey(key); 
+          setBtnTxt(key < profileTabItems().length ? "Next" : "Save")}
+        }
         defaultActiveKey="personal"
         items={profileTabItems(setActiveKey)}/>
+
+    <Flex className='py-1' justify='end'>
+      <Space>
+        <Button type='default' onClick={() => {navigate("/employees")}}>Cancel</Button>
+        <Button type='primary' onClick={handleSave}>{btnTxt}</Button>
+      </Space>
+    </Flex>
 
       </Form>
       

@@ -7,5 +7,6 @@ router = routers.DefaultRouter()
 router.register('', views.AttendaceView, 'Attendance')
 
 urlpatterns = [
+    path('api/attendance-summary/', views.attendance_summary, name="attendance-summary"),
     path('api/', include(router.urls)),
 ]

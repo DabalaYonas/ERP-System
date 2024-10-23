@@ -106,7 +106,7 @@ const fakeData2 = [
 
 const LeaveSummary = () => {
   const [holidayItems, setHolidayItems] = useState([]);
-  const [loading, setLoading] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchHolidays = async () => {
@@ -117,6 +117,7 @@ const LeaveSummary = () => {
           date: dayjs(item.date).format("MMM DD"),
           day: dayjs(item.date).format("dddd"),
         }));
+        setLoading(false);
         setHolidayItems(datas);        
       } catch (error) {
         console.error(error);
@@ -153,6 +154,7 @@ const LeaveSummary = () => {
     
     <MyCard title="Holidays" className='w-80'>
         <List
+          loading={loading}
           className='px-2'
           dataSource={holidayItems}
           renderItem={(item) => (

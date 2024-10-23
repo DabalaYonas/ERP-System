@@ -1,29 +1,33 @@
 from rest_framework import viewsets
-from rest_framework.parsers import FormParser, MultiPartParser
-from django.http import JsonResponse
 from .models import Attendance
 from .serializers import AttendanceSerializer
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from django.utils import timezone
+from .models import Attendance
+from django.utils import timezone
+from employee.models import Employee
+
+
+@api_view(['GET'])
+def attendance_summary(request):
+    date = request.GET.get("date", timezone.now().date())
+    today_attend = Attendance.objects.filter(checkIn__date=date)
+    on_time = today_attend.filter(status="ON_TIME").count()
+    late = today_attend.filter(status="LATE").count()
+    
+    company_id = request.user.company.id
+    total_absent = Employee.objects.filter(company=company_id).count() - today_attend.count()
+
+    return Response({
+        'total_attend': today_attend.count(),
+        'total_absent': total_absent,
+        'total_on_time': on_time,
+        'total_late': late,
+    })
 
 class AttendaceView(viewsets.ModelViewSet):
-    parser_classes = (MultiPartParser, FormParser)
     serializer_class = AttendanceSerializer
     queryset = Attendance.objects.all()
-
-    def post(self, request):
-        data = request.data
-        serialzer = AttendanceSerializer(data=data)
-
-        if serialzer.is_valid():
-            serialzer.save()
-            return JsonResponse("Attendance added seccussfully", safe=False)
-        return JsonResponse("Failed to add Attendance", safe=False)
     
-    def put(self, request, id=None):
-        data_to_update = Attendance.objects.get(id=id)
-        serializer = AttendanceSerializer(
-            instance=data_to_update, data=request.data, partial=True)
-
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse("Attendance updated Successfully", safe=False)
-        return JsonResponse("Failed To Update Attendance", safe=False)
+       

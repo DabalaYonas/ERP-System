@@ -28,7 +28,7 @@ const ManageUsers = () => {
         id: values.id,
         user: values.name,
         email: values.email,
-        role: values.role && values.role.id,
+        role: values.role && values.role.name,
         last_login: dayjs(values.last_login).format("MMM DD, YY - hh:mm A"),
         date_added: dayjs(values.date_joined).format("MMM DD, YYYY"),
       }));

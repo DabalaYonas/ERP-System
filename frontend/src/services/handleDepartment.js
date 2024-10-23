@@ -3,7 +3,7 @@ import axios from "axios";
 export const URL = "http://127.0.0.1:8000/lookup/api/department/";
 
 export async function getDepartments() {
-    return axios.get(URL, {withCredentials: true}).then(response => response.data);
+    return axios.get(URL, {withCredentials: true});
 }
 
 export async function getDepartment(id) {

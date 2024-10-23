@@ -27,7 +27,7 @@ const CompanySetting = () => {
 
         formData.append(name, name == "brand_color" ? value.toHexString() : value);
       });
-      await axios.patch(`${COMPANY_URL + company.id}/`, formData).then(response => {
+      await axios.patch(`${COMPANY_URL + company.id}/`, formData, {withCredentials: true}).then(response => {
         message.success("Company informations are updated!");   
         window.location.reload();        
       }).catch(error => {

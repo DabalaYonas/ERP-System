@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { getAttedances } from '../../services/handleAttendance';
 import dayjs from "dayjs";
-import { Table, Tag } from 'antd';
+import { Badge, Table, Tag } from 'antd';
+import TableNameWithAvatar from '../TableNameWithAvatar';
+
+const formatTime = "hh:mm A";
 
 const columItems = [
     {
@@ -18,6 +21,10 @@ const columItems = [
     key: "checkout",
     dataIndex: "checkout",
     title: "Check Out",
+    render: (_, { checkout }) => {
+      return checkout ? <p>{dayjs(checkout).format(formatTime)}</p> : <Badge status='processing' color='green' text="Still working"/>
+    },
+    align: 'center'
     },
     // {
     // key: "break",
@@ -34,35 +41,44 @@ const columItems = [
     dataIndex: "status",
     title: "Status",
     render: (_, { status }) => {
-      let color = status.toLowerCase() === "late" ? 'red' : 'green';
+      let color = status && status.toLowerCase() === "late" ? 'red' : 'green';
       return <Tag color={color} key={status}>
-        {status}
+        {status === "ON_TIME" ? "On Time" : "Late"}
       </Tag>
     }
     },
     ];
 
-const formatTime = "hh:mm A";
-
 function isLate(scheduledTime, tolerance = 0) {
   const startTime = dayjs('08:30 AM', formatTime);
-
   const latestArrivalTime = dayjs(scheduledTime).add(tolerance, 'minute');
   
   return startTime.isBefore(dayjs(latestArrivalTime, formatTime));
 }
   
-export const attendanceStatus = (value) => {
-  const status = isLate(value) ? "Late" : "On Time";
+export const AttendanceStatus = (value) => {
+  const status = isLate(value) ? "LATE" : "ON TIME";
   
   return status;
 }
 
-function AttendanceTable({ date = dayjs(), rowSelection = false }) {
-    const [dataSource, setDataSource] = useState([]);
+const calculateWorkingHour = (checkIn, checkOut) => {  
+  const diffInMinutes = dayjs(checkOut).diff(dayjs(checkIn), 'minute');
+
+  const hours = Math.max(Math.floor(diffInMinutes / 60), 0);
+  const minutes = Math.max(diffInMinutes % 60, 0);
+
+  const formattedTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')} hr`;
+
+  return formattedTime;
+}
+
+function AttendanceTable({ date = dayjs(), rowSelection = false, maxShow }) {
+  const [dataSource, setDataSource] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getAttedancesData = () => {
+    const fetchAttedancesData = () => {
       getAttedances().then(response => {
 
         const data = [];
@@ -71,25 +87,26 @@ function AttendanceTable({ date = dayjs(), rowSelection = false }) {
           if (dayjs(attend.checkIn).isSame(date, 'day')) {
             data.push({
                 key: attend.id,
-                employee: attend.employee.name,
+                employee: <TableNameWithAvatar name={attend.employee.name} picture={attend.employee.profilePic} />,
                 checkin: dayjs(attend.checkIn).format(formatTime),
-                checkout: dayjs(attend.checkOut).format(formatTime),
-                workinghour: dayjs(attend.checkOut).subtract(dayjs(attend.checkIn)).format(formatTime),
-                status: attendanceStatus(attend.checkIn),
+                checkout: attend.checkOut,
+                workinghour: attend.checkOut ? calculateWorkingHour(attend.checkIn, attend.checkOut) : calculateWorkingHour(attend.checkIn, dayjs()) ,
+                status: attend.status,
               });
           }
         });
-
-        setDataSource(data);
-
+        setDataSource(maxShow ? data.slice(0, [Math.min(maxShow, data.length)]) : data);
       });
+      
+      setLoading(false);
     }
 
-    getAttedancesData();
+    fetchAttedancesData();
   }, [dayjs(date).format("YYYY-MM-DD")]);
 
   return <>
         <Table 
+          loading={loading}
           pagination={dataSource.length > 10} 
           rowSelection={rowSelection} 
           columns={columItems} 

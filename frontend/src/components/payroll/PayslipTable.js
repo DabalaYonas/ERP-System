@@ -138,7 +138,7 @@ function PayslipTable({ infinity = false, paymentDate, noSelection=false, callba
                   response.data.map((value) => (valueToDict(value)));
 
         setDataSource(data);
-        callback && callback(data.length);
+        callback && callback(data);
         setLoading(false);
       } catch (error) {
         console.log(error);

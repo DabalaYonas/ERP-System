@@ -5,8 +5,11 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register('api', views.PayrollView, 'Payroll')
-router.register('payslip/api', views.PaysliptView, 'Payslip')
 
 urlpatterns = [
+    path('api/payslips/<int:payroll_id>', views.payslip_view, name="Payslip"),
+    path('api/employee-list/', views.ready_payroll_view, name='Employee List'),
+    path('api/monthly-payroll/', views.monthly_payroll, name="Monthly Payroll"),
+    path('api/submit/', views.process_payroll, name="Process Payroll"),
     path('', include(router.urls)),
 ]

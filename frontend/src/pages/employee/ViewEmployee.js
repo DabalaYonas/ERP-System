@@ -1,5 +1,12 @@
-import { Button, Card, Divider, Flex, Image, Table, Tag, Typography } from 'antd';
-import { PaperClipOutlined, MailOutlined, EditOutlined, UserOutlined, FileDoneOutlined, ProjectOutlined, FieldTimeOutlined } from "@ant-design/icons";
+import { Button, Card, Divider, Flex, Image, Space, Table, Tag, Typography } from 'antd';
+import { PaperClipOutlined, 
+  MailOutlined, 
+  EditOutlined, 
+  UserOutlined, 
+  FileDoneOutlined, 
+  ProjectOutlined,
+  DollarCircleOutlined,
+  FieldTimeOutlined, } from "@ant-design/icons";
 import React, { useEffect, useState } from 'react';
 import { Tabs } from 'antd';
 import { useParams } from 'react-router-dom';
@@ -8,7 +15,7 @@ import { getEmployee } from '../../services/handleEmployee';
 import PageTitle from '../../components/PageTitle';
 import axios from 'axios';
 import dayjs from "dayjs";
-import { attendanceStatus } from '../../components/attendance/AttendanceTable';
+import { AttendanceStatus } from '../../components/attendance/AttendanceTable';
 
 const AttendanceChild = () => {
     const [dataSource, setDataSource] = useState([]); 
@@ -27,7 +34,7 @@ const AttendanceChild = () => {
             checkin: dayjs(data.checkIn).format("hh:mm A"),
             checkout: dayjs(data.checkOut).format("hh:mm A"),
             workinghour: dayjs(data.checkIn).subtract(dayjs(data.checkOut)).format("hh:mm A"),
-            status: attendanceStatus(dayjs(data.checkIn)),
+            status: AttendanceStatus(dayjs(data.checkIn)),
           }));
   
           setLoading(false);
@@ -154,7 +161,7 @@ function ViewEmployee() {
         <>
         <PageTitle items={breadcrumbItems} title="Employee Detail" />
         <Card className='text-opacity-85 mb-5 mr-5'>
-            <Flex justify='space-between'>
+            <Flex justify='space-between' align='center'>
               <Flex gap={20}>
                   <Image src={profilePic ? profilePic : (gender == "Male" ? "/male-placeholder.jpg" : "/female-placeholder.jpg")} width={100} height={100} className='rounded-md object-cover object-center'></Image>
                   <Flex vertical gap={2}>
@@ -164,12 +171,19 @@ function ViewEmployee() {
                   </Flex>
               </Flex>
 
+              <Space>
+                
+              <Button 
+                icon={<DollarCircleOutlined />} 
+                className='py-5 self-end'>Payslip</Button>
+                
               <Button type='primary' 
                 disabled={!disabledForm}
                 onClick={handleEdit} 
                 icon={<EditOutlined />} 
                 className='py-5 self-end'>Edit Employee</Button>
 
+              </Space>
             </Flex>
 
             <Divider />

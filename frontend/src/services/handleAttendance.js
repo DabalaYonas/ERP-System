@@ -7,5 +7,5 @@ export const getAttedances = async () => {
 }
 
 export const postAttedances = async (attendace) => {
-    return await axios.post(Url, attendace, {withCredentials: true}).then(response => response.data);
+    return await axios.post(Url, attendace, {withCredentials: true});
 }

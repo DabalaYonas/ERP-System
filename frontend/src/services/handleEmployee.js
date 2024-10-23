@@ -4,7 +4,7 @@ import axios from "axios";
 export const URL = "http://127.0.0.1:8000/employee/api/";
 
 export async function getEmployees() {
-    return axios.get(URL, {withCredentials: true}).then(response => response.data).catch(error => error);
+    return axios.get(URL, {withCredentials: true});
 }
 
 export async function getEmployee(id) {
@@ -34,12 +34,5 @@ export async function putEmployee(data, id) {
 }
 
 export async function deletEmployee(id) {
-    return axios.delete(URL + id + "/", {withCredentials: true}).then(response => {
-        message.success("Employee deleted seccussfully!");
-        return response.data;
-    }).catch(error => {
-        message.error("Sorry! Can't delete this employee!");
-        console.error(error);
-        
-        return null;});
+    return axios.delete(URL + id + "/", {withCredentials: true});
 }

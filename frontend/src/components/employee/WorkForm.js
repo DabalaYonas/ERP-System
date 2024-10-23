@@ -39,12 +39,12 @@ function WorkForm({ setActiveKey }) {
             <Link to="id_card/" className='mt-2'>Generat ID Card</Link>
           </Col>
       </Row>
-    <Flex className='py-3' justify='end'>
+    {/* <Flex className='py-3' justify='end'>
       <Space>
         <Button type='default' onClick={(e) => {setActiveKey("personal");}}>Previos</Button>
         <Button htmlType='sumbit' type='primary'>Save</Button>
       </Space>
-    </Flex>
+    </Flex> */}
     </>
   )
 }

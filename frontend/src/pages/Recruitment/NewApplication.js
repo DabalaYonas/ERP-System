@@ -218,7 +218,8 @@ function NewApplication() {
   if (submitValues) {
     return <>
       <PageTitle backable/>
-    <Card>
+      
+      <Card>
         <EmployeeTab initialValue={submitValues} />
       </Card>
       </>

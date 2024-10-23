@@ -18,7 +18,7 @@ const ExportToExcel = ({ tableData, fileName, disabled }) => {
     saveAs(blob, `${fileName}.xlsx`);
   };
 
-  return <Button type='primary' onClick={saveExcel} icon={<ExportOutlined />} disabled={disabled}>Export to Excel</Button>
+  return <Button type='primary' onClick={saveExcel} icon={<ExportOutlined />} disabled={disabled}>Export</Button>
 };
 
 export default ExportToExcel;

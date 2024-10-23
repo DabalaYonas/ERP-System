@@ -28,14 +28,15 @@ const fetch = (text, serverData, callback, canCreate, canCreateEdit) => {
 }
 
 const fetchData = (serverData, callback) => {
-    serverData().then(response => {
-        const data = response.map((item) => ({
+    serverData().then(response => {      
+        const data = response.data.map((item) => ({
             value: item.id,
             label: item.name ? item.name : item.accountNo ? item.accountNo : item.code,
           }));
 
         callback(data);
-    }).catch(error => {console.error(error);
+    }).catch(error => {
+      console.error(error);
     });
 }
 

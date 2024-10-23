@@ -1,21 +1,29 @@
-import { Card, Flex, Statistic, Tag } from 'antd'
+import { Card, Flex, Space, Statistic, Tag } from 'antd'
 import React from 'react'
 import { RiseOutlined, FallOutlined} from "@ant-design/icons";
+import { formatCurrency } from '../utils/formatCurrency';
+import MyCard from './MyCard';
 
-export default function StatisticCard({ title, value, icon, suffix, prefix, percent, decline = false}) {
-    return <Card className='flex-1 cursor-default' style={{ minWidth: 300}}>
-    <Flex justify='space-between'>
-      <Statistic 
-        title={<h3 className='text-base font-medium black-text'>
-          {icon && <Tag className='px-2 py-1 text-base' color='blue'>{icon}</Tag>}
-          {title}</h3>}
-        value={value}
-        suffix={suffix}
-        prefix={prefix}
-        valueStyle={{ color: '#3a3a3a', fontWeight: '600', fontSize: 26}}/>
-  
-        {/* <p className={`ml-4 self-end ${decline ? "text-red-500" : "text-green-500"} text-base`}>{decline ? <FallOutlined /> : <RiseOutlined />} {percent}%</p> */}
-        {percent && <Tag className='self-end' color={`${decline ? "red" : "green"}`}>{decline ? <FallOutlined /> : <RiseOutlined />} {percent}%</Tag>}
-      </Flex>
-  </Card>
+export default function StatisticCard({ title, value, icon, suffix, prefix, percent=false, change, changeLabel, decline = false}) {
+    return <MyCard className='flex-1 cursor-default rounded-lg' style={{ minWidth: 280}}>
+      <Space direction='vertical' size="small" className='w-full'>
+      <h3 className='text-base font-medium text-black text-opacity-65'>
+          {icon && <Tag className='px-2 py-1 text-sm' color='blue'>{icon}</Tag>}
+          {title}</h3>
+
+          <Flex gap="middle" align='center' justify='space-between'>
+            <p className='text-black text-opacity-80 text-2xl font-medium'>{prefix} {formatCurrency(value)} {suffix}</p>
+
+            {change && 
+            <Flex align='center'>
+              <Tag color={`${decline ? "red" : "green"}`}>
+              {percent && (decline ? <FallOutlined /> : <RiseOutlined />)} {!percent && (decline ? "-" : "+")}{change}{percent && "%"}
+              </Tag> <span className='text-black text-opacity-55 text-sm font-medium'>{changeLabel}</span>
+            </Flex>}
+          </Flex>
+          <Flex>
+
+          </Flex>
+      </Space>
+  </MyCard>
 }

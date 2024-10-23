@@ -39,6 +39,7 @@ class Application(models.Model):
     expected_salary = models.FloatField(null=True, blank=True)
     proposed_salary = models.FloatField(null=True, blank=True)
     stage_id = models.ForeignKey(to=Stage, on_delete=models.SET_NULL, related_name='app_stage', null=True, blank=True)
+    employed = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return f"{self.recruitment} {self.applicant}"

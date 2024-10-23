@@ -19,12 +19,14 @@ import Applications from './pages/Recruitment/Applications';
 import NewApplication from './pages/Recruitment/NewApplication';
 import NewPayslip from './pages/Payroll/NewPayslip';
 import GeneratePayroll from './pages/Payroll/GeneratePayroll';
-import ViewPayroll from './pages/Payroll/ViewPayroll';
+import ViewPayroll from './pages/Payroll/PayrollPage';
 import ViewPayslip from './pages/Payroll/ViewPayslip';
 import IDCard from './components/IDCard';
 import { useEffect } from 'react';
 import axios from 'axios';
 import PayrollPapers from './pages/Payroll/PayrollPapers';
+import PayrollPage from './pages/Payroll/PayrollPage';
+import ProcessPayroll from './pages/Payroll/ProcessPayroll';
 
 function App() {  
   
@@ -60,13 +62,14 @@ function App() {
           <Route path='/employees/:userId' element={<LoginRequired><ViewEmployee /></LoginRequired>} />
           <Route path='/employees/:userId/id_card' element={<LoginRequired><IDCard /></LoginRequired>} />
           <Route path='/employees/add-employee' element={<LoginRequired><AddEmployee /></LoginRequired>} />
-          <Route path='/payroll' element={<LoginRequired><Payroll /></LoginRequired>} />
+          <Route path='/payroll' element={<LoginRequired><PayrollPage /></LoginRequired>} />
           {/* <Route path='/payroll/:payrollId' element={<LoginRequired><ViewPayroll /></LoginRequired>} /> */}
           <Route path='/payroll/payslip/:payslipId' element={<LoginRequired><ViewPayslip /></LoginRequired>} />
           <Route path='/payroll/payslip/:payslipId/edit-payslip/' element={<LoginRequired><NewPayslip /></LoginRequired>} />
           <Route path='/payroll/new-payslip' element={<LoginRequired><NewPayslip /></LoginRequired>} />
           <Route path='/payroll/generate' element={<LoginRequired><GeneratePayroll /></LoginRequired>} />
           <Route path='/payroll/papers' element={<LoginRequired><PayrollPapers /></LoginRequired>} />
+          <Route path='/payroll/process-payroll/:year/:month' element={<LoginRequired><ProcessPayroll /></LoginRequired>} />
           <Route path='/attendance' element={<LoginRequired><Attendance /></LoginRequired>} />
           <Route path='/leave' element={<LoginRequired><Leave /></LoginRequired>} />
           <Route path='/recruitment' element={<LoginRequired><Recruitment /></LoginRequired>} />
@@ -75,11 +78,13 @@ function App() {
           <Route path='/settings' element={<LoginRequired><Settings /></LoginRequired>} />
           <Route path='/settings/:activeKey' element={<LoginRequired><Settings /></LoginRequired>} />
         </Route>
+        
         <Route>
-          <Route path='*' element={<Error404 />} />
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<SignUp />} />
         </Route>
+        
+        <Route path='*' element={<Error404 />} />
       </Routes>
     <Routes>
       
