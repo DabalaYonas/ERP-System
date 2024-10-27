@@ -1,6 +1,16 @@
 from django.db import models
 from employee.models import Employee
 from django.core.exceptions import ValidationError
+from lookup.models import Department
+
+class OvertimeRules(models.Model):
+    department = models.ForeignKey(to=Department, null=True, blank=True, on_delete=models.SET_NULL) 
+    regular_working_hours = models.DecimalField(max_digits=4, decimal_places=2, default=8.0)
+    overtime_multiplier = models.DecimalField(max_digits=3, decimal_places=2, default=1.5)
+    max_regular_hours = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
+    
+    def __str__(self):
+        return f"Overtime Rule: {self.overtime_multiplier}x after {self.regular_working_hours} hours"
 
 class Payroll(models.Model):
     employee = models.ForeignKey(to=Employee, on_delete=models.CASCADE)

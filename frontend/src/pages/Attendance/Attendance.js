@@ -1,4 +1,4 @@
-import { Button, Card, Col, DatePicker, Divider, Flex, Form, Input, message, Modal, Row, Skeleton, Space, } from 'antd';
+import { Button, Col, DatePicker, Divider, Flex, Form, Input, message, Modal, Row, Select, Skeleton, Space, } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { ArrowLeftOutlined, ArrowRightOutlined, CalendarOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -9,6 +9,7 @@ import StatisticCard from '../../components/StatisticCard';
 import PageTitle from '../../components/PageTitle';
 import AttendanceTable, { AttendanceStatus } from '../../components/attendance/AttendanceTable';
 import axios from 'axios';
+import MyCard from '../../components/MyCard';
 
 const dateFormat = "DD-MM-YYYY";
 
@@ -20,46 +21,47 @@ const isTodayHandler = (value, setDisableToday) => {
 function Attendance() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [disabledToday, setDisableToday] = useState(true);
-  const [dateValue, setDateValue] = useState(dayjs());
+  const [date, setDate] = useState(dayjs());
   const [form] = Form.useForm();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [attendanceSummary, setAttendanceSummary] = useState({});
   const [loading, setLoading] = useState(true);
+  const [reload, setReload] = useState(0);
+
+  const fetchAttedancesData = async() => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/attendance/api/attendance-summary/?date=${date.format("YYYY-MM-DD")}`, {withCredentials: true});
+      setAttendanceSummary(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   useEffect(() => {
-    const fetchAttedancesData = async() => {
-      try {
-        const response = await axios.get(`http://127.0.0.1:8000/attendance/api/attendance-summary/?date=${dateValue.format("YYYY-MM-DD")}`, {withCredentials: true});
-        setAttendanceSummary(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
     fetchAttedancesData();
-  }, [dateValue]);
+  }, [date]);
 
   const handleSetToday = () => {
-    setDateValue(dayjs());
+    setDate(dayjs());
     setDisableToday(true);
   }
 
   const handleDateChange = (value) => {
-    setDateValue(value);  
+    setDate(value);  
     isTodayHandler(value, setDisableToday); 
   }
 
   const changeDate = (value) => {
-    const currentDate = dateValue;       
-    if (dateValue.isBefore(dayjs(), 'date') || value < 0) {
+    const currentDate = date;       
+    if (date.isBefore(dayjs(), 'date') || value < 0) {
       const newDate = currentDate.add(value, 'day');
-      setDateValue(newDate);
+      setDate(newDate);
       isTodayHandler(newDate, setDisableToday);
     }
   }
 
-  const handleOk = () => {
+  const handleCheckIn = () => {
     form.validateFields().then(async (value) => {
       const formData = new FormData();
       const checkIn = value.checkIn[0];
@@ -70,13 +72,19 @@ function Attendance() {
       formData.append("status", AttendanceStatus(checkIn));
 
       try {
-        await postAttedances(formData);
-        message.success("Attendance is saved!");
+        await axios.post(`http://127.0.0.1:8000/attendance/check_in/`, 
+          {
+            employee_id: value.employee,
+            date: checkIn.format("YYYY-MM-DD"),
+            check_in: checkIn.toISOString()}, 
+          {withCredentials: true});
+        message.success("Employee is check in!");
+        setReload(preValue => preValue + 1);
+        fetchAttedancesData();
         form.resetFields();
         setIsModalOpen(false);
-        window.location.reload();
       } catch (error) {
-        message.error("Can't save this Attendance!");
+        message.error("Employee is check out!");
       }
     }).catch((errorInfo) => {
       console.error(errorInfo);
@@ -89,16 +97,60 @@ function Attendance() {
 
   const handleCheckOut = () => {
       selectedRowKeys.forEach(async(id) => {
-        try {
-          const currentTime = dayjs();
-          await axios.patch(`http://127.0.0.1:8000/attendance/api/${id}/`, {checkOut: currentTime.toISOString()}, {withCredentials: true});
-          window.location.reload();
-        } catch (error) {
+        const formData = new FormData();
+        formData.append("employee_id", id);
+        formData.append("date", dayjs().format("YYYY-MM-DD"));
+        formData.append("check_out", dayjs().toISOString());
+        await axios.post(`http://127.0.0.1:8000/attendance/check_out/`, formData, 
+          {withCredentials: true})
+          .then(response => 
+            {message.success("Employee is check out!");
+              setReload(preValue => preValue + 1);
+              fetchAttedancesData();
+            })
+          .catch(error => {
             console.error(error);
             message.error("Can't check out this employee!");
+          });
+      });
+  }
+
+  const handleBreak = (type) => {
+    selectedRowKeys.forEach(async(id) => {
+        const formData = new FormData();
+        formData.append("employee_id", id);
+        formData.append("date", dayjs().format("YYYY-MM-DD"));
+        if (type === "start") {
+          formData.append("start_break", dayjs().toISOString());
+  
+          await axios.post(`http://127.0.0.1:8000/attendance/start_break/`, formData, 
+            {withCredentials: true})
+            .then(response => 
+              {message.success("Employee is take break!");
+                setReload(preValue => preValue + 1);
+              fetchAttedancesData();})
+            .catch(error => {
+              console.error(error);
+              message.error("This employee can't take break!");
+            });
+        } else if ("end") {
+          formData.append("end_break", dayjs().toISOString());
+  
+          await axios.post(`http://127.0.0.1:8000/attendance/end_break/`, formData, 
+            {withCredentials: true})
+            .then(response => 
+              {
+                message.success("Employee is back to work!");
+                setReload(preValue => preValue + 1);
+                fetchAttedancesData();
+              })
+            .catch(error => {
+              console.error(error);
+              message.error("This employee not on break!");
+            });  
         }
         
-      });
+    });
   }
 
   const rowSelection = {
@@ -115,51 +167,78 @@ function Attendance() {
     <PageTitle items={[
         {path: '/attendance',
           title: 'Attendance',}]} title="Employee Attendace" />
-
-      <Flex justify='space-between' gap="middle" className='mb-3'>
-        <StatisticCard title="Total Present" value={attendanceSummary.total_attend} change={10} percent />
-        <StatisticCard title="Total Absent" value={attendanceSummary.total_absent} change={10} percent />
-        <StatisticCard title="Total On Times" value={attendanceSummary.total_on_time} change={12} percent />
-        <StatisticCard title="Total Lates" value={attendanceSummary.total_late} change={34} percent decline={true} />
-      </Flex>
-
-        <Divider />
         
-        <Flex className='mb-2' justify='space-between'>
-          <Space>
+        <Space direction='vertical' className='w-full' size="middle">
+          <Flex justify='space-between'>
             <Space>
-              <Button onClick={(e) => {changeDate(-1)}} icon={<ArrowLeftOutlined className='opacity-80'/>}/>
-              <DatePicker 
-                allowClear={false} 
-                value={dateValue} 
-                onChange={handleDateChange} 
-                maxDate={dayjs()}
-                defaultValue={dayjs("08/05/2024", dateFormat)}/>
-              <Button
-                  disabled={!dateValue.isBefore(dayjs(), 'date')} 
-                  onClick={(e) => {changeDate(1)}} 
-                  icon={<ArrowRightOutlined className='opacity-80'/>} />
+              <Space>
+                <Button onClick={(e) => {changeDate(-1)}} icon={<ArrowLeftOutlined className='opacity-80'/>}/>
+                <DatePicker 
+                  allowClear={false} 
+                  value={date} 
+                  onChange={handleDateChange} 
+                  maxDate={dayjs()}
+                  defaultValue={dayjs("08/05/2024", dateFormat)}/>
+                <Button
+                    disabled={!date.isBefore(dayjs(), 'date')} 
+                    onClick={(e) => {changeDate(1)}} 
+                    icon={<ArrowRightOutlined className='opacity-80'/>} />
+              </Space>
+              
+              <Button disabled={disabledToday} icon={<CalendarOutlined />} onClick={handleSetToday}>Today</Button>
             </Space>
-            
-            <Button disabled={disabledToday} icon={<CalendarOutlined />} onClick={handleSetToday}>Today</Button>
-          </Space>
-
-          <Space>
-            <Input.Search style={{ width: "420px"}} placeholder='Search Employee Attendance' size='middle' enterButton/>
-            <Button type='primary' size='middle' onClick={() => {setIsModalOpen(true)}}>New Attendance</Button>
-            {selectedRowKeys.length > 0 && <Button type='primary' size='middle' onClick={handleCheckOut}>Check Out</Button>}
-          </Space>
-
-        </Flex>
+  
+            <Space>
+              <Button type='primary' size='middle' onClick={() => {setIsModalOpen(true)}}>New Attendance</Button>
+              {selectedRowKeys.length > 0 && 
+                (<>
+                  <Button size='middle' onClick={() => {handleBreak("start")}}>Take a Break</Button>
+                  <Button size='middle' onClick={() => {handleBreak("end")}}>Back to work</Button>
+                  <Button type='primary' size='middle' onClick={handleCheckOut}>Check Out</Button>
+                  </>
+                )}
+            </Space>
+          </Flex>
         
-        <AttendanceTable 
+          <Flex justify='space-between' gap="middle">
+            <StatisticCard title="Total Present" value={attendanceSummary.total_attend} change={10} percent />
+            <StatisticCard title="Total Absent" value={attendanceSummary.total_absent} change={10} percent />
+            <StatisticCard title="Total On Times" value={attendanceSummary.total_on_time} change={12} percent />
+            <StatisticCard title="Total Lates" value={attendanceSummary.total_late} change={34} percent decline={true} />
+          </Flex>
+
+        <MyCard title="Attendance List" header={
+          <Flex gap="small">
+            <Input.Search placeholder='Search Employee Attendance' size='middle'/>
+            <Select className='w-48' defaultValue="0" 
+                options={[
+                  {
+                      value: "0",
+                      label: "All Status",
+                  },
+                  {
+                      value: "1",
+                      label: "On Time",
+                  },
+                  {
+                      value: "2",
+                      label: "Late",
+                  }]} />
+          </Flex>}>
+
+        <AttendanceTable
+          reload={reload}
           rowSelection={rowSelection}
-          date={dateValue} />
+          date={date} />
+
+    </MyCard>
+
+      </Space>
         
     <Modal 
         open={isModalOpen} 
         title="Create Attendance"
-        onOk={handleOk}
+        onOk={handleCheckIn}
         onCancel={() => {form.resetFields(); setIsModalOpen(false)}}>
           
       <Form 
