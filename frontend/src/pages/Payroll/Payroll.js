@@ -134,7 +134,6 @@ const PayrollTab = () => {
             
           });
         });
-        
     
         setExportData(listOfData);
 

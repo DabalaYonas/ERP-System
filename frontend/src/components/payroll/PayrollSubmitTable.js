@@ -40,7 +40,7 @@ function PayrollSubmitTable() {
 
     const payPeriod = dayjs().set("year", year).set("month", month).format("MMMM YYYY");
     const fetchData = async() => {
-        try {
+        try {            
             const response = await axios.get(`http://127.0.0.1:8000/payroll/api/employee-list?payPeriod=${payPeriod}`, {withCredentials: true});
             const datas = response.data.map(data => ({
                 key: data.employee.id,

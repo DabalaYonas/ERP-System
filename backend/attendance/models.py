@@ -2,6 +2,7 @@ from django.db import models
 from employee.models import Employee
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from datetime import datetime
 
 class Attendance(models.Model):
     employee = models.ForeignKey(to=Employee, on_delete=models.CASCADE)
@@ -40,6 +41,20 @@ class Attendance(models.Model):
                 return 'Late'
             return 'On Time'
         return 'Absent'
+    
+    @property
+    def total_hours(self):
+        today = datetime.today()
+        if self.checkOut:
+            return (datetime.combine(today, self.checkOut.time()) - datetime.combine(today, self.checkIn.time())).total_seconds() / 3600
+        return 0
+
+    @property
+    def overtime(self):
+        regular_hours = 8
+        if self.total_hours > regular_hours:
+            return self.total_hours - regular_hours
+        return 0
     
     class Meta:
         ordering = ["checkIn"]

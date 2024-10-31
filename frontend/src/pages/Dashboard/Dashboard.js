@@ -26,7 +26,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [employeeCount, setEmployeeCount] = useState(0);
   const [attendSummary, setAttendSummary] = useState({});
-  const [monthlySalary, setMonthlySalary] = useState(0);
+  const [payrollSummary, setpayrollSummary] = useState({});
 
   useEffect(() => {
     const fetchDatas = async() => {
@@ -34,12 +34,19 @@ function Dashboard() {
         const holidayResponse = await getHolidays();
         const employeeResponse = await axios.get('http://127.0.0.1:8000/employee/api/employee-count/', {withCredentials: true});
         const attendanceResponse = await axios.get('http://127.0.0.1:8000/attendance/api/attendance-summary/', {params: {'date': dayjs().format("YYYY-MM-DD")}, withCredentials: true});
-        const payrollResponse = await axios.get('http://127.0.0.1:8000/payroll/api/monthly-payroll/', {params: {'date': dayjs().format("YYYY-MM-DD")}, withCredentials: true});
+        
+        await axios.get('http://127.0.0.1:8000/payroll/api/payroll-summary/', 
+          {params: {'payPeriod': dayjs().format("MMMM YYYY")}, withCredentials: true})
+          .then(response => {
+              setpayrollSummary(response.data); 
+          })
+          .catch(errInfo => {
+            console.error(errInfo);
+          });
+          
         setEmployeeCount(employeeResponse.data.total_employees);
         setHolidayItems(holidayResponse);  
-        setAttendSummary(attendanceResponse.data);          
-        // setMonthlySalary(payrollResponse.data);          
-        // console.log(payrollResponse.data);
+        setAttendSummary(attendanceResponse.data);  
         
         setLoading(false);
       } catch (error) {
@@ -74,7 +81,7 @@ function Dashboard() {
               <StatisticCard title="Total Employee" icon={<UsergroupAddOutlined />} value={employeeCount} change={10.0} percent />
               <StatisticCard title="Today Attend" icon={<FileDoneOutlined />} value={attendSummary.total_attend} change={10.0} percent decline />
               {/* <StatisticCard title="Total Applicant's" icon={<FileSearchOutlined />} value={12} change={50.0} percent /> */}
-              <StatisticCard title="This Month Salary" icon={<DollarCircleOutlined />} value={monthlySalary} suffix="Br" change={20.0} percent />
+              <StatisticCard title="This Month Salary" icon={<DollarCircleOutlined />} value={payrollSummary.total_payroll_costs} suffix="Br" change={20.0} percent />
             </Flex>
 
               <Flex gap="middle">

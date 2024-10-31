@@ -10,6 +10,16 @@ class AttendanceSerializer(serializers.ModelSerializer):
         queryset=Employee.objects.all(), write_only=True, source='employee'
     )
 
+    total_hours = serializers.SerializerMethodField()
+    overtime = serializers.SerializerMethodField()
+
     class Meta:
         model = Attendance
-        fields = '__all__'
+        fields = ['id', 'employee_id', 'employee', 'date', 'checkIn', 'checkOut', 'break_start', 'break_end', 'total_hours', 'overtime']
+        read_only_fields = ['total_hours', 'overtime']
+
+    def get_total_hours(self, obj):
+        return obj.total_hours
+    
+    def get_overtime(self, obj):
+        return obj.overtime

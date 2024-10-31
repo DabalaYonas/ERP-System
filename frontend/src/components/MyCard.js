@@ -10,6 +10,7 @@ export default function MyCard({ header, title, children, className, style }) {
         borderRadius: token.borderRadiusLG, 
         backgroundColor: "white",
         padding: "18px 18px",
+        border: "1px solid #0000001c",
         ...style
     }
 

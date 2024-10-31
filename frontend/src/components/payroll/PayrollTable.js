@@ -11,11 +11,8 @@ const CURRENCY = "Br";
 
 const ActionButton = ({id}) => {
   return <Flex gap={6}>
-    <Tooltip title="Edit Payslip">
-      <Link to={`payslip/${id}/`} className='cursor-pointer text-primary-500 hover:text-primary-400'><EyeOutlined /></Link>
-    </Tooltip>
     <Tooltip title="View Payslip">
-      <Link to={`payslip/${id}/edit-payslip`} className='cursor-pointer text-primary-500 hover:text-primary-400'><EditOutlined /></Link>  
+      <Link to={`payslip/${id}/`} className='cursor-pointer text-primary-500 hover:text-primary-400'><EyeOutlined /></Link>
     </Tooltip>
   </Flex>
 }
@@ -45,7 +42,7 @@ function PayrollTable({month, year}) {
         const fetchData = async () => {
             const response = await axios.get(`http://127.0.0.1:8000/payroll/api/`, {withCredentials: true});
             const datas = response.data.map((data) => ({
-                key: 1,
+                key: data.id,
                 payroll_id: data.id,
                 name: data.employee.name,
                 payPeriod: data.payPeriod,
@@ -281,8 +278,8 @@ function PayrollTable({month, year}) {
         {
         dataIndex: "action",
         title: "Action",
-        render: (value, _) => {
-            return <ActionButton id={value}/>
+        render: (_, {payroll_id}) => {
+            return <ActionButton id={payroll_id}/>
         }
         }
     ];

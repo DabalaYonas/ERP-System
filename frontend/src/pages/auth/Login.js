@@ -85,7 +85,8 @@ function Login() {
       </form>
 
       <div className="h-full md:py-6 flex items-center relative max-md:before:hidden before:absolute before:bg-gradient-to-r before:from-gray-50 before:via-[#E4FE66] before:to-[#55F5A3] before:h-full before:w-3/4 before:right-0 before:z-0">
-        <img src="https://miro.medium.com/v2/resize:fit:828/format:webp/0*I20KqJ1jmb20lfef.png" className="rounded-lg lg:block md:block shadow-2xl lg:w-5/6 lg:h-5/6 md:w-11/12 md:h-5/6 sm:hidden z-50 relative object-cover object-left" alt="Dining Experience" />
+        <img src="./Dashboard.webp" 
+          className="rounded-lg lg:block md:block shadow-2xl lg:w-5/6 lg:h-5/6 md:w-11/12 md:h-5/6 sm:hidden z-50 relative object-cover object-left" alt="Dashboard image of login page" />
       </div>
     </div>
   </div>

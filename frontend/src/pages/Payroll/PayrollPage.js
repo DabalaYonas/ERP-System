@@ -1,6 +1,6 @@
-import { Alert, Button, Col, DatePicker, Flex, Input, Row, Select, Space} from 'antd';
-import React, { useState } from 'react'
-import {FileTextOutlined, SyncOutlined} from '@ant-design/icons'
+import { Alert, Button, Col, DatePicker, Flex, Input, notification, Row, Select, Skeleton, Space} from 'antd';
+import React, { useEffect, useState } from 'react'
+import {FileTextOutlined, SyncOutlined, FileSyncOutlined} from '@ant-design/icons'
 import StatisticCard from '../../components/StatisticCard';
 import PageTitle from '../../components/PageTitle';
 import PayrollStackedBarChart from '../../components/PayrollStackedBarChart';
@@ -10,39 +10,82 @@ import ExportToExcel from '../../components/ExportToExcel';
 import PayrollTable from '../../components/payroll/PayrollTable';
 import { Link } from 'react-router-dom';
 import dayjs from "dayjs";
+import axios from 'axios';
 
 const CURRENCY = "Br";
 
-function PayrollPage() {
+function PayrollPage({showPayrollNotification, setShowPayrollNotification}) {
   const [month, setMonth] = useState(dayjs().month());
   const [year, setYear] = useState(dayjs().year());
+  const [api, contextHolder] = notification.useNotification();
+  const [loading, setLoading] = useState(true);
+  const [summary, setSummary] = useState({});
+  const [payPeriod, setPayPeriod] = useState(dayjs());
+  
+  useEffect(() => {
+    setLoading(true);
 
+    const payDate = dayjs().set('year', year).set('month', month);
+    setPayPeriod(payDate);
+    const fetchData = async() => {
+      await axios.get(`http://127.0.0.1:8000/payroll/api/payroll-summary?payPeriod=${payDate.format("MMMM YYYY")}`, {withCredentials: true})
+      .then(response => {
+        setSummary(response.data);
+        setLoading(false);
+      })
+      .catch(errInfo => {
+        console.error(errInfo);
+      })
+    }
+
+    if (showPayrollNotification) {  
+      api.success({
+        message: "Payroll Finish",
+        description: "You successfully run payroll for June period."
+      })
+
+      setShowPayrollNotification(false);
+    }
+    
+    fetchData();
+  }, [showPayrollNotification, month, year]);
+  
   const handleDateChange = (value) => {
     setMonth(dayjs(value).month());
     setYear(dayjs(value).year());    
   }
+
+  if (loading) {
+    return <Skeleton />
+  }
   
   return <>
+  {contextHolder}
   <PageTitle title="Payrolls" />
+  
   <Space direction='vertical' className='w-full' size="middle">
 
-  <Alert
-      message="Payroll submission for the current pay period is due in 2 days. review and finalize all employee payroll details."
-      type="warning"
+  {summary.unprocessed_employees > 0 && <Alert
+      message={<h2 className='text-xl font-medium'>Monthly Salary: {payPeriod.format("MMM")} 01st - 30st</h2>}
       showIcon
+      icon={<FileSyncOutlined />}
+      description={`Payroll for ${summary.unprocessed_employees} employees for the month of ${payPeriod.format("MMMM")} has not been processed. Please review and run payroll`}
+      type="warning"
       action={
-        <Space>
-          <Link to="details">MORE DETAILS</Link>
-        </Space>
+        <Flex align='center' className='h-full'>
+          <Link to={`run-payroll/${year}/${month}`}>
+            <Button type='primary' icon={<SyncOutlined />} danger>Run Payroll</Button>
+          </Link>
+        </Flex>
       }
-      closable
-    />
+    />}
 
     <Flex justify='space-between'>
         <DatePicker 
             picker='month' 
             onChange={handleDateChange}
-            allowClear={false} 
+            allowClear={false}
+            value={payPeriod}
             defaultValue={dayjs()}
             format={"MMMM YYYY"}
             maxDate={dayjs()}/>
@@ -51,14 +94,14 @@ function PayrollPage() {
           <Button type='primary' href='payroll/papers/' icon={<FileTextOutlined />}>Generate Bank Letter</Button>
           <Button type='primary' href='payroll/papers/' icon={<FileTextOutlined />}>Generate Payslip</Button>
           <ExportToExcel  fileName="Payroll Sheet"/>
-          <Link to={`process-payroll/${year}/${month}`}><Button type='primary' icon={<SyncOutlined />}>Process Payroll</Button></Link>
+          <Link to={`run-payroll/${year}/${month}`}><Button type='primary' icon={<SyncOutlined />}>Process Payroll</Button></Link>
         </Flex>
     </Flex>
     <Flex gap="middle" wrap align='center' justify='space-between'>
-        <StatisticCard title="Payrolls Cost" value={200000} prefix={CURRENCY} change={20} percent/>
-        <StatisticCard title="Total Expense" value={54000} prefix={CURRENCY} change={0.1} percent/>
-        <StatisticCard title="Pending Payment" value={40000} prefix={CURRENCY} change={10} decline changeLabel="Employee"/>
-        <StatisticCard title="Total Payrolss" value={40} change={20} changeLabel="New Employee"/>
+        <StatisticCard title="Payroll Cost" value={summary.total_payroll_costs} prefix={CURRENCY} change={20} percent/>
+        <StatisticCard title="Average Salary" value={summary.average_salary} prefix={CURRENCY} change={0.1} percent/>
+        <StatisticCard title="Average Salary" value={summary.highest_salary} prefix={CURRENCY} change={10} decline percent/>
+        <StatisticCard title="Total Employees" value={summary.processed_employees} notMoney change={20} changeLabel="New Employee"/>
     </Flex>
     {/* <Flex>    
         <MyCard title="Payment History" className="basis-3/5">

@@ -4,7 +4,7 @@ import { RiseOutlined, FallOutlined} from "@ant-design/icons";
 import { formatCurrency } from '../utils/formatCurrency';
 import MyCard from './MyCard';
 
-export default function StatisticCard({ title, value, icon, suffix, prefix, percent=false, change, changeLabel, decline = false}) {
+export default function StatisticCard({ title, value, icon, suffix, prefix, percent=false, change, changeLabel, decline = false, notMoney}) {
     return <MyCard className='flex-1 cursor-default rounded-lg' style={{ minWidth: 280}}>
       <Space direction='vertical' size="small" className='w-full'>
       <h3 className='text-base font-medium text-black text-opacity-65'>
@@ -12,7 +12,7 @@ export default function StatisticCard({ title, value, icon, suffix, prefix, perc
           {title}</h3>
 
           <Flex gap="middle" align='center' justify='space-between'>
-            <p className='text-black text-opacity-80 text-2xl font-medium'>{prefix} {formatCurrency(value)} {suffix}</p>
+            <p className='text-black text-opacity-80 text-2xl font-medium'>{prefix} {notMoney ? value : formatCurrency(value)} {suffix}</p>
 
             {change && 
             <Flex align='center'>

@@ -19,32 +19,16 @@ import Applications from './pages/Recruitment/Applications';
 import NewApplication from './pages/Recruitment/NewApplication';
 import NewPayslip from './pages/Payroll/NewPayslip';
 import GeneratePayroll from './pages/Payroll/GeneratePayroll';
-import ViewPayroll from './pages/Payroll/PayrollPage';
 import ViewPayslip from './pages/Payroll/ViewPayslip';
 import IDCard from './components/IDCard';
-import { useEffect } from 'react';
-import axios from 'axios';
 import PayrollPapers from './pages/Payroll/PayrollPapers';
 import PayrollPage from './pages/Payroll/PayrollPage';
 import ProcessPayroll from './pages/Payroll/ProcessPayroll';
+import RunPayroll from './pages/Payroll/RunPayroll';
+import { useState } from 'react';
 
 function App() {  
-  
-//   useEffect(() => {
-//   const updateOnlineStatus = () => {
-//     console.log("Is Online", navigator.onLine);
-    
-//     axios.patch('http://127.0.0.1:8000/user/api/', { is_online: !navigator.onLine }, {headers : {"Content-Type": "application/json"}, withCredentials: true});
-//   };
-
-//   window.addEventListener('online', updateOnlineStatus);
-//   window.addEventListener('offline', updateOnlineStatus);
-
-//   return () => {
-//     window.removeEventListener('online', updateOnlineStatus);
-//     window.removeEventListener('offline', updateOnlineStatus);
-//   };
-// }, []);
+  const [showPayrollNotification, setShowPayrollNotification] = useState(false);
   
   return (
     <ConfigProvider 
@@ -62,8 +46,8 @@ function App() {
           <Route path='/employees/:userId' element={<LoginRequired><ViewEmployee /></LoginRequired>} />
           <Route path='/employees/:userId/id_card' element={<LoginRequired><IDCard /></LoginRequired>} />
           <Route path='/employees/add-employee' element={<LoginRequired><AddEmployee /></LoginRequired>} />
-          <Route path='/payroll' element={<LoginRequired><PayrollPage /></LoginRequired>} />
-          {/* <Route path='/payroll/:payrollId' element={<LoginRequired><ViewPayroll /></LoginRequired>} /> */}
+          <Route path='/payroll' element={<LoginRequired><PayrollPage setShowPayrollNotification={setShowPayrollNotification} showPayrollNotification={showPayrollNotification}/></LoginRequired>} />
+          {/* <Route path='/payroll/:payrollId' element={<LoginRequired><RunPayroll /></LoginRequired>} /> */}
           <Route path='/payroll/payslip/:payslipId' element={<LoginRequired><ViewPayslip /></LoginRequired>} />
           <Route path='/payroll/payslip/:payslipId/edit-payslip/' element={<LoginRequired><NewPayslip /></LoginRequired>} />
           <Route path='/payroll/new-payslip' element={<LoginRequired><NewPayslip /></LoginRequired>} />
@@ -82,6 +66,7 @@ function App() {
         <Route>
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<SignUp />} />
+          <Route path='/payroll/run-payroll/:year/:month' element={<LoginRequired><RunPayroll setShowPayrollNotification={setShowPayrollNotification}/></LoginRequired>} />
         </Route>
         
         <Route path='*' element={<Error404 />} />
