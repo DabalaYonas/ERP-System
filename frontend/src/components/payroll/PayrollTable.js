@@ -1,35 +1,35 @@
 import { Avatar, Button, Flex, Input, Pagination, Space, Table, Tag, Tooltip } from 'antd';
 import React, { useEffect, useRef, useState } from 'react'
-import { CloseOutlined, EditOutlined, EyeOutlined, SearchOutlined, UserOutlined} from '@ant-design/icons'
-import { Link } from 'react-router-dom';
+import { CloseOutlined, EyeOutlined, PrinterOutlined, SearchOutlined, UserOutlined} from '@ant-design/icons'
 import { formatCurrency } from '../../utils/formatCurrency';
 import Highlighter from 'react-highlight-words';
-import axios from 'axios';
 import dayjs from "dayjs";
+import Payslip from './payslip/Payslip';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import TableWithEmployee from '../TableWithEmployee';
+import API from '../../services/api';
 
 const CURRENCY = "Br";
 
 const ActionButton = ({id}) => {
-  return <Flex gap={6}>
-    <Tooltip title="View Payslip">
-      <Link to={`payslip/${id}/`} className='cursor-pointer text-primary-500 hover:text-primary-400'><EyeOutlined /></Link>
-    </Tooltip>
-  </Flex>
+// const response = await axios.get(`http://127.0.0.1:8000/payroll/api/payslips/${id}`, {withCredentials: true});
+  return <Space size="small">
+    {/* <PDFDownloadLink document={<Payslip data={id} />} fileName='payslips.pdf'>
+        <Tooltip title="Payslip pdf">
+            <Button icon={<PrinterOutlined />} />
+        </Tooltip>
+     </PDFDownloadLink> */}
+  <Tooltip title="View Payslip">
+    <Button icon={<EyeOutlined />} href={`/payroll/payslip/${id}`} />
+  </Tooltip>
+</Space>
 }
 
-function PayrollTable({month, year}) {
+function PayrollTable({month, year, setCurrentData}) {
     const [originalData, setOriginalData] = useState([]);
     const [dataSource, setDataSource] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [departmentFilters, setDepartmentFilters] = useState([]);
-    const [searchAllText, setSearchAllText] = useState('');
-    const [searchText, setSearchText] = useState('');
-    const [searchedColumn, setSearchedColumn] = useState('');
-    const searchInput = useRef(null);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-
-    const [current, setCurrent] = useState(1);
-    const pageSize = 5;
 
     useEffect(() => {
 
@@ -40,25 +40,30 @@ function PayrollTable({month, year}) {
         }
 
         const fetchData = async () => {
-            const response = await axios.get(`http://127.0.0.1:8000/payroll/api/`, {withCredentials: true});
-            const datas = response.data.map((data) => ({
-                key: data.id,
-                payroll_id: data.id,
-                name: data.employee.name,
-                payPeriod: data.payPeriod,
-                profilePic: data.employee.profilePic,
-                basic: data.basic_salary,
-                gross_earning: data.gross_earning,
-                tot_deduction: data.total_deduction,
-                net: data.net_salary,
-                status: data.status,
-                action: true,
-            }));
-
-            setDataSource(datas);
-            setOriginalData(datas);
-            setLoading(false);
-            handleDateChange(datas)
+            try {
+                const response = await API.get(`/payroll/api/`);
+                const datas = response.data.map((data) => ({
+                    key: data.id,
+                    payroll_id: data.id,
+                    employee: data.employee.name,
+                    payPeriod: data.payPeriod,
+                    profilePic: data.employee.profilePic,
+                    basic: data.basic_salary,
+                    gross_earning: data.gross_earning,
+                    tot_deduction: data.total_deduction,
+                    net: data.net_salary,
+                    status: data.status,
+                    action: true,
+                }));
+                setCurrentData(response.data.filter(item => dayjs(item.payPeriod).isSame(dayjs().set('year', year).set('month', month), 'month')));
+    
+                setDataSource(datas);
+                setOriginalData(datas);
+                setLoading(false);
+                handleDateChange(datas);
+            } catch (error) {
+                console.error(error);
+            }
         }
 
         if (loading) {
@@ -68,153 +73,12 @@ function PayrollTable({month, year}) {
         }
         
     }, [month, year]);
-  
-    const handleChange = (page) => {
-        setCurrent(page);
-      };
-  
-      const currentData = dataSource.slice((current - 1) * pageSize, current * pageSize);
-      const totalResults = dataSource.length;
-
-    const handleSearchAll = (e) => {
-        const value = e.target.value;
-        setSearchAllText(value);
-        const filteredData = originalData.filter((item) => item.name.toLowerCase().includes(value.toLowerCase()));
-        setDataSource(filteredData);
-    }
-    
-    const handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
-    setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
-    };
-
-    const handleReset = (clearFilters) => {
-    clearFilters();
-    setSearchText('');
-    };
-
-    const HighlightedText = (text) => <Highlighter
-        highlightStyle={{
-            backgroundColor: '#ffc069',
-            padding: 0,
-        }}
-        searchWords={[searchText]}
-        autoEscape
-        textToHighlight={text ? text.toString() : ''}
-        />
-
-    const NameRender = (name, profilePic) => (<Flex gap={14} align="center">
-        {profilePic ? (<Avatar className="shrink-0" src={profilePic}></Avatar>) : 
-        (<Avatar className="shrink-0"  icon={<UserOutlined />} />)}
-        {name}
-    </Flex>);
-
-    const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
-        <div
-        style={{
-            padding: 8,
-        }}
-        onKeyDown={(e) => e.stopPropagation()}
-        >
-        <Flex justify="space-between" className="mb-1"> 
-            <p>{`Search ${dataIndex.replace("_", " ")}`}</p>
-        <Button
-            type="text"
-            size="small"
-            icon={<CloseOutlined />}
-            onClick={() => {
-                close();
-            }}
-            >
-            {/* close */}
-            </Button>
-
-        </Flex>
-        <Input
-            ref={searchInput}
-            placeholder={`Search ${dataIndex.replace("_", " ")}`}
-            value={selectedKeys[0]}
-            onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-            onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            style={{
-            marginBottom: 8,
-            display: 'block',
-            }}
-        />
-        <Space>
-            <Button
-            type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
-            size="small"
-            style={{
-                width: 90,
-            }}
-            >
-            Search
-            </Button>
-
-            <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            size="small"
-            style={{
-                width: 90,
-            }}>
-            Clear
-            </Button>
-
-            <Button
-            type="link"
-            size="small"
-            onClick={() => {
-                confirm({
-                closeDropdown: false,
-                });
-                setSearchText(selectedKeys[0]);
-                setSearchedColumn(dataIndex);
-            }}
-            >
-            Filter
-            </Button>
-        </Space>
-        </div>
-    ),
-    filterIcon: (filtered) => (
-        <SearchOutlined
-        style={{
-            color: filtered ? '#3b82f6' : undefined,
-        }}
-        />
-    ),
-
-    onFilter: (value, record) =>
-        record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-        if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
-        }
-    },
-
-    render: (text, item) => {
-        return dataIndex === "name" ? NameRender(
-        searchedColumn === dataIndex ? (HighlightedText(text)) : (text), 
-        item.profilePic) : searchedColumn === dataIndex ? (HighlightedText(text)) : (text)
-    }
-    });  
-      
-    const columns = [
-        {
+    const columnsData = {
+        order: ["payroll_id", "employee", "basic", "gross_earning", "tot_deduction", "net", "status", "action"],
+        columns : [{
         title: 'Payroll ID',
         dataIndex: 'payroll_id',
         sorter: (a, b) => a.payroll_id - b.payroll_id,
-        },
-        {
-        title: 'Employee Name',
-        dataIndex: 'name',
-        ...getColumnSearchProps("name"),
-        sorter: (a, b) => a.name.localeCompare(b.name),
         },
         {
         title: 'Basic Salary',
@@ -282,7 +146,7 @@ function PayrollTable({month, year}) {
             return <ActionButton id={payroll_id}/>
         }
         }
-    ];
+    ]};
 
     const onSelectChange = async(newSelectedRowKeys) => {
         setSelectedRowKeys(newSelectedRowKeys);
@@ -294,26 +158,13 @@ function PayrollTable({month, year}) {
     };
         
     return <>
-    <Table
+    <TableWithEmployee
         pagination={false} 
         loading={loading}
-        columns={columns}
-        dataSource={currentData}/>
-    
-
-    <Flex align='center' justify='space-between' className='mt-4 px-2'>
-        <span>
-        Showing {(current - 1) * pageSize + 1}-{Math.min(current * pageSize, totalResults)} of {totalResults} results
-        </span>
-        <Pagination
-        current={current}
-        pageSize={pageSize}
-        total={totalResults}
-        onChange={handleChange}
-        showSizeChanger={false}
-        />
-    </Flex>
-
+        rowSelection={rowSelection}
+        columnOrder={columnsData.order}
+        columns={columnsData.columns}
+        dataSource={dataSource}/>
         </>
 }
 

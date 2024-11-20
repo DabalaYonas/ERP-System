@@ -9,9 +9,9 @@ import StatisticCard from '../../components/StatisticCard';
 import MyCard from '../../components/MyCard';
 import SalaryPieChart from '../../components/payroll/run payroll/SalaryChart';
 import dayjs from 'dayjs';
-import axios from 'axios';
 import { formatCurrency } from '../../utils/formatCurrency';
 import InputMoney from '../../components/InputMoney';
+import API from '../../services/api';
 const { Header, Content, Sider } = Layout;
 
 const calcIncomeTax = (taxable_income) => { 
@@ -189,13 +189,13 @@ const EmployeeAllowances = ({dataSource, setDataSource}) => {
             >
               Save
             </a>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
+            <Popconfirm title="Sure to cancel?" onConfirm={cancel} okText="Yes" cancelText="No">
               <a>Cancel</a>
             </Popconfirm>
           </span>
         ) : (
           <a disabled={editingKey !== ''} onClick={() => edit(record)}>
-            <EditOutlined className=' cursor-pointer hover:text-blue-950 text-base'/>
+            <EditOutlined className='cursor-pointer hover:text-blue-950 text-base'/>
           </a>
         );
       },
@@ -366,7 +366,7 @@ const TotalDeductions = ({dataSource, setDataSource}) => {
             >
               Save
             </a>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
+            <Popconfirm title="Sure to cancel?" onConfirm={cancel} okText="Yes" cancelText="No">
               <a>Cancel</a>
             </Popconfirm>
           </span>
@@ -650,7 +650,7 @@ function RunPayroll({setShowPayrollNotification}) {
   useEffect(() => {
     const fetchData = async() => {
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/payroll/api/employee-list?payPeriod=${payPeriod}`, {withCredentials: true});
+            const response = await API.get(`/payroll/api/employee-list?payPeriod=${payPeriod}`);
             const datas = response.data.map(data => ({
                 key: data.employee.id,
                 name: data.employee.name,
@@ -743,7 +743,7 @@ function RunPayroll({setShowPayrollNotification}) {
       other_deductions: data.other_deductions,
     }));
     
-    await axios.post(`http://127.0.0.1:8000/payroll/api/submit/`, 
+    await API.post(`/payroll/api/submit/`, 
       {payrollsData: payrollsData, 
           payPeriod: payPeriod}, 
           {withCredentials: true})
@@ -766,7 +766,7 @@ function RunPayroll({setShowPayrollNotification}) {
         }}
       >
         <div className='w-full'>
-          <PageTitle backable title="Run Payroll" descrTitle="Pay period" descr={`${dayjs().set("month", month).format("MMMM")} 01st - 31st`} descrIcon={<CalendarOutlined />}/>
+          <PageTitle backable title="Run Payroll" horizontal descTitle="Pay period" description={`${dayjs().set("month", month).format("MMMM")} 01st - 31st`} descrIcon={<CalendarOutlined />}/>
         </div>
       </Header>
 

@@ -4,10 +4,12 @@ from . import views
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register('api', views.LeaveView, 'Leave View')
-router.register('types/api', views.LeaveTypeView, 'Leave Type View')
-router.register('public-holidays/api', views.PublicHolidayView, 'Public Holiday View')
+router.register('types', views.LeaveTypeView, 'Leave Type View')
+router.register('public-holidays', views.PublicHolidayView, 'Public Holiday View')
+router.register('balances', views.LeaveBalanceViewSet, 'Leave Balances')
+router.register('', views.LeaveViewSet, 'Leave View')
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('api/leave-summary/', views.LeaveSummaryView.as_view(), name='leave-summary'),
+    path('api/', include(router.urls)),
 ]

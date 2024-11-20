@@ -7,9 +7,8 @@ import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import PersonalForm from './PersonalForm';
 import WorkForm from './WorkForm';
-import DocumentForm from './DocumentForm';
 import SalaryForm from './SalaryForm';
-
+// import DocumentForm from './DocumentForm';
 
 const profileTabItems = (setActiveKey) => {
   
@@ -24,12 +23,12 @@ const profileTabItems = (setActiveKey) => {
         icon: <FileTextOutlined />,
         children: <WorkForm setActiveKey={setActiveKey}/>,
     },
+    // {   key: 3,
+    //     label: 'Documents',
+    //     icon: <FolderOpenOutlined />,
+    //     children: <DocumentForm />
+    // },
     {   key: 3,
-        label: 'Documents',
-        icon: <FolderOpenOutlined />,
-        children: <DocumentForm />
-    },
-    {   key: 4,
         label: 'Salary Informations',
         icon: <DollarCircleOutlined />,
         children: <SalaryForm />
@@ -39,6 +38,7 @@ const profileTabItems = (setActiveKey) => {
 function EmployeeTab({disabled = false, initialValue, hasInitial = false}) {
   const [activeKey, setActiveKey] = useState(1);
   const [btnTxt, setBtnTxt] = useState("Next");
+
   const [form] = Form.useForm();
   const [initialValues, setInitialValues] = useState(initialValue);
   const params = useParams();
@@ -86,10 +86,14 @@ function EmployeeTab({disabled = false, initialValue, hasInitial = false}) {
     value.other_deductions && formData.append("other_deductions", value.other_deductions);
 
     const response = userId ? await putEmployee(formData, userId) : await postEmployees(formData); 
+
     if (response) {
       navigate(-1);
     }
   }
+
+  console.log(activeKey);
+  
   
   if (!initialValues && hasInitial) {
     return <Skeleton active></Skeleton>;
@@ -99,6 +103,7 @@ function EmployeeTab({disabled = false, initialValue, hasInitial = false}) {
     const newActiveKey = Math.min(4, activeKey+1);
     setActiveKey(newActiveKey);
     setBtnTxt(newActiveKey < profileTabItems().length ? "Next" : "Save");
+
     if (activeKey == profileTabItems().length) {
       form.submit();
     }
@@ -114,23 +119,22 @@ function EmployeeTab({disabled = false, initialValue, hasInitial = false}) {
         initialValues={initialValues}
         layout='vertical'>
           
-      <Tabs
-        activeKey={activeKey}
-        onChange={(key) => {
-          setActiveKey(key); 
-          setBtnTxt(key < profileTabItems().length ? "Next" : "Save")}
-        }
-        defaultActiveKey="personal"
-        items={profileTabItems(setActiveKey)}/>
+        <Tabs
+          activeKey={activeKey}
+          onChange={(key) => {
+            setActiveKey(key); 
+            setBtnTxt(key < profileTabItems().length ? "Next" : "Save")}
+          }
+          defaultActiveKey="personal"
+          items={profileTabItems(setActiveKey)}/>
 
-    <Flex className='py-1' justify='end'>
-      <Space>
-        <Button type='default' onClick={() => {navigate("/employees")}}>Cancel</Button>
-        <Button type='primary' onClick={handleSave}>{btnTxt}</Button>
-      </Space>
-    </Flex>
-
-      </Form>
+      <Flex className='py-1' justify='end'>
+        <Space>
+          <Button type='default' onClick={() => {activeKey > 1 ? setActiveKey(activeKey - 1) : navigate("/employees")}}>{activeKey > 1 ? "Previous" : "Cancel"}</Button>
+          <Button type='primary' onClick={handleSave}>{activeKey < profileTabItems().length ? "Next" : "Save"}</Button>
+        </Space>
+      </Flex>
+    </Form>
       
 {/* 
       <Modal

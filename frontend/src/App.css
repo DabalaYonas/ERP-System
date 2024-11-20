@@ -16,6 +16,12 @@
     color: white !important;
 }
 
+.ant-layout-sider-children {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .logout-menu {
     border: none !important;
 }
@@ -34,12 +40,12 @@
 }
 
 .custom-scroll::-webkit-scrollbar-thumb {
-  background: #b5b5b5;
+  background: #ddd;
   border-radius: 20px;
 }
 
 .custom-scroll::-webkit-scrollbar-thumb:hover {
-  background: #999;
+  background: #bbb;
 }
 
 .black-text {

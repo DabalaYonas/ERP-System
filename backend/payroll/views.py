@@ -14,8 +14,9 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import datetime
 from django.db.models import Sum, Avg, Max, Min
+from utils.decorators import role_required
 
-@csrf_exempt
+@api_view(['POST'])
 def process_payroll(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -69,7 +70,6 @@ def payroll_summary(request):
 
     return Response(summary)
 
-
 @api_view(['GET'])
 def ready_payroll_view(request):
     payPeriod = request.GET.get("payPeriod", datetime.date.today().strftime("%B %Y"))    
@@ -97,8 +97,6 @@ def ready_payroll_view(request):
         )
         
         attendance_data = AttendanceSerializer(attendance_records, many=True).data
-
-        print(employee.name, attendance_records.count())
         
         total_hours = sum(record['total_hours'] for record in attendance_data)
         total_overtime = sum(record['overtime'] for record in attendance_data)
@@ -114,14 +112,13 @@ def ready_payroll_view(request):
 
     return JsonResponse(pending_payroll, safe=False, status=status.HTTP_200_OK)
 
-
+@role_required("HR")
 @api_view(['GET'])
 def payslip_view(request, payroll_id):
     payroll = get_object_or_404(Payroll, pk=payroll_id)
     payslip = payroll.generate_payslip()
     serializer = PayrollSerializer(payslip)
     return Response(serializer.data)
-
 
 class PayrollView(viewsets.ModelViewSet):
     serializer_class = PayrollSerializer

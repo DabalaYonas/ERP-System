@@ -10,12 +10,15 @@ import ExportToExcel from '../../components/ExportToExcel';
 import PayrollTable from '../../components/payroll/PayrollTable';
 import { Link } from 'react-router-dom';
 import dayjs from "dayjs";
-import axios from 'axios';
+import ListGrid from '../../components/ListGridSegment';
+import { convert2ExportData } from '../../utils/convert2ExportData';
+import API from '../../services/api';
 
 const CURRENCY = "Br";
 
 function PayrollPage({showPayrollNotification, setShowPayrollNotification}) {
   const [month, setMonth] = useState(dayjs().month());
+  const [currentData, setCurrentData] = useState([]);
   const [year, setYear] = useState(dayjs().year());
   const [api, contextHolder] = notification.useNotification();
   const [loading, setLoading] = useState(true);
@@ -28,7 +31,7 @@ function PayrollPage({showPayrollNotification, setShowPayrollNotification}) {
     const payDate = dayjs().set('year', year).set('month', month);
     setPayPeriod(payDate);
     const fetchData = async() => {
-      await axios.get(`http://127.0.0.1:8000/payroll/api/payroll-summary?payPeriod=${payDate.format("MMMM YYYY")}`, {withCredentials: true})
+      await API.get(`http://127.0.0.1:8000/payroll/api/payroll-summary?payPeriod=${payDate.format("MMMM YYYY")}`)
       .then(response => {
         setSummary(response.data);
         setLoading(false);
@@ -93,7 +96,7 @@ function PayrollPage({showPayrollNotification, setShowPayrollNotification}) {
           <SuccessButton className='bg-green-500 text-white'>Mark as Paid</SuccessButton>
           <Button type='primary' href='payroll/papers/' icon={<FileTextOutlined />}>Generate Bank Letter</Button>
           <Button type='primary' href='payroll/papers/' icon={<FileTextOutlined />}>Generate Payslip</Button>
-          <ExportToExcel  fileName="Payroll Sheet"/>
+          <ExportToExcel tableData={convert2ExportData(currentData)} fileName={`Payroll Sheet - ${payPeriod.format("MMM YYYY")}`}/>
           <Link to={`run-payroll/${year}/${month}`}><Button type='primary' icon={<SyncOutlined />}>Process Payroll</Button></Link>
         </Flex>
     </Flex>
@@ -109,8 +112,8 @@ function PayrollPage({showPayrollNotification, setShowPayrollNotification}) {
         </MyCard>
     </Flex> */}
 
-    <MyCard title="Payroll List" header={<Flex gap="small">
-        <Input.Search placeholder='Search Employee' />
+    <MyCard title="Payroll List" header={
+      <Flex gap="middle">
         <Select className='w-48' defaultValue="0" 
             options={[
               {
@@ -126,9 +129,12 @@ function PayrollPage({showPayrollNotification, setShowPayrollNotification}) {
                   label: "Pending",
               }
       ]}></Select>
+        <Input.Search placeholder='Search Employee' />
+          <ListGrid />
         </Flex>}>
 
         <PayrollTable 
+            setCurrentData={setCurrentData}
             month={month} 
             year={year}/>
 

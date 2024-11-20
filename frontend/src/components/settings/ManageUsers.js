@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Avatar, Badge, Button, Dropdown, Flex, Form, Input, message, Space, Table } from 'antd';
+import { Button, Dropdown, Flex, Form, Input, message, Space, Table } from 'antd';
 import MyTypography from '../MyTypography';
 import { EditOutlined, UserOutlined, DeleteOutlined, MoreOutlined} from "@ant-design/icons";
 import NewButton from '../NewButton';
 import { DescText } from '../DecriptionText';
-import axios from 'axios';
 import dayjs from "dayjs";
-import SearchInput from '../SearchInput';
 import { AuthContext } from '../../context/AuthContext';
+import DataSelect from '../DataSelect';
+import API from '../../services/api';
 
 const fetchRoles = async() => {
-  return await axios.get("http://127.0.0.1:8000/user/api/role/", {withCredentials: true}).then(response => response.data).catch(error => {console.error(error);
+  return await API.get("/user/api/roles/").then(response => response.data).catch(error => {console.error(error);
   });
 }
 
@@ -22,15 +22,18 @@ const ManageUsers = () => {
   const fetchUsersData = async() => {
     setLoading(true);
     try {
-      const response = await axios.get("http://127.0.0.1:8000/user/api/all/", {headers: {"Content-Type": "application/json"}, withCredentials: true});
+      const response = await API.get("/user/api/all/", 
+        {headers: {"Content-Type": "application/json"}, 
+        withCredentials: true});
+
       const data = response.data.map(values => ({
         key: values.id,
         id: values.id,
         user: values.name,
         email: values.email,
-        role: values.role && values.role.name,
-        last_login: dayjs(values.last_login).format("MMM DD, YY - hh:mm A"),
-        date_added: dayjs(values.date_joined).format("MMM DD, YYYY"),
+        role: values.groups__id,
+        last_login: values.last_login,
+        date_added: values.date_joined,
       }));
 
       setDataSource(data);
@@ -41,14 +44,21 @@ const ManageUsers = () => {
     
   }
 
-
-  const updateRole = async(option) => {
+  const updateRole = async(user_id, role_id) => {
     try {
-      await axios.patch("http://127.0.0.1:8000/user/api/", {role_id: option.value}, {headers : {'Content-Type': 'application/json'}, withCredentials: true});
+      await API.post("/user/api/assign-role/", 
+        {user_id: user_id, role_id: role_id});
+      
       message.success("Successfully updated user role!");
       fetchRoles();
     } catch (error) {
-      message.error("Can't updated user role!");
+      if (error.response.data.error) {
+        message.error(error.response.data.error);
+      } else if (error.response.data.detail) {
+        message.error(error.response.data.detail);
+      } else {
+        message.error("Can't updated user role!");
+      }
     }
   }
     const items = [
@@ -90,11 +100,11 @@ const ManageUsers = () => {
         key: "role",
         dataIndex: "role",
         title: "Role",
-        render: (value, {id}) => {
-          
-          return <Form initialValues={{ role: value}} disabled={id !== user.id}>
+        render: (_, {id, role}) => {
+          return <Form initialValues={{role: role}}>
                   <Form.Item className='w-52' name="role" style={{marginBottom: 0}}>
-                    <SearchInput serverData={fetchRoles} placeholder="Role" onSelect={updateRole}></SearchInput>
+                    <DataSelect placeholder="Select role" link="http://127.0.0.1:8000/user/api/roles/" 
+                        onChange={(role_id) => {updateRole(id, role_id)}} />
                   </Form.Item>
                 </Form>
         }
@@ -102,10 +112,9 @@ const ManageUsers = () => {
       { 
         key: "last_login",
         dataIndex: "last_login",
-        title: "Last active",
+        title: "Last login",
         render: (value, _) => {
-
-          return value.toLowerCase() === "online" ? <Badge status="processing" color='green' text="Online" /> : <p>{value}</p>;
+          return dayjs(value.last_login).format("MMM DD, YY hh:mm A");
         }
       },
       { 
@@ -113,26 +122,21 @@ const ManageUsers = () => {
         dataIndex: "date_added",
         title: "Date Joined",
         render: (value, _) => {
-
-          return <Flex justify="space-between">{value} <Dropdown menu={{items}} trigger={["click"]}><MoreOutlined /></Dropdown></Flex>
+          return <Flex justify="space-between">
+                    {dayjs(value.date_joined).format("MMM DD, YYYY")}
+                    <Dropdown menu={{items}} trigger={["click"]}><MoreOutlined /></Dropdown>
+                  </Flex>
         }
       },
     ]
 
     useEffect(() => {
-      const interval = setInterval(() => {
-        fetchUsersData();
-      }, 300000);
-
       fetchUsersData();
-
-      return () => clearInterval(interval);
     }, []);
   
     return <>
-    
       <MyTypography level={3}>User management</MyTypography>
-      <DescText>Manage HavenERP users and their account permission.</DescText>
+      <DescText>Manage all your users and their account role.</DescText>
   
       <Flex justify='space-between' className='py-3'>
         <MyTypography level={3}>All users {dataSource && dataSource.length}</MyTypography>
@@ -142,7 +146,12 @@ const ManageUsers = () => {
           <Button>Invite User</Button>
         </Space>
       </Flex>
-      <Table columns={columns} dataSource={dataSource} pagination={dataSource && dataSource.length > 10} loading={loading} />
+      
+      <Table 
+        columns={columns} 
+        dataSource={dataSource} 
+        pagination={dataSource && dataSource.length > 10} 
+        loading={loading} />
     </>
   }
 

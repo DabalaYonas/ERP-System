@@ -1,8 +1,9 @@
 import React, { createContext, useEffect, useState } from 'react';
-import axios from 'axios';
 import { getCurrentUser } from '../services/getCurrentUser';
 import { getCurrentCompany } from '../services/getCurrentCompany';
 import isLoggedIn from '../actions/isLoggedIn';
+import API from '../services/api';
+import axios from 'axios';
 
 export const AuthContext = createContext();
 
@@ -11,16 +12,17 @@ export const AuthProvider = ({ children }) => {
     const [company, setCompany] = useState(null);
 
     const login = async (email, password) => {
-        const response = await axios.post('http://127.0.0.1:8000/user/login/api/', { email, password }, 
-            {headers: {'Content-Type': 'application/json'}, withCredentials: true});
+        const response = await axios.post('http://127.0.0.1:8000/user/login/api/', { email, password });
 
         if (response) {
-          const token =  response.data.jwt;
+          const token =  response.data.access;
           
-          const currentUser = await getCurrentUser();
-          const currentCompany = await getCurrentCompany();
           if(token != null) {
-            localStorage.setItem("jwtToken", token);
+            localStorage.setItem('access_token', token);
+            localStorage.setItem('refresh_token', response.data.refresh);
+            API.defaults.headers.common['Authorization'] = `Bearer ${response.data.access}`;
+            const currentUser = await getCurrentUser();
+            const currentCompany = await getCurrentCompany();
             setUser(currentUser);
             setCompany(currentCompany);
           }
@@ -28,17 +30,19 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = async () => {
-        await axios.post('http://127.0.0.1:8000/user/logout/api/', {}, {withCredentials: true});
-        localStorage.removeItem('jwtToken');
+        await API.post('/user/logout/api/', {});
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        delete API.defaults.headers.common['Authorization'];
         setUser(null);
         setCompany(null);
     };
 
     const register = async (name, email, password, companyName) => {
-        const response = await axios.post("http://127.0.0.1:8000/company/api/", {name: companyName, currency_id: ""}, {withCredentials: true});
+        const response = await API.post("/company/api/", {name: companyName, currency_id: ""});
         if (response) {
-            await axios.post('http://127.0.0.1:8000/user/register/api/', {name, email, password, company_id: response.data.id, role_id: ""}, 
-                {headers: {'Content-Type': 'application/json'}, withCredentials: true}).catch(error => {console.error(error);});
+            await API.post('/user/register/api/', {name, email, password, company_id: response.data.id, role_id: ""}, 
+                {headers: {'Content-Type': 'application/json'}}).catch(error => {console.error(error);});
         }
     };
     

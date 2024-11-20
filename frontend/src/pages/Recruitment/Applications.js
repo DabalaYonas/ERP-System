@@ -7,8 +7,8 @@ import { EditOutlined, UserOutlined, DeleteOutlined, MoreOutlined} from "@ant-de
 import NewButton from '../../components/NewButton';
 import { getStages } from '../../services/handleLookupDatas';
 import PageTitle from '../../components/PageTitle';
-import axios from 'axios';
 import { DescText } from '../../components/DecriptionText';
+import API from '../../services/api';
 
 const COLORS = ["magenta", "red", "green", "blue", "purple", "lime", "gold", "volcano", "orange", "cyan"];
 
@@ -52,7 +52,7 @@ const ListItem = ({item, index}) => {
   ]
 
   const handleDelete = async() => {
-    await axios.delete(`http://127.0.0.1:8000/recruitment/application/api/${item.id}/`).then(response => {
+    await API.delete(`/recruitment/application/api/${item.id}/`).then(response => {
       window.location.reload();
     }).catch(error => {console.error(error);})
   }

@@ -9,7 +9,7 @@ const ManageRole = () => {
     const [roleDataSource, setRoleDataSource] = useState();
     const [open, setOpen] = useState(false);
     const [form] = Form.useForm();
-    const ROLE_URL = "http://127.0.0.1:8000/user/api/role/";
+    const ROLE_URL = "http://127.0.0.1:8000/user/api/roles/";
   
     const loadDataSource = async() => {
       await axios.get(ROLE_URL, {withCredentials: true}).then(response => {
@@ -76,7 +76,7 @@ const ManageRole = () => {
     const handleOK = () => {
       form.validateFields().then(values => {
         console.log(values);
-        axios.post("http://127.0.0.1:8000/user/api/role/", values).then(response => {
+        axios.post("http://127.0.0.1:8000/user/api/role/", values, {withCredentials: true}).then(response => {
           message.success("Succesfully added a new role!");
           setOpen(false);
           window.location.reload();

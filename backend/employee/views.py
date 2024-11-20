@@ -19,7 +19,7 @@ class EmployeeView(viewsets.ModelViewSet):
     parser_classes = (MultiPartParser, FormParser)
     serializer_class = EmployeeSerializer
     queryset = Employee.objects.all()
-
+    
     def perform_create(self, serializer): 
         user = self.request.user
         
@@ -35,38 +35,6 @@ class EmployeeView(viewsets.ModelViewSet):
         company_id = user.company.id
 
         return Employee.objects.filter(company=company_id)
-    
-    # def list(self, request, *args, **kwargs):
-    #     for instance in self.queryset:
-    #         leave_balance = 0
-
-    #         if (timezone.now() - instance.date_joined).days >= 365:
-    #             worked_year = (timezone.now() - instance.date_joined).days // 365
-    #             leave_balance = 15 + math.ceil(worked_year / 2)
-    #             leave_balance = min(leave_balance, 30)
-            
-    #         instance.annual_leave_balance = leave_balance
-    #         instance.save()
-            
-    #     queryset = self.filter_queryset(self.get_queryset())
-    #     serializer = self.get_serializer(queryset, many=True)
-    #     return Response(serializer.data)
-    
-    # def retrieve(self, request, *args, **kwargs):
-    #     instance = self.get_object()
-
-    #     #Calculate annual leave balance
-    #     leave_balance = 0
-    #     if (timezone.now() - instance.date_joined).days >= 365:
-    #         worked_year = (timezone.now() - instance.date_joined).days // 365
-    #         leave_balance = 15 + math.ceil(worked_year / 2)
-    #         leave_balance = min(leave_balance, 30)
-            
-    #     instance.annual_leave_balance = leave_balance
-    #     instance.save()
-
-    #     serializer = self.get_serializer(instance)
-    #     return Response(serializer.data)
     
 
 

@@ -26,6 +26,7 @@ import PayrollPage from './pages/Payroll/PayrollPage';
 import ProcessPayroll from './pages/Payroll/ProcessPayroll';
 import RunPayroll from './pages/Payroll/RunPayroll';
 import { useState } from 'react';
+import ActivityLog from './pages/Report/ActivityLog';
 
 function App() {  
   const [showPayrollNotification, setShowPayrollNotification] = useState(false);
@@ -59,6 +60,7 @@ function App() {
           <Route path='/recruitment' element={<LoginRequired><Recruitment /></LoginRequired>} />
           <Route path='/recruitment/:recruitmentID/' element={<LoginRequired><Applications /></LoginRequired>} />
           <Route path='/recruitment/:recruitmentID/:applicationID' element={<LoginRequired><NewApplication /></LoginRequired>} />
+          <Route path='/activity-log' element={<LoginRequired><ActivityLog /></LoginRequired>} />
           <Route path='/settings' element={<LoginRequired><Settings /></LoginRequired>} />
           <Route path='/settings/:activeKey' element={<LoginRequired><Settings /></LoginRequired>} />
         </Route>

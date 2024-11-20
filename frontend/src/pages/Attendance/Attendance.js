@@ -1,15 +1,15 @@
-import { Button, Col, DatePicker, Divider, Flex, Form, Input, message, Modal, Row, Select, Skeleton, Space, } from 'antd';
+import { Button, Col, DatePicker, Flex, Form, Input, message, Modal, Row, Select, Skeleton, Space, } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { ArrowLeftOutlined, ArrowRightOutlined, CalendarOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import SearchInput from '../../components/SearchInput';
 import { getEmployees } from '../../services/handleEmployee';
-import { postAttedances } from '../../services/handleAttendance';
 import StatisticCard from '../../components/StatisticCard';
 import PageTitle from '../../components/PageTitle';
 import AttendanceTable, { AttendanceStatus } from '../../components/attendance/AttendanceTable';
 import axios from 'axios';
 import MyCard from '../../components/MyCard';
+import API from '../../services/api';
 
 const dateFormat = "DD-MM-YYYY";
 
@@ -30,7 +30,7 @@ function Attendance() {
 
   const fetchAttedancesData = async() => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/attendance/api/attendance-summary/?date=${date.format("YYYY-MM-DD")}`, {withCredentials: true});
+      const response = await API.get(`/attendance/api/attendance-summary/?date=${date.format("YYYY-MM-DD")}`);
       setAttendanceSummary(response.data);
       setLoading(false);
     } catch (error) {

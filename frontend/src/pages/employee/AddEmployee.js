@@ -18,7 +18,7 @@ function AddEmployee() {
   return (
     <>
     <PageTitle items={breadcrumbItems} title="New Employee" />
-    <Card >
+    <Card>
       <EmployeeTab />
     </Card>
       </>

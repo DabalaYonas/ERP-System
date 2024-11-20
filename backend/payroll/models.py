@@ -104,7 +104,7 @@ class Payroll(models.Model):
 
     def generate_payslip(self):
         return {
-            'employee_name': self.employee.name,
+            'employee': self.employee,
             'payPeriod': self.payPeriod,
             'basic_salary': self.basic_salary,
             'non_tax_transp_allow': self.non_tax_transp_allow,

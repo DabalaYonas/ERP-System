@@ -1,10 +1,9 @@
 import axios from "axios";
+import API from "./api";
 
 export const getCurrentUser = async() => {
-  try {
-    const token = localStorage.getItem("jwtToken");     
-    const response = await axios.get(`http://127.0.0.1:8000/user/api/`,
-      {headers: {'Content-Type': 'application/json'}, withCredentials: true});
+  try {  
+    const response = await API.get(`/user/api/`);
 
     return response.data;
   } catch (error) {

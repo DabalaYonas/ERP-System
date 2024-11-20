@@ -3,9 +3,9 @@ import { Button, Card, Col, Divider, Flex, Form, Input, message, Row, Skeleton, 
 import MyTypography from '../../components/MyTypography';
 import { CameraOutlined, LockOutlined, SafetyOutlined, WarningOutlined} from "@ant-design/icons";
 import { DescText } from '../DecriptionText';
-import axios from 'axios';
 import { AuthContext } from '../../context/AuthContext';
 import ImageUpload from '../ImageUpload';
+import API from '../../services/api';
 
 
 const UserSetting = () => {
@@ -26,7 +26,7 @@ const UserSetting = () => {
         }    
       });
 
-      await axios.patch(`${USER_URL}`, formData, {withCredentials: true}).then(response => {
+      await API.patch(`${USER_URL}`, formData).then(response => {
         window.location.reload(); 
         message.success("User informations are updated!");   
       }).catch(error => {

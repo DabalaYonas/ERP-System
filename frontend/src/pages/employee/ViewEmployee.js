@@ -1,11 +1,9 @@
-import { Button, Card, Divider, Flex, Image, Space, Table, Tag, Typography } from 'antd';
+import { Button, Card, Divider, Flex, Image, Table, Tag, Typography } from 'antd';
 import { PaperClipOutlined, 
   MailOutlined, 
   EditOutlined, 
   UserOutlined, 
   FileDoneOutlined, 
-  ProjectOutlined,
-  DollarCircleOutlined,
   FieldTimeOutlined, } from "@ant-design/icons";
 import React, { useEffect, useState } from 'react';
 import { Tabs } from 'antd';
@@ -13,9 +11,9 @@ import { useParams } from 'react-router-dom';
 import EmployeeTab from '../../components/employee/EmployeeTab';
 import { getEmployee } from '../../services/handleEmployee';
 import PageTitle from '../../components/PageTitle';
-import axios from 'axios';
 import dayjs from "dayjs";
 import { AttendanceStatus } from '../../components/attendance/AttendanceTable';
+import API from '../../services/api';
 
 const AttendanceChild = () => {
     const [dataSource, setDataSource] = useState([]); 
@@ -27,7 +25,7 @@ const AttendanceChild = () => {
       const loadDatas = async() => {
         setLoading(true);
         try {
-          const responseDatas = await axios.get("http://127.0.0.1:8000/attendance/api/", {withCredentials: true}).then(response => response.data);
+          const responseDatas = await API.get("/attendance/api/", {withCredentials: true}).then(response => response.data);
           const result = responseDatas.filter(data => data.employee.id == userId);     
           const datas = result.map(data => ({
             date: dayjs(data.checkIn).format("MMM DD, YYYY"),
@@ -105,11 +103,11 @@ const sideTabItems = (mDisabled) =>  {
       icon: <FileDoneOutlined />,
       children: <AttendanceChild />
   },
-  {   key: 'project',
-      label: 'Project',
-      icon: <ProjectOutlined />,
-      children: <ComingSoon />
-  },
+  // {   key: 'project',
+  //     label: 'Project',
+  //     icon: <ProjectOutlined />,
+  //     children: <ComingSoon />
+  // },
   {   key: 'leave',
       label: 'Leave',
       icon: <FieldTimeOutlined />,
@@ -170,12 +168,6 @@ function ViewEmployee() {
                     <p><MailOutlined /> {email}</p>
                   </Flex>
               </Flex>
-
-              <Space>
-                
-              <Button 
-                icon={<DollarCircleOutlined />} 
-                className='py-5 self-end'>Payslip</Button>
                 
               <Button type='primary' 
                 disabled={!disabledForm}
@@ -183,7 +175,6 @@ function ViewEmployee() {
                 icon={<EditOutlined />} 
                 className='py-5 self-end'>Edit Employee</Button>
 
-              </Space>
             </Flex>
 
             <Divider />

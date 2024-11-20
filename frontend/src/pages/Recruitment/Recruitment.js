@@ -1,9 +1,9 @@
 import { Button, Card, Col, Flex, Form, Input, message, Modal, Row, Skeleton } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { AppstoreOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { FaBaseballBall, FaHandshake, FaLaptop, FaPlusCircle, FaUser } from "react-icons/fa";
 import { getRecruitments, postRecruitment } from '../../services/handleRecruitment';
 import { useNavigate } from "react-router-dom";
+import ListGrid from '../../components/ListGridSegment';
 
 const boxItems = [{
   color: "green",
@@ -127,10 +127,7 @@ function Recruitment() {
         onClick={() => {setIsOpen(true)}}>New Job Positions</Button>
     </Flex>
 
-    <Flex gap={10}>
-      <AppstoreOutlined className='text-xl cursor-pointer' />
-      <UnorderedListOutlined className='text-xl cursor-pointer' />
-    </Flex>
+    <ListGrid />
 
   </Flex>
   

@@ -10,8 +10,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Error404 from '../Error404';
 import PageTitle from '../../components/PageTitle';
 import MyTypography from '../../components/MyTypography';
-import axios from 'axios';
 import EmployeeTab from '../../components/employee/EmployeeTab';
+import API from '../../services/api';
 
 function NewApplication() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -200,7 +200,7 @@ function NewApplication() {
 
   const onRefuse = async() => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/recruitment/application/api/${applicationID}/`, {withCredentials: true});
+      await API.delete(`/recruitment/application/api/${applicationID}/`, {withCredentials: true});
       navigate(-1);
     } catch (error) {
       message.success("Can't refused this employee");

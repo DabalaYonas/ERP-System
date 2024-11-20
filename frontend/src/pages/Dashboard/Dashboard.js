@@ -2,7 +2,7 @@ import PageTitle from '../../components/PageTitle';
 import StatisticCard from '../../components/StatisticCard';
 import { Calendar, Divider, Flex, Skeleton, Tag, Timeline } from "antd";
 import AttendanceTable from "../../components/attendance/AttendanceTable";
-import { UsergroupAddOutlined, FileDoneOutlined, FileSearchOutlined, DollarCircleOutlined, CalendarOutlined } from "@ant-design/icons";
+import { UsergroupAddOutlined, FileDoneOutlined, DollarCircleOutlined, CalendarOutlined } from "@ant-design/icons";
 import MyTypography from "../../components/MyTypography";
 import MyCard from "../../components/MyCard";
 import PayrollAreaChart from '../../components/PayrollAreaChart ';
@@ -10,8 +10,7 @@ import EmployeeAttendanceChart from '../../components/AttendanceChart';
 import { useEffect, useState } from 'react';
 import { getHolidays } from '../../services/handleLeaves';
 import dayjs from "dayjs";
-import axios from 'axios';
-import EmployeeStatusChart from '../../components/EmployeeStatusChart';
+import API from '../../services/api';
 
 const breadcrumbItems = [
     {
@@ -32,10 +31,10 @@ function Dashboard() {
     const fetchDatas = async() => {
       try {
         const holidayResponse = await getHolidays();
-        const employeeResponse = await axios.get('http://127.0.0.1:8000/employee/api/employee-count/', {withCredentials: true});
-        const attendanceResponse = await axios.get('http://127.0.0.1:8000/attendance/api/attendance-summary/', {params: {'date': dayjs().format("YYYY-MM-DD")}, withCredentials: true});
+        const employeeResponse = await API.get('/employee/api/employee-count/', {withCredentials: true});
+        const attendanceResponse = await API.get('/attendance/api/attendance-summary/', {params: {'date': dayjs().format("YYYY-MM-DD")}, withCredentials: true});
         
-        await axios.get('http://127.0.0.1:8000/payroll/api/payroll-summary/', 
+        await API.get('/payroll/api/payroll-summary/', 
           {params: {'payPeriod': dayjs().format("MMMM YYYY")}, withCredentials: true})
           .then(response => {
               setpayrollSummary(response.data); 
@@ -73,37 +72,59 @@ function Dashboard() {
     return <div className='w-full bg-violet-500 h-1 rounded'></div>;
   };
 
+  const payrollChartData = [
+    { month: 'Jan', payroll: 4000 },
+    { month: 'Feb', payroll: 3000 },
+    { month: 'Mar', payroll: 5000 },
+    { month: 'Apr', payroll: 7000 },
+    { month: 'May', payroll: 6000 },
+    { month: 'Jun', payroll: 8000 },
+  ]; 
+  
+  const attendChartData = [
+    { status: 'Present', count: attendSummary.total_attend },
+    { status: 'Absent', count: attendSummary.total_absent },
+    { status: 'Late', count: attendSummary.total_late },
+  ];
+
     return <>
         <PageTitle title="Dashboard" items={breadcrumbItems} />
         <Flex gap="middle" className="pb-4">
           <Flex gap="middle" vertical className='flex-1'>
             <Flex gap="middle">
-              <StatisticCard title="Total Employee" icon={<UsergroupAddOutlined />} value={employeeCount} change={10.0} percent />
-              <StatisticCard title="Today Attend" icon={<FileDoneOutlined />} value={attendSummary.total_attend} change={10.0} percent decline />
-              {/* <StatisticCard title="Total Applicant's" icon={<FileSearchOutlined />} value={12} change={50.0} percent /> */}
-              <StatisticCard title="This Month Salary" icon={<DollarCircleOutlined />} value={payrollSummary.total_payroll_costs} suffix="Br" change={20.0} percent />
+              <StatisticCard 
+                title="Total Employee" 
+                icon={<UsergroupAddOutlined />} 
+                value={employeeCount} 
+                change={10}
+                changeLabel="New Employee" />
+
+              <StatisticCard 
+                title="Today Attend" 
+                icon={<FileDoneOutlined />} 
+                value={attendSummary.total_attend} 
+                change={10.0} percent decline />
+              
+              <StatisticCard title="This Month Salary" 
+                icon={<DollarCircleOutlined />} 
+                value={payrollSummary.total_payroll_costs} 
+                suffix="Br" 
+                change={20.0} percent />
             </Flex>
 
               <Flex gap="middle">
-                <MyCard title="Payment History" className=" basis-3/5">
-                  <PayrollAreaChart />
+                <MyCard title="Payment History" className="basis-3/5">
+                  <PayrollAreaChart data={payrollChartData} />
                 </MyCard>
                 
-                <MyCard title="Today Attendance" className=" basis-2/5">
-                  <EmployeeAttendanceChart />
+                <MyCard title="Today Attendance" className="basis-2/5">
+                  <EmployeeAttendanceChart data={attendChartData} />
                 </MyCard>
-
               </Flex>
-              <Flex gap="middle" align='start'>
 
                 <MyCard title="Attendance Overview" className="flex-1">
                   <AttendanceTable maxShow={5} />
                 </MyCard>
-
-                {/* <MyCard title="Employee Status" style={{ width: 300}}>
-                  <EmployeeStatusChart />
-                </MyCard> */}
-              </Flex>
           </Flex>
 
           <Flex gap='middle' vertical className="h-lvh basis-1/4">

@@ -1,15 +1,15 @@
-import axios from "axios";
+import API from "./api";
 
-export const URL = "http://127.0.0.1:8000/leave/public-holidays/api/";
+export const URL = "/leave/api/public-holidays/";
 
 export async function getHolidays() {
-    return axios.get(URL, {withCredentials: true}).then(response => response.data);
+    return API.get(URL).then(response => response.data);
 }
 
 export async function getHoliday(id) {
-    return axios.get(URL + id + "/", {withCredentials: true}).then(response => response.data);
+    return API.get(URL + id + "/").then(response => response.data);
 }
 
 export async function postHolidays(data) {
-    return axios.post(URL, data, {withCredentials: true}).then(response => response.data);
+    return API.post(URL, data).then(response => response.data);
 }

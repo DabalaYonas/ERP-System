@@ -1,6 +1,5 @@
-import { Button, Flex, Input, Table, Avatar, message, Popconfirm, Space, Tooltip } from "antd";
+import { Button, Flex, Input, Avatar, message, Space, Tooltip } from "antd";
 import {
-  DeleteOutlined,
   EyeOutlined,
   PlusCircleOutlined,
   UserOutlined,
@@ -13,6 +12,9 @@ import React, { useEffect, useState, useRef } from "react";
 import PageTitle from "../../components/PageTitle";
 import { getDepartments } from "../../services/handleDepartment";
 import Highlighter from 'react-highlight-words';
+import ListGrid from "../../components/ListGridSegment";
+import MyCard from "../../components/MyCard";
+import TableWithEmployee from "../../components/TableWithEmployee";
 
 const handleDelete = async (id) => {
   try {
@@ -49,11 +51,11 @@ function Employees() {
           key: item.id,
           id: item.id,
           profilePic: item.profilePic,
-          name: item.name,
+          employee: item.name,
           department: item.department ? item.department.name : "_",
           gender: item.gender,
           phone_number: item.phone_number,
-          actions: true,
+          action: true,
         }
         ));
           
@@ -205,15 +207,11 @@ function Employees() {
     }
   });  
 
-const columns = [
+const columnsData = {
+  order: ["id", "employee", "department", "gender", "phone_number", "action"],
+  columns : [
   {
-    title: 'Employee Name',
-    dataIndex: 'name',
-    sorter: (a, b) => a.name.localeCompare(b.name),
-    ...getColumnSearchProps("name"),
-  },
-  {
-    title: 'Employee ID',
+    title: 'Id',
     dataIndex: 'id',
   },
   {
@@ -245,8 +243,8 @@ const columns = [
     ...getColumnSearchProps("phone_number"),
   },
   {
-    title: 'Actions',
-    dataIndex: 'actions',
+    title: 'Action',
+    dataIndex: 'action',
     render: (value, item) => {
       const id = item.id;
       
@@ -268,22 +266,29 @@ const columns = [
         </Flex>
     }
   },
-];
+]};
 
     return <>
       <PageTitle items={breadcrumbItems} title="All Employee" />
-
-      <Flex align="center" gap='20px' className="pb-4" justify="space-between">
-        <Input.Search value={searchAllText} onChange={handleSearchAll} style={{width: 420}} placeholder="Search employee" enterButton />
+      <Space direction="vertical" className="w-full" size="middle">
         <Link to='/employees/add-employee'>
           <Button type="primary" icon={<PlusCircleOutlined />} >Add Employee</Button>
         </Link>
-      </Flex>
-      
-      <Table 
-        dataSource={dataSource} 
-        columns={columns} 
-        loading={loading}/>
+
+        <MyCard title="Employees" header={
+          <Flex align="center" gap='20px' justify="space-between">
+          <Input.Search value={searchAllText} onChange={handleSearchAll} style={{width: 320}} placeholder="Search employee" />
+          <ListGrid />
+        </Flex>}>
+        
+          <TableWithEmployee 
+            dataSource={dataSource}
+            columnOrder={columnsData.order}
+            columns={columnsData.columns} 
+            loading={loading}/>
+          
+        </MyCard>
+      </Space>
     </>
 }
 

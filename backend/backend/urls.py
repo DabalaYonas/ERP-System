@@ -29,7 +29,8 @@ urlpatterns = [
     path('payroll/', include('payroll.urls'), name="Payroll"),
     path('leave/', include('leave.urls'), name="Leave"),
     path('lookup/', include('lookup.urls'), name="Lookup"),
-    path('company/', include('company.urls'), name="Company")
+    path('company/', include('company.urls'), name="Company"),
+    path('activity-log/', include('activity_log.urls'), name="Activity Log")
 ]
 
 

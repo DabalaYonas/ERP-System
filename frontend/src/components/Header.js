@@ -7,11 +7,14 @@ import {
   LogoutOutlined,
   MoonOutlined,
   SunOutlined,
+  BulbOutlined,
+  BulbFilled,
 } from '@ant-design/icons';
 import { FaBars } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from '../context/AuthContext';
 import NotificationDropDown from './NotificationDropDown';
+import { useTheme } from '../context/ThemeContext';
 
 const { Header } = Layout;
 
@@ -43,6 +46,7 @@ const notifItems = [
 export default function CustomHeader({ profilePic, collapsed, setCollapsed, colorBgContainer }) {
   const { logout, user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   const onClick = async({key}) => {
     switch (key) {
@@ -99,9 +103,11 @@ export default function CustomHeader({ profilePic, collapsed, setCollapsed, colo
                 <BellOutlined className='text-base bg-slate-100 p-2 rounded-md text-slate-800' />
               </Badge>
             </NotificationDropDown>
-           
-            {1 ? <MoonOutlined className='text-base cursor-pointer bg-slate-100 p-2 rounded-md text-slate-800' /> :
-            <SunOutlined className='text-base cursor-pointer bg-slate-100 p-2 rounded-md text-slate-800' />}
+
+            <div onClick={toggleTheme} className='text-base cursor-pointer rounded-md overflow-hidden bg-slate-100'>
+              {theme === 'light' ? <MoonOutlined className='p-2 text-slate-800' /> : 
+              <SunOutlined className='p-2 text-slate-800' />}
+            </div>
            
             <Dropdown 
               className='cursor-pointer'

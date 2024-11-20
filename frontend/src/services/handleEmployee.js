@@ -1,18 +1,18 @@
 import { message } from "antd";
-import axios from "axios";
+import API from "./api";
 
-export const URL = "http://127.0.0.1:8000/employee/api/";
+export const URL = "/employee/api/";
 
 export async function getEmployees() {
-    return axios.get(URL, {withCredentials: true});
+    return API.get(URL, {withCredentials: true});
 }
 
 export async function getEmployee(id) {
-    return axios.get(URL + id + "/", {withCredentials: true}).then(response => response.data).catch(error => error);
+    return API.get(URL + id + "/", {withCredentials: true}).then(response => response.data).catch(error => error);
 }
 
 export async function postEmployees(data) {
-    return axios.post(URL, data, {headers: {'content-type': 'multipart/form-data'}, withCredentials: true}).then(response => {
+    return API.post(URL, data, {headers: {'content-type': 'multipart/form-data'}, withCredentials: true}).then(response => {
         message.success("Employee created seccussfully!");
         return response.data;
     }).catch(error => {
@@ -23,7 +23,7 @@ export async function postEmployees(data) {
 }
 
 export async function putEmployee(data, id) {
-    return axios.put(URL + id + "/", data, {headers: {'content-type': 'multipart/form-data'}, withCredentials: true}).then(response => {
+    return API.put(URL + id + "/", data, {headers: {'content-type': 'multipart/form-data'}, withCredentials: true}).then(response => {
         message.success("Employee updated seccussfully!");
         return response.data;
     }).catch(error => {
@@ -34,5 +34,5 @@ export async function putEmployee(data, id) {
 }
 
 export async function deletEmployee(id) {
-    return axios.delete(URL + id + "/", {withCredentials: true});
+    return API.delete(URL + id + "/", {withCredentials: true});
 }

@@ -1,11 +1,11 @@
-import axios from "axios"
+import API from "./api";
 
-export const Url = "http://127.0.0.1:8000/attendance/api/";
+export const Url = "/attendance/api/";
 
 export const getAttedances = async () => {
-    return await axios.get(Url, {withCredentials: true}).then(response => response.data);
+    return await API.get(Url).then(response => response.data);
 }
 
 export const postAttedances = async (attendace) => {
-    return await axios.post(Url, attendace, {withCredentials: true});
+    return await API.post(Url, attendace);
 }

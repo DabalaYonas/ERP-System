@@ -2,13 +2,13 @@ import React, { useContext } from 'react';
 import {Button, Col, ColorPicker, Divider, Flex, Form, Input, message, Row, Skeleton } from 'antd';
 import MyTypography from '../../components/MyTypography';
 import SearchInput from '../../components/SearchInput';
-import axios from 'axios';
 import ImageUpload from '../ImageUpload';
 import { DescText } from '../DecriptionText';
 import { AuthContext } from '../../context/AuthContext';
+import API from '../../services/api';
 
 const getCurrency = async() => {
-  return await axios.get("http://127.0.0.1:8000/lookup/api/currency/", {withCredentials: true}).then(response => response.data);
+  return await API.get("/lookup/api/currency/").then(response => response.data);
 }
 
 const CompanySetting = () => {
@@ -27,7 +27,7 @@ const CompanySetting = () => {
 
         formData.append(name, name == "brand_color" ? value.toHexString() : value);
       });
-      await axios.patch(`${COMPANY_URL + company.id}/`, formData, {withCredentials: true}).then(response => {
+      await API.patch(`${COMPANY_URL + company.id}/`, formData).then(response => {
         message.success("Company informations are updated!");   
         window.location.reload();        
       }).catch(error => {

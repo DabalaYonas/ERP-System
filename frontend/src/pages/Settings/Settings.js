@@ -30,11 +30,11 @@ const tabItems = [
     label: "Manage Users",
     children: <ManageUsers />
   },
-  {
-    key: "manage-role",
-    label: "Manage Role",
-    children: <ManageRole />
-  },
+  // {
+  //   key: "manage-role",
+  //   label: "Manage Role",
+  //   children: <ManageRole />
+  // },
   {
     key: "notification",
     label: "Notification",

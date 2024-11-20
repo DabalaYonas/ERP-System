@@ -112,9 +112,11 @@ function AttendanceTable({ date = dayjs(), rowSelection = false, maxShow, reload
           }
         });
         setDataSource(maxShow ? data.slice(0, [Math.min(maxShow, data.length)]) : data);
+        setLoading(false);
+      }).catch(errInfo => {
+        console.error(errInfo);
+        
       });
-      
-      setLoading(false);
     }
 
     fetchAttedancesData();
